@@ -51,6 +51,12 @@
 * Автоматический пересчет удельной мощности в Вт/фунт при имперских настройках и перестроение интервальной таблицы сплитов с шагом ровно в 1 милю (вместо 1 км).
 * Интерактивное преобразование значений текстовых полей ввода на лету без потери точности хранения данных.
 
+#### 7. Сегменты и лидерборды (Segments & Leaderboards)
+* Автономное сопоставление (snapping) GPS-координат тренировки (GPX/FIT) с эталонными сегментами по формуле Haversine с погрешностью до 25 метров и верификацией пройденного расстояния (допуск 15% для исключения ложных срезок).
+* Автоматический расчет личных рекордов (PR) и занятых мест.
+* Виртуальные соперники (боты) с реалистичным распределением результатов для поддержания духа соревнований.
+* Интерактивный детальный просмотр сегмента: наложение трека на карту золотым цветом, график высот с помощью Swift Charts и полные таблицы лидерборда.
+
 ---
 
 ### 🛠 Стек технологий и Архитектура
@@ -96,6 +102,11 @@
   <img src="docs/screenshots/activity_detail_power_curve.png" alt="Детальная кривая тренировки" width="50%">
 </p>
 
+<p align="center">
+  <b>Детали тренировочного сегмента и лидерборд</b><br>
+  <img src="docs/screenshots/segment_detail_leaderboard.png" alt="Лидерборд сегмента" width="50%">
+</p>
+
 ---
 
 ## 🇬🇧 English Section
@@ -112,6 +123,7 @@
 * **Apple Health (HealthKit) Integration**: Dual synchronization reading activities, sleep analyses, and Heart Rate Variability (HRV) metrics to evaluate daily Readiness Scores.
 * **Structured Training Planner**: Dynamic training schedule generator adapting blocks into recovery, developmental, and tapering cycles based on historical workloads.
 * **Unified Imperial/Metric Engine**: Global system conversion instantly formatting inputs, charts, and values. Automatically splits running/cycling intervals into 1-mile laps with pace and elevation gains formatted dynamically (mi, ft, lbs, mph, W/lbs).
+* **Segments & Leaderboards**: Local offline snapping of activities (GPX/FIT) with predefined segments using the Haversine formula (25m proximity, 15% distance tolerance). Tracks Personal Records (PRs), shows interactive segment maps, Swift Charts elevation profiles, and lists local leaderboards populated with simulated bots.
 
 ---
 
