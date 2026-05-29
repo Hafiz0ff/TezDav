@@ -1,0 +1,31 @@
+# OS X
+.DS_Store
+
+# Xcode
+build/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.moved-aside
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Firebase
+google-services.json
+GoogleService-Info.plist
+
+# Crashlytics
+*.dSYM
+
+# Local Environment
+.env
+.env.*

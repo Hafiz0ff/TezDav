@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>Strava OAuth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>tezdav</string>
+			</array>
+		</dict>
+	</array>
+	<key>STRAVA_CLIENT_ID</key>
+	<string>252486</string>
+	<key>STRAVA_CLIENT_SECRET</key>
+	<string>3a574eea398185ce9bd189a8ced6ea5e769e0f53</string>
+	<key>STRAVA_REDIRECT_URI</key>
+	<string>tezdav://auth/callback</string>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>GPS Exchange Format (GPX)</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.gpx</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Garmin FIT Activity</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.garmin.fit</string>
+			</array>
+		</dict>
+	</array>
+	<key>UTImportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.xml</string>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>GPS Exchange Format (GPX)</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>public.gpx</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>gpx</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/gpx+xml</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Garmin FIT Activity</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>com.garmin.fit</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>fit</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -1,0 +1,924 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A00100000000000000000091 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000091 /* Assets.xcassets */; };
+		A00100000000000000000081 /* GpxParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000081 /* GpxParser.swift */; };
+		A00100000000000000000082 /* FitParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000082 /* FitParser.swift */; };
+		A00100000000000000000083 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000083 /* HapticManager.swift */; };
+		A00100000000000000000084 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000084 /* OnboardingView.swift */; };
+		A00100000000000000000085 /* FileImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000085 /* FileImportView.swift */; };
+		598F8D16404199C9E89E047D /* FitDataProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = "TEMP_F2492D5D-8A8F-4FFB-9D9F-36BD3FC4C05B" /* FitDataProtocol */; };
+		780FAA6CEBDE15ECC6794193 /* FitDataProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 7EFE2C791C65C4881CC65413 /* FitDataProtocol */; };
+		598F8D16404199C9E89E048A /* FitnessUnits in Frameworks */ = {isa = PBXBuildFile; productRef = 7EFE2C791C65C4881CC6548A /* FitnessUnits */; };
+		598F8D16404199C9E89E048B /* AntMessageProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 7EFE2C791C65C4881CC6548B /* AntMessageProtocol */; };
+		598F8D16404199C9E89E048C /* DataDecoder in Frameworks */ = {isa = PBXBuildFile; productRef = 7EFE2C791C65C4881CC6548C /* DataDecoder */; };
+		A00100000000000000000001 /* TezDavApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000001 /* TezDavApp.swift */; };
+		A00100000000000000000002 /* AppRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000002 /* AppRootView.swift */; };
+		A00100000000000000000003 /* TrainingMetrics/TrainingLoadCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000003 /* TrainingMetrics/TrainingLoadCalculator.swift */; };
+		A00100000000000000000004 /* Persistence/Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000004 /* Persistence/Activity.swift */; };
+		A00100000000000000000005 /* Persistence/ActivityStreamSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000005 /* Persistence/ActivityStreamSample.swift */; };
+		A00100000000000000000006 /* Persistence/SyncState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000006 /* Persistence/SyncState.swift */; };
+		A00100000000000000000007 /* Persistence/UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000007 /* Persistence/UserSettings.swift */; };
+		A00100000000000000000008 /* Auth/StravaConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000008 /* Auth/StravaConfig.swift */; };
+		A00100000000000000000009 /* Auth/StravaOAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000009 /* Auth/StravaOAuth.swift */; };
+		A00100000000000000000010 /* Auth/TokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000010 /* Auth/TokenStore.swift */; };
+		A00100000000000000000011 /* Auth/KeychainTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000011 /* Auth/KeychainTokenStore.swift */; };
+		A00100000000000000000012 /* Auth/StravaSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000012 /* Auth/StravaSession.swift */; };
+		A00100000000000000000013 /* StravaAPI/RateLimitQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000013 /* StravaAPI/RateLimitQueue.swift */; };
+		A00100000000000000000014 /* StravaAPI/StravaDTOs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000014 /* StravaAPI/StravaDTOs.swift */; };
+		A00100000000000000000015 /* StravaAPI/StravaAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000015 /* StravaAPI/StravaAPIClient.swift */; };
+		A00100000000000000000016 /* Sync/SyncProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000016 /* Sync/SyncProgress.swift */; };
+		A00100000000000000000017 /* Sync/SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000017 /* Sync/SyncService.swift */; };
+		A00100000000000000000018 /* Dashboard/DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000018 /* Dashboard/DashboardViewModel.swift */; };
+		A00100000000000000000019 /* Dashboard/DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000019 /* Dashboard/DashboardView.swift */; };
+		A00100000000000000000020 /* TezDavTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000020 /* TezDavTests.swift */; };
+		A00100000000000000000021 /* TrainingLoadCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000021 /* TrainingLoadCalculatorTests.swift */; };
+		A00100000000000000000022 /* StravaOAuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000022 /* StravaOAuthTests.swift */; };
+		A00100000000000000000023 /* RateLimitQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000023 /* RateLimitQueueTests.swift */; };
+		A00100000000000000000024 /* PersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000024 /* PersistenceTests.swift */; };
+		A00100000000000000000025 /* SyncServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000025 /* SyncServiceTests.swift */; };
+		A00100000000000000000029 /* Auth/StravaTokenRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000029 /* Auth/StravaTokenRefresher.swift */; };
+		A00100000000000000000030 /* Dashboard/ActivityDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000030 /* Dashboard/ActivityDetailView.swift */; };
+		A00100000000000000000031 /* Dashboard/FormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000031 /* Dashboard/FormView.swift */; };
+		A00100000000000000000032 /* Dashboard/RecordsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000032 /* Dashboard/RecordsView.swift */; };
+		A00100000000000000000033 /* TrainingMetrics/PersonalRecordCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000033 /* TrainingMetrics/PersonalRecordCalculator.swift */; };
+		A00100000000000000000041 /* Dashboard/ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000041 /* Dashboard/ProfileView.swift */; };
+		A00100000000000000000042 /* Notifications/NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000042 /* Notifications/NotificationManager.swift */; };
+		A00100000000000000000051 /* Persistence/AppGroupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000051 /* Persistence/AppGroupManager.swift */; };
+		A00100000000000000000052 /* TrainingMetrics/HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000052 /* TrainingMetrics/HealthKitManager.swift */; };
+		A00100000000000000000053 /* Sync/WatchConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000053 /* Sync/WatchConnectivityManager.swift */; };
+		A00100000000000000000071 /* Persistence/IntervalSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000071 /* Persistence/IntervalSegment.swift */; };
+		A00100000000000000000072 /* Persistence/TrainingWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000072 /* Persistence/TrainingWeek.swift */; };
+		A00100000000000000000073 /* TrainingMetrics/IntervalDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000073 /* TrainingMetrics/IntervalDetector.swift */; };
+		A00100000000000000000074 /* TrainingMetrics/TrainingPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000074 /* TrainingMetrics/TrainingPlanner.swift */; };
+		A00100000000000000000075 /* Sync/ExportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000075 /* Sync/ExportManager.swift */; };
+		A00100000000000000000076 /* Dashboard/TrainingPlannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000076 /* Dashboard/TrainingPlannerView.swift */; };
+		LA01000000000000000000001 /* LiveActivity/WorkoutActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000001 /* LiveActivity/WorkoutActivityAttributes.swift */; };
+		LA01000000000000000000002 /* LiveActivity/LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000002 /* LiveActivity/LiveActivityManager.swift */; };
+		LA01000000000000000000003 /* LiveActivity/WorkoutSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000003 /* LiveActivity/WorkoutSimulator.swift */; };
+		LA01000000000000000000011 /* WorkoutActivityAttributes.swift in Sources (LA) */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000001 /* LiveActivity/WorkoutActivityAttributes.swift */; };
+		LA01000000000000000000012 /* TezDavLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000012 /* TezDavLiveActivityBundle.swift */; };
+		LA01000000000000000000013 /* WorkoutLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000013 /* WorkoutLiveActivity.swift */; };
+		LA01000000000000000000014 /* LockScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000014 /* LockScreenView.swift */; };
+		LA01000000000000000000015 /* DynamicIslandViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000015 /* DynamicIslandViews.swift */; };
+		LA01000000000000000000016 /* LiveActivityHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000016 /* LiveActivityHelpers.swift */; };
+		RB0100000000000000000001 /* Persistence/SavedRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB0200000000000000000001 /* Persistence/SavedRoute.swift */; };
+		RB0100000000000000000002 /* RouteBuilder/ElevationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB0200000000000000000002 /* RouteBuilder/ElevationService.swift */; };
+		RB0100000000000000000003 /* RouteBuilder/RouteEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB0200000000000000000003 /* RouteBuilder/RouteEngine.swift */; };
+		RB0100000000000000000004 /* RouteBuilder/RouteMapSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB0200000000000000000004 /* RouteBuilder/RouteMapSnapshot.swift */; };
+		RB0100000000000000000005 /* RouteBuilder/RouteBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB0200000000000000000005 /* RouteBuilder/RouteBuilderView.swift */; };
+		RB0100000000000000000006 /* RouteBuilder/RouteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB0200000000000000000006 /* RouteBuilder/RouteDetailView.swift */; };
+		RB0100000000000000000007 /* RouteBuilder/RouteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB0200000000000000000007 /* RouteBuilder/RouteListView.swift */; };
+		RT0100000000000000000001 /* RouteBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = RT0200000000000000000001 /* RouteBuilderTests.swift */; };
+		PC0100000000000000000001 /* TrainingMetrics/PowerCurveCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000001 /* TrainingMetrics/PowerCurveCalculator.swift */; };
+		PC0100000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift */; };
+		PC0100000000000000000003 /* Dashboard/PowerCurveChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000003 /* Dashboard/PowerCurveChartView.swift */; };
+		PC0100000000000000000004 /* Dashboard/PowerCurveFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000004 /* Dashboard/PowerCurveFormView.swift */; };
+		PC0100000000000000000005 /* PowerCurveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000005 /* PowerCurveTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A00300000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A00400000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A00500000000000000000001;
+			remoteInfo = TezDav;
+		};
+		LA03000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A00400000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = LA05000000000000000000001;
+			remoteInfo = TezDavLiveActivity;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		A00200000000000000000091 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A00200000000000000000081 /* GpxParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/GpxParser.swift; sourceTree = "<group>"; };
+		A00200000000000000000082 /* FitParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/FitParser.swift; sourceTree = "<group>"; };
+		A00200000000000000000083 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications/HapticManager.swift; sourceTree = "<group>"; };
+		A00200000000000000000084 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/OnboardingView.swift; sourceTree = "<group>"; };
+		A00200000000000000000085 /* FileImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/FileImportView.swift; sourceTree = "<group>"; };
+		A00200000000000000000001 /* TezDavApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavApp.swift; sourceTree = "<group>"; };
+		A00200000000000000000002 /* AppRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRootView.swift; sourceTree = "<group>"; };
+		A00200000000000000000003 /* TrainingMetrics/TrainingLoadCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/TrainingLoadCalculator.swift; sourceTree = "<group>"; };
+		A00200000000000000000004 /* Persistence/Activity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/Activity.swift; sourceTree = "<group>"; };
+		A00200000000000000000005 /* Persistence/ActivityStreamSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/ActivityStreamSample.swift; sourceTree = "<group>"; };
+		A00200000000000000000006 /* Persistence/SyncState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/SyncState.swift; sourceTree = "<group>"; };
+		A00200000000000000000007 /* Persistence/UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/UserSettings.swift; sourceTree = "<group>"; };
+		A00200000000000000000008 /* Auth/StravaConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth/StravaConfig.swift; sourceTree = "<group>"; };
+		A00200000000000000000009 /* Auth/StravaOAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth/StravaOAuth.swift; sourceTree = "<group>"; };
+		A00200000000000000000010 /* Auth/TokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth/TokenStore.swift; sourceTree = "<group>"; };
+		A00200000000000000000011 /* Auth/KeychainTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth/KeychainTokenStore.swift; sourceTree = "<group>"; };
+		A00200000000000000000012 /* Auth/StravaSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth/StravaSession.swift; sourceTree = "<group>"; };
+		A00200000000000000000013 /* StravaAPI/RateLimitQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StravaAPI/RateLimitQueue.swift; sourceTree = "<group>"; };
+		A00200000000000000000014 /* StravaAPI/StravaDTOs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StravaAPI/StravaDTOs.swift; sourceTree = "<group>"; };
+		A00200000000000000000015 /* StravaAPI/StravaAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StravaAPI/StravaAPIClient.swift; sourceTree = "<group>"; };
+		A00200000000000000000016 /* Sync/SyncProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/SyncProgress.swift; sourceTree = "<group>"; };
+		A00200000000000000000017 /* Sync/SyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/SyncService.swift; sourceTree = "<group>"; };
+		A00200000000000000000018 /* Dashboard/DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/DashboardViewModel.swift; sourceTree = "<group>"; };
+		A00200000000000000000019 /* Dashboard/DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/DashboardView.swift; sourceTree = "<group>"; };
+		A00200000000000000000020 /* TezDavTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavTests.swift; sourceTree = "<group>"; };
+		A00200000000000000000021 /* TrainingLoadCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLoadCalculatorTests.swift; sourceTree = "<group>"; };
+		A00200000000000000000022 /* StravaOAuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StravaOAuthTests.swift; sourceTree = "<group>"; };
+		A00200000000000000000023 /* RateLimitQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateLimitQueueTests.swift; sourceTree = "<group>"; };
+		A00200000000000000000024 /* PersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceTests.swift; sourceTree = "<group>"; };
+		A00200000000000000000025 /* SyncServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncServiceTests.swift; sourceTree = "<group>"; };
+		A00200000000000000000026 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A00200000000000000000027 /* TezDav.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TezDav.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A00200000000000000000028 /* TezDavTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TezDavTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A00200000000000000000029 /* Auth/StravaTokenRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth/StravaTokenRefresher.swift; sourceTree = "<group>"; };
+		A00200000000000000000030 /* Dashboard/ActivityDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/ActivityDetailView.swift; sourceTree = "<group>"; };
+		A00200000000000000000031 /* Dashboard/FormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/FormView.swift; sourceTree = "<group>"; };
+		A00200000000000000000032 /* Dashboard/RecordsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/RecordsView.swift; sourceTree = "<group>"; };
+		A00200000000000000000033 /* TrainingMetrics/PersonalRecordCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/PersonalRecordCalculator.swift; sourceTree = "<group>"; };
+		A00200000000000000000041 /* Dashboard/ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/ProfileView.swift; sourceTree = "<group>"; };
+		A00200000000000000000042 /* Notifications/NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications/NotificationManager.swift; sourceTree = "<group>"; };
+		A00200000000000000000051 /* Persistence/AppGroupManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/AppGroupManager.swift; sourceTree = "<group>"; };
+		A00200000000000000000052 /* TrainingMetrics/HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/HealthKitManager.swift; sourceTree = "<group>"; };
+		A00200000000000000000053 /* Sync/WatchConnectivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/WatchConnectivityManager.swift; sourceTree = "<group>"; };
+		A00200000000000000000054 /* TezDavWidget/TezDavWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavWidget/TezDavWidget.swift; sourceTree = "<group>"; };
+		A00200000000000000000055 /* TezDavWatch/TezDavWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavWatch/TezDavWatchApp.swift; sourceTree = "<group>"; };
+		A00200000000000000000056 /* TezDavWatch/TezDavWatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavWatch/TezDavWatchView.swift; sourceTree = "<group>"; };
+		A00200000000000000000071 /* Persistence/IntervalSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/IntervalSegment.swift; sourceTree = "<group>"; };
+		A00200000000000000000072 /* Persistence/TrainingWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/TrainingWeek.swift; sourceTree = "<group>"; };
+		A00200000000000000000073 /* TrainingMetrics/IntervalDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/IntervalDetector.swift; sourceTree = "<group>"; };
+		A00200000000000000000074 /* TrainingMetrics/TrainingPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/TrainingPlanner.swift; sourceTree = "<group>"; };
+		A00200000000000000000075 /* Sync/ExportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/ExportManager.swift; sourceTree = "<group>"; };
+		A00200000000000000000076 /* Dashboard/TrainingPlannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/TrainingPlannerView.swift; sourceTree = "<group>"; };
+		LA02000000000000000000001 /* LiveActivity/WorkoutActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/WorkoutActivityAttributes.swift; sourceTree = "<group>"; };
+		LA02000000000000000000002 /* LiveActivity/LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/LiveActivityManager.swift; sourceTree = "<group>"; };
+		LA02000000000000000000003 /* LiveActivity/WorkoutSimulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/WorkoutSimulator.swift; sourceTree = "<group>"; };
+		LA02000000000000000000010 /* TezDavLiveActivity.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TezDavLiveActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		LA02000000000000000000012 /* TezDavLiveActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/TezDavLiveActivityBundle.swift; sourceTree = SOURCE_ROOT; };
+		LA02000000000000000000013 /* WorkoutLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/WorkoutLiveActivity.swift; sourceTree = SOURCE_ROOT; };
+		LA02000000000000000000014 /* LockScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/LockScreenView.swift; sourceTree = SOURCE_ROOT; };
+		LA02000000000000000000015 /* DynamicIslandViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/DynamicIslandViews.swift; sourceTree = SOURCE_ROOT; };
+		LA02000000000000000000016 /* LiveActivityHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/LiveActivityHelpers.swift; sourceTree = SOURCE_ROOT; };
+		RB0200000000000000000001 /* Persistence/SavedRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/SavedRoute.swift; sourceTree = "<group>"; };
+		RB0200000000000000000002 /* RouteBuilder/ElevationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/ElevationService.swift; sourceTree = "<group>"; };
+		RB0200000000000000000003 /* RouteBuilder/RouteEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/RouteEngine.swift; sourceTree = "<group>"; };
+		RB0200000000000000000004 /* RouteBuilder/RouteMapSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/RouteMapSnapshot.swift; sourceTree = "<group>"; };
+		RB0200000000000000000005 /* RouteBuilder/RouteBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/RouteBuilderView.swift; sourceTree = "<group>"; };
+		RB0200000000000000000006 /* RouteBuilder/RouteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/RouteDetailView.swift; sourceTree = "<group>"; };
+		RB0200000000000000000007 /* RouteBuilder/RouteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/RouteListView.swift; sourceTree = "<group>"; };
+		RT0200000000000000000001 /* RouteBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilderTests.swift; sourceTree = "<group>"; };
+		PC0200000000000000000001 /* TrainingMetrics/PowerCurveCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/PowerCurveCalculator.swift; sourceTree = "<group>"; };
+		PC0200000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/CriticalPowerSolver.swift; sourceTree = "<group>"; };
+		PC0200000000000000000003 /* Dashboard/PowerCurveChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/PowerCurveChartView.swift; sourceTree = "<group>"; };
+		PC0200000000000000000004 /* Dashboard/PowerCurveFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/PowerCurveFormView.swift; sourceTree = "<group>"; };
+		PC0200000000000000000005 /* PowerCurveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavTests/PowerCurveTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A00600000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				598F8D16404199C9E89E047D /* FitDataProtocol in Frameworks */,
+				598F8D16404199C9E89E048A /* FitnessUnits in Frameworks */,
+				598F8D16404199C9E89E048B /* AntMessageProtocol in Frameworks */,
+				598F8D16404199C9E89E048C /* DataDecoder in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00600000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				598F8D16404199C9E89E047D /* FitDataProtocol in Frameworks */,
+				780FAA6CEBDE15ECC6794193 /* FitDataProtocol in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		LA06000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A00700000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A00700000000000000000002 /* TezDav */,
+				A00700000000000000000003 /* TezDavTests */,
+				A00700000000000000000004 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A00700000000000000000002 /* TezDav */ = {
+			isa = PBXGroup;
+			children = (
+				A00200000000000000000091 /* Assets.xcassets */,
+				A00200000000000000000081 /* GpxParser.swift */,
+				A00200000000000000000082 /* FitParser.swift */,
+				A00200000000000000000083 /* HapticManager.swift */,
+				A00200000000000000000084 /* OnboardingView.swift */,
+				A00200000000000000000085 /* FileImportView.swift */,
+				A00200000000000000000071 /* Persistence/IntervalSegment.swift */,
+				A00200000000000000000072 /* Persistence/TrainingWeek.swift */,
+				A00200000000000000000073 /* TrainingMetrics/IntervalDetector.swift */,
+				A00200000000000000000074 /* TrainingMetrics/TrainingPlanner.swift */,
+				A00200000000000000000075 /* Sync/ExportManager.swift */,
+				A00200000000000000000076 /* Dashboard/TrainingPlannerView.swift */,
+				A00200000000000000000026 /* Info.plist */,
+				A00200000000000000000001 /* TezDavApp.swift */,
+				A00200000000000000000002 /* AppRootView.swift */,
+				A00200000000000000000003 /* TrainingMetrics/TrainingLoadCalculator.swift */,
+				A00200000000000000000004 /* Persistence/Activity.swift */,
+				A00200000000000000000005 /* Persistence/ActivityStreamSample.swift */,
+				A00200000000000000000006 /* Persistence/SyncState.swift */,
+				A00200000000000000000007 /* Persistence/UserSettings.swift */,
+				A00200000000000000000008 /* Auth/StravaConfig.swift */,
+				A00200000000000000000009 /* Auth/StravaOAuth.swift */,
+				A00200000000000000000010 /* Auth/TokenStore.swift */,
+				A00200000000000000000011 /* Auth/KeychainTokenStore.swift */,
+				A00200000000000000000012 /* Auth/StravaSession.swift */,
+				A00200000000000000000029 /* Auth/StravaTokenRefresher.swift */,
+				A00200000000000000000013 /* StravaAPI/RateLimitQueue.swift */,
+				A00200000000000000000014 /* StravaAPI/StravaDTOs.swift */,
+				A00200000000000000000015 /* StravaAPI/StravaAPIClient.swift */,
+				A00200000000000000000016 /* Sync/SyncProgress.swift */,
+				A00200000000000000000017 /* Sync/SyncService.swift */,
+				A00200000000000000000018 /* Dashboard/DashboardViewModel.swift */,
+				A00200000000000000000019 /* Dashboard/DashboardView.swift */,
+				A00200000000000000000030 /* Dashboard/ActivityDetailView.swift */,
+				A00200000000000000000031 /* Dashboard/FormView.swift */,
+				A00200000000000000000032 /* Dashboard/RecordsView.swift */,
+				A00200000000000000000033 /* TrainingMetrics/PersonalRecordCalculator.swift */,
+				A00200000000000000000041 /* Dashboard/ProfileView.swift */,
+				A00200000000000000000042 /* Notifications/NotificationManager.swift */,
+				A00200000000000000000051 /* Persistence/AppGroupManager.swift */,
+				A00200000000000000000052 /* TrainingMetrics/HealthKitManager.swift */,
+				A00200000000000000000053 /* Sync/WatchConnectivityManager.swift */,
+				A00200000000000000000054 /* TezDavWidget/TezDavWidget.swift */,
+				A00200000000000000000055 /* TezDavWatch/TezDavWatchApp.swift */,
+				A00200000000000000000056 /* TezDavWatch/TezDavWatchView.swift */,
+				LA02000000000000000000001 /* LiveActivity/WorkoutActivityAttributes.swift */,
+				LA02000000000000000000002 /* LiveActivity/LiveActivityManager.swift */,
+				LA02000000000000000000003 /* LiveActivity/WorkoutSimulator.swift */,
+				RB0200000000000000000001 /* Persistence/SavedRoute.swift */,
+				RB0200000000000000000002 /* RouteBuilder/ElevationService.swift */,
+				RB0200000000000000000003 /* RouteBuilder/RouteEngine.swift */,
+				RB0200000000000000000004 /* RouteBuilder/RouteMapSnapshot.swift */,
+				RB0200000000000000000005 /* RouteBuilder/RouteBuilderView.swift */,
+				RB0200000000000000000006 /* RouteBuilder/RouteDetailView.swift */,
+				RB0200000000000000000007 /* RouteBuilder/RouteListView.swift */,
+				LA02000000000000000000012 /* TezDavLiveActivityBundle.swift */,
+				LA02000000000000000000013 /* WorkoutLiveActivity.swift */,
+				LA02000000000000000000014 /* LockScreenView.swift */,
+				LA02000000000000000000015 /* DynamicIslandViews.swift */,
+				LA02000000000000000000016 /* LiveActivityHelpers.swift */,
+				PC0200000000000000000001 /* TrainingMetrics/PowerCurveCalculator.swift */,
+				PC0200000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift */,
+				PC0200000000000000000003 /* Dashboard/PowerCurveChartView.swift */,
+				PC0200000000000000000004 /* Dashboard/PowerCurveFormView.swift */,
+			);
+			path = TezDav;
+			sourceTree = "<group>";
+		};
+		A00700000000000000000003 /* TezDavTests */ = {
+			isa = PBXGroup;
+			children = (
+				A00200000000000000000020 /* TezDavTests.swift */,
+				A00200000000000000000021 /* TrainingLoadCalculatorTests.swift */,
+				A00200000000000000000022 /* StravaOAuthTests.swift */,
+				A00200000000000000000023 /* RateLimitQueueTests.swift */,
+				A00200000000000000000024 /* PersistenceTests.swift */,
+				A00200000000000000000025 /* SyncServiceTests.swift */,
+				RT0200000000000000000001 /* RouteBuilderTests.swift */,
+			);
+			path = TezDavTests;
+			sourceTree = "<group>";
+		};
+		A00700000000000000000004 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A00200000000000000000027 /* TezDav.app */,
+				A00200000000000000000028 /* TezDavTests.xctest */,
+				LA02000000000000000000010 /* TezDavLiveActivity.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A00500000000000000000001 /* TezDav */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A01100000000000000000002 /* Build configuration list for PBXNativeTarget "TezDav" */;
+			buildPhases = (
+				A00800000000000000000001 /* Sources */,
+				A00600000000000000000001 /* Frameworks */,
+				A00900000000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				LA10000000000000000000001 /* PBXTargetDependency */,
+			);
+			name = TezDav;
+			packageProductDependencies = (
+				"TEMP_F2492D5D-8A8F-4FFB-9D9F-36BD3FC4C05B" /* FitDataProtocol */,
+				7EFE2C791C65C4881CC6548A /* FitnessUnits */,
+				7EFE2C791C65C4881CC6548B /* AntMessageProtocol */,
+				7EFE2C791C65C4881CC6548C /* DataDecoder */,
+			);
+			productName = TezDav;
+			productReference = A00200000000000000000027 /* TezDav.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A00500000000000000000002 /* TezDavTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A01100000000000000000003 /* Build configuration list for PBXNativeTarget "TezDavTests" */;
+			buildPhases = (
+				A00800000000000000000002 /* Sources */,
+				A00600000000000000000002 /* Frameworks */,
+				A00900000000000000000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A01000000000000000000001 /* PBXTargetDependency */,
+			);
+			name = TezDavTests;
+			packageProductDependencies = (
+				7EFE2C791C65C4881CC65413 /* FitDataProtocol */,
+			);
+			productName = TezDavTests;
+			productReference = A00200000000000000000028 /* TezDavTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		LA05000000000000000000001 /* TezDavLiveActivity */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = LA11000000000000000000001 /* Build configuration list for PBXNativeTarget "TezDavLiveActivity" */;
+			buildPhases = (
+				LA08000000000000000000001 /* Sources */,
+				LA06000000000000000000001 /* Frameworks */,
+				LA09000000000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TezDavLiveActivity;
+			productName = TezDavLiveActivity;
+			productReference = LA02000000000000000000010 /* TezDavLiveActivity.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A00400000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2604;
+				LastUpgradeCheck = 2604;
+				TargetAttributes = {
+					A00500000000000000000001 = {
+						CreatedOnToolsVersion = 26.4;
+					};
+					A00500000000000000000002 = {
+						CreatedOnToolsVersion = 26.4;
+						TestTargetID = A00500000000000000000001;
+					};
+				};
+			};
+			buildConfigurationList = A01100000000000000000001 /* Build configuration list for PBXProject "TezDav" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A00700000000000000000001;
+			packageReferences = (
+				59FEB8010D350F2F2ABBF7DF /* XCRemoteSwiftPackageReference "FitDataProtocol" */,
+				59FEB8010D350F2F2ABBF78A /* XCRemoteSwiftPackageReference "FitnessUnits" */,
+				59FEB8010D350F2F2ABBF78B /* XCRemoteSwiftPackageReference "AntMessageProtocol" */,
+				59FEB8010D350F2F2ABBF78C /* XCRemoteSwiftPackageReference "DataDecoder" */,
+			);
+			productRefGroup = A00700000000000000000004 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A00500000000000000000001 /* TezDav */,
+				A00500000000000000000002 /* TezDavTests */,
+				LA05000000000000000000001 /* TezDavLiveActivity */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A00900000000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00100000000000000000091 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00900000000000000000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00100000000000000000091 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		LA09000000000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A00800000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00100000000000000000001 /* TezDavApp.swift in Sources */,
+				A00100000000000000000002 /* AppRootView.swift in Sources */,
+				A00100000000000000000003 /* TrainingMetrics/TrainingLoadCalculator.swift in Sources */,
+				A00100000000000000000004 /* Persistence/Activity.swift in Sources */,
+				A00100000000000000000005 /* Persistence/ActivityStreamSample.swift in Sources */,
+				A00100000000000000000006 /* Persistence/SyncState.swift in Sources */,
+				A00100000000000000000007 /* Persistence/UserSettings.swift in Sources */,
+				A00100000000000000000008 /* Auth/StravaConfig.swift in Sources */,
+				A00100000000000000000009 /* Auth/StravaOAuth.swift in Sources */,
+				A00100000000000000000010 /* Auth/TokenStore.swift in Sources */,
+				A00100000000000000000011 /* Auth/KeychainTokenStore.swift in Sources */,
+				A00100000000000000000012 /* Auth/StravaSession.swift in Sources */,
+				A00100000000000000000029 /* Auth/StravaTokenRefresher.swift in Sources */,
+				A00100000000000000000013 /* StravaAPI/RateLimitQueue.swift in Sources */,
+				A00100000000000000000014 /* StravaAPI/StravaDTOs.swift in Sources */,
+				A00100000000000000000015 /* StravaAPI/StravaAPIClient.swift in Sources */,
+				A00100000000000000000016 /* Sync/SyncProgress.swift in Sources */,
+				A00100000000000000000017 /* Sync/SyncService.swift in Sources */,
+				A00100000000000000000018 /* Dashboard/DashboardViewModel.swift in Sources */,
+				A00100000000000000000019 /* Dashboard/DashboardView.swift in Sources */,
+				A00100000000000000000030 /* Dashboard/ActivityDetailView.swift in Sources */,
+				A00100000000000000000031 /* Dashboard/FormView.swift in Sources */,
+				A00100000000000000000032 /* Dashboard/RecordsView.swift in Sources */,
+				A00100000000000000000033 /* TrainingMetrics/PersonalRecordCalculator.swift in Sources */,
+				A00100000000000000000041 /* Dashboard/ProfileView.swift in Sources */,
+				A00100000000000000000042 /* Notifications/NotificationManager.swift in Sources */,
+				A00100000000000000000051 /* Persistence/AppGroupManager.swift in Sources */,
+				A00100000000000000000071 /* Persistence/IntervalSegment.swift in Sources */,
+				A00100000000000000000072 /* Persistence/TrainingWeek.swift in Sources */,
+				A00100000000000000000073 /* TrainingMetrics/IntervalDetector.swift in Sources */,
+				A00100000000000000000074 /* TrainingMetrics/TrainingPlanner.swift in Sources */,
+				A00100000000000000000075 /* Sync/ExportManager.swift in Sources */,
+				A00100000000000000000076 /* Dashboard/TrainingPlannerView.swift in Sources */,
+				A00100000000000000000052 /* TrainingMetrics/HealthKitManager.swift in Sources */,
+				A00100000000000000000053 /* Sync/WatchConnectivityManager.swift in Sources */,
+				A00100000000000000000081 /* GpxParser.swift in Sources */,
+				A00100000000000000000082 /* FitParser.swift in Sources */,
+				A00100000000000000000083 /* HapticManager.swift in Sources */,
+				A00100000000000000000084 /* OnboardingView.swift in Sources */,
+				A00100000000000000000085 /* FileImportView.swift in Sources */,
+				LA01000000000000000000001 /* LiveActivity/WorkoutActivityAttributes.swift in Sources */,
+				LA01000000000000000000002 /* LiveActivity/LiveActivityManager.swift in Sources */,
+				LA01000000000000000000003 /* LiveActivity/WorkoutSimulator.swift in Sources */,
+				RB0100000000000000000001 /* Persistence/SavedRoute.swift in Sources */,
+				RB0100000000000000000002 /* RouteBuilder/ElevationService.swift in Sources */,
+				RB0100000000000000000003 /* RouteBuilder/RouteEngine.swift in Sources */,
+				RB0100000000000000000004 /* RouteBuilder/RouteMapSnapshot.swift in Sources */,
+				RB0100000000000000000005 /* RouteBuilder/RouteBuilderView.swift in Sources */,
+				RB0100000000000000000006 /* RouteBuilder/RouteDetailView.swift in Sources */,
+				RB0100000000000000000007 /* RouteBuilder/RouteListView.swift in Sources */,
+				PC0100000000000000000001 /* TrainingMetrics/PowerCurveCalculator.swift in Sources */,
+				PC0100000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift in Sources */,
+				PC0100000000000000000003 /* Dashboard/PowerCurveChartView.swift in Sources */,
+				PC0100000000000000000004 /* Dashboard/PowerCurveFormView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00800000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00100000000000000000020 /* TezDavTests.swift in Sources */,
+				A00100000000000000000021 /* TrainingLoadCalculatorTests.swift in Sources */,
+				A00100000000000000000022 /* StravaOAuthTests.swift in Sources */,
+				A00100000000000000000023 /* RateLimitQueueTests.swift in Sources */,
+				A00100000000000000000024 /* PersistenceTests.swift in Sources */,
+				A00100000000000000000025 /* SyncServiceTests.swift in Sources */,
+				RT0100000000000000000001 /* RouteBuilderTests.swift in Sources */,
+				PC0100000000000000000005 /* PowerCurveTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		LA08000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				LA01000000000000000000011 /* WorkoutActivityAttributes.swift in Sources (LA) */,
+				LA01000000000000000000012 /* TezDavLiveActivityBundle.swift in Sources */,
+				LA01000000000000000000013 /* WorkoutLiveActivity.swift in Sources */,
+				LA01000000000000000000014 /* LockScreenView.swift in Sources */,
+				LA01000000000000000000015 /* DynamicIslandViews.swift in Sources */,
+				LA01000000000000000000016 /* LiveActivityHelpers.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A01000000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A00500000000000000000001 /* TezDav */;
+			targetProxy = A00300000000000000000001 /* PBXContainerItemProxy */;
+		};
+		LA10000000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = LA05000000000000000000001 /* TezDavLiveActivity */;
+			targetProxy = LA03000000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		A01200000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A01200000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A01200000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TezDav/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.TezDav;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A01200000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TezDav/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.TezDav;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		A01200000000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.TezDavTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TezDav.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TezDav";
+			};
+			name = Debug;
+		};
+		A01200000000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.TezDavTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TezDav.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TezDav";
+			};
+			name = Release;
+		};
+		LA12000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = TezDavLiveActivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.TezDav.LiveActivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		LA12000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = TezDavLiveActivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.TezDav.LiveActivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A01100000000000000000001 /* Build configuration list for PBXProject "TezDav" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A01200000000000000000001 /* Debug */,
+				A01200000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A01100000000000000000002 /* Build configuration list for PBXNativeTarget "TezDav" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A01200000000000000000003 /* Debug */,
+				A01200000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A01100000000000000000003 /* Build configuration list for PBXNativeTarget "TezDavTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A01200000000000000000005 /* Debug */,
+				A01200000000000000000006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		LA11000000000000000000001 /* Build configuration list for PBXNativeTarget "TezDavLiveActivity" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				LA12000000000000000000001 /* Debug */,
+				LA12000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		59FEB8010D350F2F2ABBF7DF /* XCRemoteSwiftPackageReference "FitDataProtocol" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/FitnessKit/FitDataProtocol";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.4;
+			};
+		};
+		59FEB8010D350F2F2ABBF78A /* XCRemoteSwiftPackageReference "FitnessUnits" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/FitnessKit/FitnessUnits";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.0;
+			};
+		};
+		59FEB8010D350F2F2ABBF78B /* XCRemoteSwiftPackageReference "AntMessageProtocol" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/FitnessKit/AntMessageProtocol";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.1;
+			};
+		};
+		59FEB8010D350F2F2ABBF78C /* XCRemoteSwiftPackageReference "DataDecoder" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/FitnessKit/DataDecoder";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7EFE2C791C65C4881CC65413 /* FitDataProtocol */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 59FEB8010D350F2F2ABBF7DF /* XCRemoteSwiftPackageReference "FitDataProtocol" */;
+			productName = FitDataProtocol;
+		};
+		"TEMP_F2492D5D-8A8F-4FFB-9D9F-36BD3FC4C05B" /* FitDataProtocol */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 59FEB8010D350F2F2ABBF7DF /* XCRemoteSwiftPackageReference "FitDataProtocol" */;
+			productName = FitDataProtocol;
+		};
+		7EFE2C791C65C4881CC6548A /* FitnessUnits */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 59FEB8010D350F2F2ABBF78A /* XCRemoteSwiftPackageReference "FitnessUnits" */;
+			productName = FitnessUnits;
+		};
+		7EFE2C791C65C4881CC6548B /* AntMessageProtocol */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 59FEB8010D350F2F2ABBF78B /* XCRemoteSwiftPackageReference "AntMessageProtocol" */;
+			productName = AntMessageProtocol;
+		};
+		7EFE2C791C65C4881CC6548C /* DataDecoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 59FEB8010D350F2F2ABBF78C /* XCRemoteSwiftPackageReference "DataDecoder" */;
+			productName = DataDecoder;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A00400000000000000000001 /* Project object */;
+}
