@@ -22,7 +22,8 @@ final class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN)!,
             HKObjectType.quantityType(forIdentifier: .restingHeartRate)!,
             HKObjectType.quantityType(forIdentifier: .stepCount)!,
-            HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!
+            HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
+            HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
         ]
         
         let typesToWrite: Set<HKSampleType> = [
@@ -150,26 +151,245 @@ final class HealthKitManager: ObservableObject {
         return (steps, calories)
     }
     
-    // Scientific Recovery Score Formula (1-10 scale)
-    nonisolated func calculateRecoveryScore(hrvToday: Double?, hrvBaseline: Double?, tsb: Double) -> Int {
+    // Queries sleep duration for the past 24 hours (returns hours slept as asleep)
+    func fetchSleepDurationLastNight() async -> Double? {
+        guard let healthStore = healthStore else {
+            return 7.5 // simulator default
+        }
+        
+        let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
+        let calendar = Calendar.current
+        let now = Date()
+        let oneDayAgo = calendar.date(byAdding: .day, value: -1, to: now)!
+        let predicate = HKQuery.predicateForSamples(withStart: oneDayAgo, end: now, options: .strictStartDate)
+        
+        return await withCheckedContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: sleepType,
+                predicate: predicate,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: nil
+            ) { _, samples, error in
+                guard error == nil, let sleepSamples = samples as? [HKCategorySample] else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                
+                // Filter only 'asleep' samples (includes deep, light, rem)
+                let asleepSamples = sleepSamples.filter { sample in
+                    sample.value == HKCategoryValueSleepAnalysis.asleep.rawValue ||
+                    sample.value == HKCategoryValueSleepAnalysis.asleepCore.rawValue ||
+                    sample.value == HKCategoryValueSleepAnalysis.asleepDeep.rawValue ||
+                    sample.value == HKCategoryValueSleepAnalysis.asleepREM.rawValue
+                }
+                
+                let totalDurationSeconds = asleepSamples.reduce(0.0) { sum, sample in
+                    sum + sample.endDate.timeIntervalSince(sample.startDate)
+                }
+                
+                continuation.resume(returning: totalDurationSeconds / 3600.0)
+            }
+            healthStore.execute(query)
+        }
+    }
+    
+    // Historical point for Readiness Trend Charts
+    struct ReadinessHistoryPoint: Identifiable, Sendable {
+        let id: UUID
+        let date: Date
+        let readinessScore: Int
+        let hrv: Double
+        let hrvBaseline: Double
+        
+        init(id: UUID = UUID(), date: Date, readinessScore: Int, hrv: Double, hrvBaseline: Double) {
+            self.id = id
+            self.date = date
+            self.readinessScore = readinessScore
+            self.hrv = hrv
+            self.hrvBaseline = hrvBaseline
+        }
+    }
+    
+    func fetchReadinessHistory(
+        daysCount: Int = 7,
+        ctlList: [Date: Double] = [:],
+        atlList: [Date: Double] = [:]
+    ) async -> [ReadinessHistoryPoint] {
+        guard let healthStore = healthStore else {
+            // Simulator mock data generator
+            let calendar = Calendar.current
+            var points: [ReadinessHistoryPoint] = []
+            for i in (0..<daysCount).reversed() {
+                let date = calendar.date(byAdding: .day, value: -i, to: .now)!
+                let mockHRV = 50.0 + Double.random(in: -8...12)
+                let mockBaseline = 54.0
+                let mockSleep = 7.0 + Double.random(in: -1.5...1.5)
+                let mockRHR = 56.0 + Double.random(in: -3...5)
+                let dayStart = calendar.startOfDay(for: date)
+                let tsb = (ctlList[dayStart] ?? 40.0) - (atlList[dayStart] ?? 45.0)
+                
+                let score = calculateRecoveryScore(
+                    hrvToday: mockHRV,
+                    hrvBaseline: mockBaseline,
+                    sleepHours: mockSleep,
+                    restingHR: mockRHR,
+                    tsb: tsb
+                )
+                points.append(ReadinessHistoryPoint(
+                    date: date,
+                    readinessScore: score,
+                    hrv: mockHRV,
+                    hrvBaseline: mockBaseline
+                ))
+            }
+            return points
+        }
+        
+        let calendar = Calendar.current
+        let now = Date()
+        let startDate = calendar.date(byAdding: .day, value: -daysCount, to: now)!
+        
+        let hrvType = HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN)!
+        let restingType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate)!
+        
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: now, options: .strictStartDate)
+        
+        let hrvSamples = await queryQuantitySamples(type: hrvType, predicate: predicate, unit: HKUnit.secondUnit(with: .milli))
+        let rhrSamples = await queryQuantitySamples(type: restingType, predicate: predicate, unit: HKUnit.count().unitDivided(by: HKUnit.minute()))
+        let sleepSamples = await querySleepSamples(predicate: predicate)
+        
+        let baselineVal = await queryAverageQuantity(type: hrvType, predicate: HKQuery.predicateForSamples(withStart: calendar.date(byAdding: .day, value: -30, to: now)!, end: now, options: .strictStartDate), unit: HKUnit.secondUnit(with: .milli)) ?? 55.0
+        
+        var points: [ReadinessHistoryPoint] = []
+        
+        for i in (0..<daysCount).reversed() {
+            let targetDate = calendar.date(byAdding: .day, value: -i, to: now)!
+            let startOfTarget = calendar.startOfDay(for: targetDate)
+            let endOfTarget = calendar.date(byAdding: .day, value: 1, to: startOfTarget)!
+            
+            // 1. HRV for this day
+            let dayHrvs = hrvSamples.filter { $0.date >= startOfTarget && $0.date < endOfTarget }
+            let dayHrvAvg = dayHrvs.isEmpty ? nil : dayHrvs.reduce(0.0) { $0 + $1.value } / Double(dayHrvs.count)
+            
+            // 2. Resting HR for this day
+            let dayRhrs = rhrSamples.filter { $0.date >= startOfTarget && $0.date < endOfTarget }
+            let dayRhrAvg = dayRhrs.isEmpty ? nil : dayRhrs.reduce(0.0) { $0 + $1.value } / Double(dayRhrs.count)
+            
+            // 3. Sleep duration for the night leading into this day
+            let nightSleeps = sleepSamples.filter { $0.endDate >= startOfTarget && $0.endDate < endOfTarget }
+            let daySleepDuration = nightSleeps.reduce(0.0) { $0 + $1.endDate.timeIntervalSince($1.startDate) } / 3600.0
+            
+            // 4. TSB for this day
+            let dayKey = calendar.startOfDay(for: targetDate)
+            let tsb = (ctlList[dayKey] ?? 35.0) - (atlList[dayKey] ?? 40.0)
+            
+            let score = calculateRecoveryScore(
+                hrvToday: dayHrvAvg,
+                hrvBaseline: baselineVal,
+                sleepHours: daySleepDuration > 0 ? daySleepDuration : nil,
+                restingHR: dayRhrAvg,
+                tsb: tsb
+            )
+            
+            points.append(ReadinessHistoryPoint(
+                date: targetDate,
+                readinessScore: score,
+                hrv: dayHrvAvg ?? (baselineVal + Double.random(in: -3...3)),
+                hrvBaseline: baselineVal
+            ))
+        }
+        
+        return points
+    }
+    
+    private func queryQuantitySamples(type: HKQuantityType, predicate: NSPredicate, unit: HKUnit) async -> [(date: Date, value: Double)] {
+        guard let healthStore = healthStore else { return [] }
+        return await withCheckedContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: type,
+                predicate: predicate,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)]
+            ) { _, samples, error in
+                guard error == nil, let quantitySamples = samples as? [HKQuantitySample] else {
+                    continuation.resume(returning: [])
+                    return
+                }
+                let mapped = quantitySamples.map { ($0.startDate, $0.quantity.doubleValue(for: unit)) }
+                continuation.resume(returning: mapped)
+            }
+            healthStore.execute(query)
+        }
+    }
+    
+    private func querySleepSamples(predicate: NSPredicate) async -> [HKCategorySample] {
+        guard let healthStore = healthStore else { return [] }
+        let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
+        return await withCheckedContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: sleepType,
+                predicate: predicate,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: nil
+            ) { _, samples, error in
+                guard error == nil, let sleepSamples = samples as? [HKCategorySample] else {
+                    continuation.resume(returning: [])
+                    return
+                }
+                let asleep = sleepSamples.filter {
+                    $0.value == HKCategoryValueSleepAnalysis.asleep.rawValue ||
+                    $0.value == HKCategoryValueSleepAnalysis.asleepCore.rawValue ||
+                    $0.value == HKCategoryValueSleepAnalysis.asleepDeep.rawValue ||
+                    $0.value == HKCategoryValueSleepAnalysis.asleepREM.rawValue
+                }
+                continuation.resume(returning: asleep)
+            }
+            healthStore.execute(query)
+        }
+    }
+
+    // Scientific Readiness/Recovery Score Formula (0-100 scale)
+    nonisolated func calculateRecoveryScore(
+        hrvToday: Double?,
+        hrvBaseline: Double?,
+        sleepHours: Double? = nil,
+        restingHR: Double? = nil,
+        tsb: Double
+    ) -> Int {
         let todayHRV = hrvToday ?? 55.0
         let baselineHRV = hrvBaseline ?? 50.0
+        let sleep = sleepHours ?? 7.5
+        let rhr = restingHR ?? 58.0
         
-        // SDNN HRV ratio relative to baseline
+        // 1. HRV Factor (45% weight)
         let hrvRatio = baselineHRV > 0 ? (todayHRV / baselineHRV) : 1.0
-        let clampedHrvRatio = max(0.5, min(1.5, hrvRatio))
+        let hrvFactor: Double
+        if hrvRatio >= 1.0 {
+            hrvFactor = min(100.0, 100.0 + (hrvRatio - 1.0) * 100.0)
+        } else {
+            hrvFactor = max(0.0, hrvRatio * 100.0)
+        }
         
-        // TSB (Form) factor: standard zones typically span from -30 (very tired) to +15 (fresh)
-        // Shift and normalize TSB to 0.0 - 1.0
-        let tsbFactor = (tsb + 30.0) / 60.0
-        let clampedTsbFactor = max(0.0, min(1.0, tsbFactor))
+        // 2. Sleep Factor (35% weight)
+        let sleepFactor = min(100.0, (sleep / 8.0) * 100.0)
         
-        // Combined score weighting: 60% HRV (Autonomic Nervous system) + 40% TSB (Cumulative load)
-        let composite = (clampedHrvRatio * 0.6) + (clampedTsbFactor * 0.4)
+        // 3. Resting HR Factor (10% weight)
+        let restingHrFactor: Double
+        if rhr <= 60.0 {
+            restingHrFactor = 100.0
+        } else {
+            restingHrFactor = max(0.0, 100.0 - (rhr - 60.0) * 4.0)
+        }
         
-        // Scale to 1-10
-        let score = Int(round(composite * 10.0))
-        return max(1, min(10, score))
+        // 4. TSB Factor (10% weight)
+        let tsbScore = (tsb + 30.0) / 45.0
+        let tsbFactor = max(0.0, min(100.0, tsbScore * 100.0))
+        
+        // Combine weights
+        let composite = (hrvFactor * 0.45) + (sleepFactor * 0.35) + (restingHrFactor * 0.10) + (tsbFactor * 0.10)
+        
+        let finalScore = Int(round(composite))
+        return max(0, min(100, finalScore))
     }
     
     // MARK: - Query Helper Methods
@@ -188,7 +408,6 @@ final class HealthKitManager: ObservableObject {
                     return
                 }
                 
-                // Get overall average
                 let value = stats.averageQuantity()?.doubleValue(for: unit)
                 continuation.resume(returning: value)
             }

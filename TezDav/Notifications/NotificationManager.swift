@@ -324,11 +324,39 @@ final class NotificationManager {
         }
     }
     
+    // Trigger 6: Schedule/Refresh Morning Readiness Report Notification
+    func scheduleMorningReadinessReport(readinessScore: Int) {
+        let content = UNMutableNotificationContent()
+        content.title = "☀️ Утренний отчет о готовности"
+        content.sound = .default
+        
+        let advice: String
+        if readinessScore >= 80 {
+            advice = "Отличный день для интервалов! Ваша готовность \(readinessScore)%. Организм полностью адаптирован."
+        } else if readinessScore >= 40 {
+            advice = "Ваша готовность \(readinessScore)%. Рекомендуется базовая выносливость или умеренный бег."
+        } else {
+            advice = "Ваша готовность \(readinessScore)% (высокое утомление). Лучше запланировать день отдыха или легкую разминку."
+        }
+        content.body = advice
+        
+        // Schedule for 8:00 AM daily
+        var components = DateComponents()
+        components.hour = 8
+        components.minute = 0
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+        let request = UNNotificationRequest(identifier: "morning-readiness-report", content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request)
+    }
+    
     // Reschedule all time-dependent goals and reports
     func rescheduleAllTriggers(settings: UserSettings, context: ModelContext) {
         scheduleWeeklyReport(context: context)
         scheduleGoalReminder(settings: settings, context: context)
         scheduleRaceCountdown(settings: settings)
+        scheduleMorningReadinessReport(readinessScore: 75) // default fallback
     }
     
     // MARK: - Helpers

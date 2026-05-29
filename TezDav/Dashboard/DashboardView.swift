@@ -9,7 +9,7 @@ struct DashboardView: View {
     @StateObject private var progress = SyncProgress()
     @Environment(\.modelContext) private var modelContext
     
-    @State private var recoveryScore: Int = 7
+    @State private var recoveryScore: Int = 75
     @State private var isFileImporterPresented = false
     @State private var localImportedFileURLs: [URL]? = nil
 
@@ -67,17 +67,17 @@ struct DashboardView: View {
                                     .frame(width: 52, height: 52)
                                 
                                 Circle()
-                                    .trim(from: 0, to: CGFloat(Double(recoveryScore) / 10.0))
+                                    .trim(from: 0, to: CGFloat(Double(recoveryScore) / 100.0))
                                     .stroke(recoveryColor(recoveryScore).gradient, style: StrokeStyle(lineWidth: 5, lineCap: .round))
                                     .frame(width: 52, height: 52)
                                     .rotationEffect(.degrees(-90))
                                 
-                                Text("\(recoveryScore)")
-                                    .font(.title2.weight(.bold))
+                                Text("\(recoveryScore)%")
+                                    .font(.system(size: 14, weight: .bold))
                             }
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Индекс восстановления: \(recoveryScore)/10")
+                                Text("Готовность к нагрузке: \(recoveryScore)%")
                                     .font(.headline)
                                 Text(recoveryAdvice(recoveryScore))
                                     .font(.subheadline)
@@ -332,14 +332,19 @@ struct DashboardView: View {
         Task {
             let summary = DashboardViewModel.summary(from: activities)
             let hrv = await HealthKitManager.shared.fetchHRVSDNN()
+            let sleep = await HealthKitManager.shared.fetchSleepDurationLastNight()
+            let restingHR = await HealthKitManager.shared.fetchRestingHR()
             let recovery = HealthKitManager.shared.calculateRecoveryScore(
                 hrvToday: hrv.today,
                 hrvBaseline: hrv.baseline30Day,
+                sleepHours: sleep,
+                restingHR: restingHR,
                 tsb: summary.tsb
             )
             
             await MainActor.run {
                 self.recoveryScore = recovery
+                NotificationManager.shared.scheduleMorningReadinessReport(readinessScore: recovery)
             }
             
             let lastAct = activities.first
@@ -367,18 +372,18 @@ struct DashboardView: View {
     }
 
     private func recoveryColor(_ score: Int) -> Color {
-        if score >= 8 { return .green }
-        if score >= 5 { return .yellow }
+        if score >= 80 { return .green }
+        if score >= 40 { return .yellow }
         return .red
     }
     
     private func recoveryAdvice(_ score: Int) -> String {
-        if score >= 8 {
-            return "Отличная готовность. Подходящий день для темповой или силовой сессии!"
-        } else if score >= 5 {
-            return "Умеренная готовность. Хороший день для легких аэробных тренировок."
+        if score >= 80 {
+            return "Отличный день для интервалов! Ваша готовность \(score)%. Организм полностью адаптирован."
+        } else if score >= 40 {
+            return "Ваша готовность \(score)%. Рекомендуется базовая выносливость или умеренный бег."
         } else {
-            return "Высокий уровень утомления. Рекомендуется полный отдых или легкое восстановление."
+            return "Ваша готовность \(score)% (высокое утомление). Лучше запланировать день отдыха или легкую разминку."
         }
     }
 

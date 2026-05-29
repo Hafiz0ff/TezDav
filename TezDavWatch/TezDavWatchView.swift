@@ -41,15 +41,15 @@ struct WatchHomeScreen: View {
                             .frame(width: 54, height: 54)
                         
                         Circle()
-                            .trim(from: 0, to: CGFloat(Double(viewModel.snapshot.recoveryScore) / 10.0))
+                            .trim(from: 0, to: CGFloat(Double(viewModel.snapshot.recoveryScore) / 100.0))
                             .stroke(recoveryColor(viewModel.snapshot.recoveryScore).gradient, style: StrokeStyle(lineWidth: 5, lineCap: .round))
                             .frame(width: 54, height: 54)
                             .rotationEffect(.degrees(-90))
                         
-                        Text("\(viewModel.snapshot.recoveryScore)")
-                            .font(.title3.weight(.bold))
+                        Text("\(viewModel.snapshot.recoveryScore)%")
+                            .font(.system(size: 11, weight: .bold))
                     }
-                    Text("Восст.")
+                    Text("Готовн.")
                         .font(.system(size: 10, weight: .semibold))
                         .foregroundStyle(.secondary)
                 }
@@ -89,8 +89,8 @@ struct WatchHomeScreen: View {
     }
     
     private func recoveryColor(_ score: Int) -> Color {
-        if score >= 8 { return .green }
-        if score >= 5 { return .yellow }
+        if score >= 80 { return .green }
+        if score >= 40 { return .yellow }
         return .red
     }
     

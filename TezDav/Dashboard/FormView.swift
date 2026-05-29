@@ -24,6 +24,7 @@ struct FormView: View {
     
     enum FormTab: String, CaseIterable, Identifiable {
         case pmc = "PMC"
+        case hrv = "Готовность (HRV)"
         case powerCurve = "Кривая мощности"
         var id: String { self.rawValue }
     }
@@ -33,6 +34,14 @@ struct FormView: View {
     @State private var selectedDate: Date? = nil
     @State private var isShowingPlanner = false
     @State private var drawTracker = 0.0
+    
+    @State private var readinessHistory: [HealthKitManager.ReadinessHistoryPoint] = []
+    @State private var sleepHoursToday: Double? = nil
+    @State private var restingHRToday: Double? = nil
+    @State private var hrvToday: Double? = nil
+    @State private var hrvBaseline: Double? = nil
+    @State private var isLoadingReadiness = false
+    @State private var readinessPeriodDays: Int = 7
     
     enum Period: String, CaseIterable, Identifiable {
         case oneMonth = "1M"
@@ -117,11 +126,16 @@ struct FormView: View {
                                     .padding()
                                 }
                             }
+                        } else if selectedTab == .hrv {
+                            ScrollView {
+                                readinessScoreFormView()
+                                    .padding()
+                            }
                         } else {
                             PowerCurveFormView()
                         }
                     }
-                    .navigationTitle(selectedTab == .pmc ? "Анализ формы" : "Кривая мощности")
+                    .navigationTitle(selectedTab == .pmc ? "Анализ формы" : (selectedTab == .hrv ? "Готовность (HRV)" : "Кривая мощности"))
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
@@ -140,6 +154,17 @@ struct FormView: View {
                         withAnimation(.easeOut(duration: 0.6)) {
                             drawTracker = 1.0
                         }
+                        if selectedTab == .hrv {
+                            loadReadinessData()
+                        }
+                    }
+                    .onChange(of: selectedTab) { oldValue, newValue in
+                        if newValue == .hrv {
+                            loadReadinessData()
+                        }
+                    }
+                    .onChange(of: readinessPeriodDays) { oldValue, newValue in
+                        loadReadinessData()
                     }
                 }
             }
@@ -472,6 +497,263 @@ struct FormView: View {
             return "Critical fatigue level! Extremely high risk of injury or overtraining syndrome. Settle down and rest immediately."
         }
     }
+
+    // MARK: - Readiness Score & HRV Analytics Helpers
+    
+    private func loadReadinessData() {
+        isLoadingReadiness = true
+        Task {
+            let hrv = await HealthKitManager.shared.fetchHRVSDNN()
+            let sleep = await HealthKitManager.shared.fetchSleepDurationLastNight()
+            let resting = await HealthKitManager.shared.fetchRestingHR()
+            
+            let ctlList = getCtlMap()
+            let atlList = getAtlMap()
+            
+            let history = await HealthKitManager.shared.fetchReadinessHistory(
+                daysCount: readinessPeriodDays,
+                ctlList: ctlList,
+                atlList: atlList
+            )
+            
+            await MainActor.run {
+                self.hrvToday = hrv.today
+                self.hrvBaseline = hrv.baseline30Day
+                self.sleepHoursToday = sleep
+                self.restingHRToday = resting
+                self.readinessHistory = history
+                self.isLoadingReadiness = false
+            }
+        }
+    }
+    
+    private func getCtlMap() -> [Date: Double] {
+        let calendar = Calendar.current
+        var ctlList: [Date: Double] = [:]
+        let allMetrics = calculateDailyMetrics()
+        for m in allMetrics {
+            ctlList[calendar.startOfDay(for: m.date)] = m.ctl
+        }
+        return ctlList
+    }
+    
+    private func getAtlMap() -> [Date: Double] {
+        let calendar = Calendar.current
+        var atlList: [Date: Double] = [:]
+        let allMetrics = calculateDailyMetrics()
+        for m in allMetrics {
+            atlList[calendar.startOfDay(for: m.date)] = m.atl
+        }
+        return atlList
+    }
+    
+    private func readinessColor(_ score: Int) -> Color {
+        if score >= 80 { return .green }
+        if score >= 40 { return .yellow }
+        return .red
+    }
+    
+    private func readinessAdvice(_ score: Int) -> String {
+        if score >= 80 {
+            return "Отличный день для интервалов! Ваша готовность \(score)%. Организм полностью адаптирован."
+        } else if score >= 40 {
+            return "Ваша готовность \(score)%. Рекомендуется базовая выносливость или умеренный бег."
+        } else {
+            return "Ваша готовность \(score)% (высокое утомление). Лучше запланировать день отдыха или легкую разминку."
+        }
+    }
+    
+    private func tsbTaperMessage(_ tsb: Double) -> String {
+        if tsb > 15 { return "Избыточная свежесть" }
+        if tsb > 5 { return "Идеально для старта" }
+        if tsb >= -5 { return "Хорошая готовность" }
+        if tsb >= -15 { return "Небольшая усталость" }
+        return "Высокая усталость"
+    }
+    
+    @ViewBuilder
+    private func readinessScoreFormView() -> some View {
+        VStack(spacing: 20) {
+            if isLoadingReadiness {
+                VStack(spacing: 12) {
+                    ProgressView()
+                        .controlSize(.large)
+                    Text("Загрузка данных готовности...")
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxHeight: .infinity)
+                .padding(.vertical, 80)
+            } else {
+                // 1. circular progress readiness score
+                let summary = DashboardViewModel.summary(from: activities)
+                let currentReadiness = HealthKitManager.shared.calculateRecoveryScore(
+                    hrvToday: hrvToday,
+                    hrvBaseline: hrvBaseline,
+                    sleepHours: sleepHoursToday,
+                    restingHR: restingHRToday,
+                    tsb: summary.tsb
+                )
+                
+                VStack(spacing: 16) {
+                    ZStack {
+                        Circle()
+                            .stroke(.tertiary.opacity(0.3), lineWidth: 8)
+                            .frame(width: 120, height: 120)
+                        
+                        Circle()
+                            .trim(from: 0, to: CGFloat(Double(currentReadiness) / 100.0))
+                            .stroke(readinessColor(currentReadiness).gradient, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                            .frame(width: 120, height: 120)
+                            .rotationEffect(.degrees(-90))
+                        
+                        VStack {
+                            Text("\(currentReadiness)%")
+                                .font(.system(size: 32, weight: .bold))
+                            Text("Готовность")
+                                .font(.caption.weight(.medium))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    
+                    Text(readinessAdvice(currentReadiness))
+                        .font(.subheadline)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                        .foregroundStyle(.secondary)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                
+                // 2. Metrics grid
+                LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                    ReadinessMetricCard(
+                        title: "Сон",
+                        value: sleepHoursToday != nil ? String(format: "%.1f ч", sleepHoursToday!) : "-- ч",
+                        subtitle: "Цель: 8.0 ч",
+                        icon: "bed.double.fill",
+                        iconColor: .purple
+                    )
+                    
+                    ReadinessMetricCard(
+                        title: "Вариабельность (HRV)",
+                        value: hrvToday != nil ? String(format: "%.0f мс", hrvToday!) : "-- мс",
+                        subtitle: hrvBaseline != nil ? String(format: "База: %.0f мс", hrvBaseline!) : "База: --",
+                        icon: "heart.text.square.fill",
+                        iconColor: .red
+                    )
+                    
+                    ReadinessMetricCard(
+                        title: "Пульс покоя",
+                        value: restingHRToday != nil ? String(format: "%.0f уд/м", restingHRToday!) : "-- уд/м",
+                        subtitle: "Норма: <60 уд/м",
+                        icon: "heart.fill",
+                        iconColor: .pink
+                    )
+                    
+                    ReadinessMetricCard(
+                        title: "Форма (TSB)",
+                        value: String(format: "%.0f", summary.tsb),
+                        subtitle: tsbTaperMessage(summary.tsb),
+                        icon: "waveform.path.ecg.rectangle.fill",
+                        iconColor: .blue
+                    )
+                }
+                
+                // 3. Period selector
+                Picker("Период", selection: $readinessPeriodDays) {
+                    Text("7 дней").tag(7)
+                    Text("30 дней").tag(30)
+                }
+                .pickerStyle(.segmented)
+                .padding(.top, 8)
+                
+                // 4. Trend Charts
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Тренд готовности")
+                        .font(.headline)
+                        .padding(.horizontal, 4)
+                    
+                    Chart {
+                        ForEach(readinessHistory) { point in
+                            LineMark(
+                                x: .value("Дата", point.date, unit: .day),
+                                y: .value("Готовность", point.readinessScore)
+                            )
+                            .foregroundStyle(Color.blue.gradient)
+                            .interpolationMethod(.catmullRom)
+                            
+                            PointMark(
+                                x: .value("Дата", point.date, unit: .day),
+                                y: .value("Готовность", point.readinessScore)
+                            )
+                            .foregroundStyle(readinessColor(point.readinessScore))
+                        }
+                    }
+                    .frame(height: 180)
+                    .chartYScale(domain: 0...100)
+                    .chartXAxis {
+                        AxisMarks(values: .stride(by: .day, count: readinessPeriodDays == 7 ? 1 : 5)) { _ in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel(format: .dateTime.day().month())
+                        }
+                    }
+                    .padding()
+                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                }
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Тренд HRV и базовый коридор")
+                        .font(.headline)
+                        .padding(.horizontal, 4)
+                    
+                    Chart {
+                        ForEach(readinessHistory) { point in
+                            // SWC Corridor: baseline - 5 to baseline + 5
+                            AreaMark(
+                                x: .value("Дата", point.date, unit: .day),
+                                yStart: .value("Нижняя граница", point.hrvBaseline - 5),
+                                yEnd: .value("Верхняя граница", point.hrvBaseline + 5)
+                            )
+                            .foregroundStyle(Color.secondary.opacity(0.15))
+                            
+                            LineMark(
+                                x: .value("Дата", point.date, unit: .day),
+                                y: .value("Базовый HRV", point.hrvBaseline)
+                            )
+                            .foregroundStyle(Color.secondary)
+                            .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
+                            
+                            LineMark(
+                                x: .value("Дата", point.date, unit: .day),
+                                y: .value("HRV", point.hrv)
+                            )
+                            .foregroundStyle(Color.red.gradient)
+                            .interpolationMethod(.catmullRom)
+                            
+                            PointMark(
+                                x: .value("Дата", point.date, unit: .day),
+                                y: .value("HRV", point.hrv)
+                            )
+                            .foregroundStyle(Color.red)
+                        }
+                    }
+                    .frame(height: 180)
+                    .chartYScale(domain: 20...120)
+                    .chartXAxis {
+                        AxisMarks(values: .stride(by: .day, count: readinessPeriodDays == 7 ? 1 : 5)) { _ in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel(format: .dateTime.day().month())
+                        }
+                    }
+                    .padding()
+                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                }
+            }
+        }
+    }
 }
 
 // Custom AreaBackground helper to avoid SwiftUI area shape styling issues
@@ -482,5 +764,39 @@ private struct AreaBackground {
             startPoint: .top,
             endPoint: .bottom
         )
+    }
+}
+
+struct ReadinessMetricCard: View {
+    let title: String
+    let value: String
+    let subtitle: String
+    let icon: String
+    let iconColor: Color
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundStyle(iconColor.gradient)
+                    .font(.title3)
+                Spacer()
+            }
+            
+            Text(value)
+                .font(.title2.bold())
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.caption.bold())
+                    .foregroundStyle(.primary)
+                Text(subtitle)
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+        }
+        .padding()
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
     }
 }

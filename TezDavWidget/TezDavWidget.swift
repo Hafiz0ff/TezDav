@@ -32,7 +32,7 @@ struct Provider: TimelineProvider {
             weeklyDuration: 9400.0,
             weeklyGoalMeters: 50000.0,
             weeklyCyclingGoalHours: 5.0,
-            recoveryScore: 7,
+            recoveryScore: 75,
             lastActivityName: "Вечерний бег",
             lastActivityDate: Date().addingTimeInterval(-86400),
             lastActivityDistance: 10200.0
@@ -144,12 +144,12 @@ struct RecoveryWidgetView: View {
     
     var body: some View {
         VStack(spacing: 6) {
-            Text("Восстановление")
+            Text("Готовность")
                 .font(.caption2.weight(.bold))
                 .foregroundStyle(.secondary)
             
-            Text("\(entry.snapshot.recoveryScore)")
-                .font(.system(size: 40, weight: .bold))
+            Text("\(entry.snapshot.recoveryScore)%")
+                .font(.system(size: 32, weight: .bold))
                 .foregroundStyle(recoveryColor(entry.snapshot.recoveryScore).gradient)
             
             Text(recoveryText(entry.snapshot.recoveryScore))
@@ -160,14 +160,14 @@ struct RecoveryWidgetView: View {
     }
     
     private func recoveryColor(_ score: Int) -> Color {
-        if score >= 8 { return .green }
-        if score >= 5 { return .yellow }
+        if score >= 80 { return .green }
+        if score >= 40 { return .yellow }
         return .red
     }
     
     private func recoveryText(_ score: Int) -> String {
-        if score >= 8 { return "Готов к нагрузке" }
-        if score >= 5 { return "Умеренная форма" }
+        if score >= 80 { return "Готов к нагрузке" }
+        if score >= 40 { return "Умеренная форма" }
         return "Необходим отдых"
     }
 }
@@ -183,9 +183,9 @@ struct DashboardWidgetView: View {
                     .font(.headline)
                     .foregroundStyle(.blue)
                 Spacer()
-                Text("Восст.: \(entry.snapshot.recoveryScore)/10")
+                Text("Готовность: \(entry.snapshot.recoveryScore)%")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.green)
+                    .foregroundStyle(recoveryColor(entry.snapshot.recoveryScore))
             }
             
             Divider()
@@ -239,6 +239,12 @@ struct DashboardWidgetView: View {
         }
         .containerBackground(.background, for: .widget)
     }
+    
+    private func recoveryColor(_ score: Int) -> Color {
+        if score >= 80 { return .green }
+        if score >= 40 { return .yellow }
+        return .red
+    }
 }
 
 // MARK: - Widget 5: Lock Screen Widget (accessoryRectangular)
@@ -247,7 +253,7 @@ struct LockScreenWidgetView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text("⚡️ TezDav Восстановление: \(entry.snapshot.recoveryScore)/10")
+            Text("⚡️ TezDav Готовность: \(entry.snapshot.recoveryScore)%")
                 .font(.caption2.weight(.semibold))
             Text(String(format: "Форма (TSB): %+.0f", entry.snapshot.tsb))
                 .font(.caption)

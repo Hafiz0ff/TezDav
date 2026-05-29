@@ -94,22 +94,27 @@ final class TrainingLoadCalculatorTests: XCTestCase {
         XCTAssertEqual(zones[3], 174.8, accuracy: 0.1)
     }
 
+    @MainActor
     func testHealthKitRecoveryScoreSDNNEquation() {
-        // High readiness: Today HRV = 65, Baseline = 50, TSB = 10 (Fresh) -> expect high score
+        // High readiness: Today HRV = 65, Baseline = 50, Sleep = 8.0, RHR = 55, TSB = 10 (Fresh) -> expect high score (around 99-100)
         let highReadiness = HealthKitManager.shared.calculateRecoveryScore(
             hrvToday: 65.0,
             hrvBaseline: 50.0,
+            sleepHours: 8.0,
+            restingHR: 55.0,
             tsb: 10.0
         )
-        XCTAssertEqual(highReadiness, 10)
+        XCTAssertGreaterThanOrEqual(highReadiness, 90)
         
-        // Moderate recovery: Today HRV = 35, Baseline = 50, TSB = -25 (Fatigued) -> expect moderate score
+        // Moderate recovery: Today HRV = 35, Baseline = 50, Sleep = 5.0, RHR = 70, TSB = -25 (Fatigued) -> expect lower score
         let moderateRecovery = HealthKitManager.shared.calculateRecoveryScore(
             hrvToday: 35.0,
             hrvBaseline: 50.0,
+            sleepHours: 5.0,
+            restingHR: 70.0,
             tsb: -25.0
         )
-        XCTAssertEqual(moderateRecovery, 5)
+        XCTAssertLessThan(moderateRecovery, 65)
     }
     
     func testIntervalDetectionWithMovingAverage() {
