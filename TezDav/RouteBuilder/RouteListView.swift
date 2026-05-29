@@ -23,79 +23,104 @@ struct RouteListView: View {
         }
     }
     
+    @State private var selectedTabMode = 0 // 0 for Routes, 1 for Segments
+    
     var body: some View {
         NavigationStack {
-            Group {
-                if allRoutes.isEmpty {
-                    VStack(spacing: 20) {
-                        Image(systemName: "map")
-                            .font(.system(size: 64))
-                            .foregroundColor(.orange.opacity(0.8))
-                            .padding()
-                            .background(Circle().fill(Color.orange.opacity(0.1)))
-                        
-                        Text("Нет маршрутов")
-                            .font(.title3)
-                            .bold()
-                        
-                        Text("Спланируйте свою следующую тренировку. Нарисуйте маршрут на карте, посмотрите перепады высот и отправьте на часы.")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 40)
-                        
-                        Button(action: {
-                            showBuilder = true
-                        }) {
-                            Text("Создать маршрут")
-                                .bold()
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 24)
-                                .padding(.vertical, 12)
-                                .background(Color.orange)
-                                .cornerRadius(12)
-                        }
-                    }
-                    .padding()
+            VStack(spacing: 0) {
+                Picker("Режим", selection: $selectedTabMode) {
+                    Text("Маршруты").tag(0)
+                    Text("Сегменты").tag(1)
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(Color(.systemGroupedBackground))
+                
+                if selectedTabMode == 0 {
+                    routesListSection
                 } else {
-                    List {
-                        ForEach(sortedRoutes) { route in
-                            NavigationLink(destination: RouteDetailView(route: route)) {
-                                RouteRowView(route: route)
-                            }
-                            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(Color.clear)
-                        }
-                        .onDelete(perform: deleteRoutes)
-                    }
-                    .listStyle(.plain)
-                    .background(Color(.systemGroupedBackground))
+                    SegmentListView()
                 }
             }
-            .navigationTitle("Маршруты")
+            .navigationTitle(selectedTabMode == 0 ? "Маршруты" : "Сегменты")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: 12) {
-                        Menu {
-                            Picker("Сортировка", selection: $sortBy) {
-                                Label("По дате", systemImage: "calendar").tag(SortOption.date)
-                                Label("По дистанции", systemImage: "arrow.triangle.pull").tag(SortOption.distance)
+                if selectedTabMode == 0 {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        HStack(spacing: 12) {
+                            Menu {
+                                Picker("Сортировка", selection: $sortBy) {
+                                    Label("По дате", systemImage: "calendar").tag(SortOption.date)
+                                    Label("По дистанции", systemImage: "arrow.triangle.pull").tag(SortOption.distance)
+                                }
+                            } label: {
+                                Image(systemName: "arrow.up.and.down.text.horizontal")
                             }
-                        } label: {
-                            Image(systemName: "arrow.up.and.down.text.horizontal")
-                        }
-                        
-                        Button(action: {
-                            showBuilder = true
-                        }) {
-                            Image(systemName: "plus")
+                            
+                            Button(action: {
+                                showBuilder = true
+                            }) {
+                                Image(systemName: "plus")
+                            }
                         }
                     }
                 }
             }
             .sheet(isPresented: $showBuilder) {
                 RouteBuilderView()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var routesListSection: some View {
+        Group {
+            if allRoutes.isEmpty {
+                VStack(spacing: 20) {
+                    Image(systemName: "map")
+                        .font(.system(size: 64))
+                        .foregroundColor(.orange.opacity(0.8))
+                        .padding()
+                        .background(Circle().fill(Color.orange.opacity(0.1)))
+                    
+                    Text("Нет маршрутов")
+                        .font(.title3)
+                        .bold()
+                    
+                    Text("Спланируйте свою следующую тренировку. Нарисуйте маршрут на карте, посмотрите перепады высот и отправьте на часы.")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 40)
+                    
+                    Button(action: {
+                        showBuilder = true
+                    }) {
+                        Text("Создать маршрут")
+                            .bold()
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 12)
+                            .background(Color.orange)
+                            .cornerRadius(12)
+                    }
+                }
+                .padding()
+                Spacer()
+            } else {
+                List {
+                    ForEach(sortedRoutes) { route in
+                        NavigationLink(destination: RouteDetailView(route: route)) {
+                            RouteRowView(route: route)
+                        }
+                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                    }
+                    .onDelete(perform: deleteRoutes)
+                }
+                .listStyle(.plain)
+                .background(Color(.systemGroupedBackground))
             }
         }
     }

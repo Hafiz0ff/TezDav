@@ -288,6 +288,7 @@ struct FileImportView: View {
                 
                 // Run personal records scan immediately for this workout
                 PersonalRecordCalculator.calculateAndSetRecords(for: item.activity, samples: item.samples)
+                SegmentMatcher.matchSegments(for: item.activity, samples: item.samples, context: modelContext)
             }
         }
         

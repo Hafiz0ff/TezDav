@@ -12,7 +12,7 @@ struct TezDavApp: App {
 
     static let modelContainer: ModelContainer = {
         do {
-            return try ModelContainer(for: Activity.self, ActivityStreamSample.self, SyncState.self, UserSettings.self, IntervalSegment.self, TrainingWeek.self, SavedRoute.self)
+            return try ModelContainer(for: Activity.self, ActivityStreamSample.self, SyncState.self, UserSettings.self, IntervalSegment.self, TrainingWeek.self, SavedRoute.self, Segment.self, SegmentEffort.self)
         } catch {
             preconditionFailure("Unable to create SwiftData container: \(error)")
         }

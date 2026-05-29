@@ -376,6 +376,7 @@ struct RecordsView: View {
                 )
                 if let samples = try? modelContext.fetch(descriptor), !samples.isEmpty {
                     PersonalRecordCalculator.calculateAndSetRecords(for: act, samples: samples)
+                    SegmentMatcher.matchSegments(for: act, samples: samples, context: modelContext)
                     newRecordsFound = true
                 }
             }

@@ -32,6 +32,8 @@ struct ActivityDetailView: View {
     @Query private var userSettings: [UserSettings]
     // Query all interval segments
     @Query private var allSegments: [IntervalSegment]
+    // Query all segment efforts
+    @Query private var allSegmentEfforts: [SegmentEffort]
 
     @State private var isLoadingStreams = false
     @State private var streamLoadingError: String? = nil
@@ -45,6 +47,10 @@ struct ActivityDetailView: View {
     
     private var activitySegments: [IntervalSegment] {
         allSegments.filter { $0.activityId == activity.stravaId }.sorted { $0.segmentIndex < $1.segmentIndex }
+    }
+
+    private var matchedSegmentEfforts: [SegmentEffort] {
+        allSegmentEfforts.filter { $0.activityId == activity.stravaId }.sorted { $0.elapsedTime < $1.elapsedTime }
     }
 
     private let config = StravaConfig.fromBundle()
@@ -150,6 +156,9 @@ struct ActivityDetailView: View {
                         if hasPowerCurveData {
                             activityPowerCurveSection
                         }
+
+                        // Section 11: Matched Segments
+                        matchedSegmentsSection
                     }
                     .padding()
                 }
@@ -757,6 +766,7 @@ struct ActivityDetailView: View {
 
         // Calculate and cache personal records for this activity
         PersonalRecordCalculator.calculateAndSetRecords(for: activity, samples: samplesArray)
+        SegmentMatcher.matchSegments(for: activity, samples: samplesArray, context: modelContext)
 
         // Delete any existing interval segments first
         try? modelContext.delete(model: IntervalSegment.self, where: #Predicate<IntervalSegment> { segment in
@@ -1575,6 +1585,123 @@ struct ActivityDetailView: View {
         check(duration: "1 час", val: activity.peakPower60m, maxOther: otherActivities.compactMap { $0.peakPower60m }.max())
         
         return records
+    }
+
+    private var matchedSegmentsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Пройденные сегменты")
+                .font(.headline)
+                .foregroundColor(.primary)
+            
+            if matchedSegmentEfforts.isEmpty {
+                Text("На этой тренировке не обнаружено пересечений с популярными сегментами.")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(12)
+            } else {
+                VStack(spacing: 8) {
+                    ForEach(matchedSegmentEfforts) { effort in
+                        if let seg = effort.segment {
+                            NavigationLink(destination: SegmentDetailView(segment: seg)) {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(seg.name)
+                                            .font(.subheadline.weight(.semibold))
+                                            .foregroundColor(.primary)
+                                            .lineLimit(1)
+                                        
+                                        HStack(spacing: 8) {
+                                            Text(String(format: "%.1f%% уклон", seg.averageGrade))
+                                                .font(.caption2)
+                                                .foregroundColor(.secondary)
+                                            
+                                            Text(formatDistance(seg.distanceMeters))
+                                                .font(.caption2)
+                                                .foregroundColor(.secondary)
+                                        }
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    if isPersonalRecord(effort) {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "crown.fill")
+                                                .font(.caption)
+                                                .foregroundColor(.yellow)
+                                            Text("PR")
+                                                .font(.caption2.weight(.bold))
+                                                .foregroundColor(.orange)
+                                        }
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 3)
+                                        .background(Color.yellow.opacity(0.1))
+                                        .cornerRadius(6)
+                                    }
+                                    
+                                    VStack(alignment: .trailing, spacing: 2) {
+                                        Text(formatDuration(effort.elapsedTime))
+                                            .font(.subheadline.weight(.bold))
+                                            .foregroundColor(.primary)
+                                        
+                                        if let hr = effort.averageHeartRate {
+                                            Text(String(format: "❤️ %.0f bpm", hr))
+                                                .font(.caption2)
+                                                .foregroundColor(.secondary)
+                                        }
+                                    }
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding()
+                                .background(Color(.secondarySystemBackground))
+                                .cornerRadius(12)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.02), radius: 4, x: 0, y: 2)
+    }
+
+    private func isPersonalRecord(_ effort: SegmentEffort) -> Bool {
+        guard let seg = effort.segment else { return false }
+        let userEfforts = seg.efforts.filter { !$0.isMock && $0.athleteName == "Вы" }
+        guard let bestTime = userEfforts.map({ $0.elapsedTime }).min() else { return false }
+        return effort.elapsedTime <= bestTime
+    }
+
+    private func formatDistance(_ meters: Double) -> String {
+        let isMetric = activeUserSettings.isMetric
+        if isMetric {
+            if meters >= 1000 {
+                return String(format: "%.2f км", meters / 1000.0)
+            } else {
+                return "\(Int(meters)) м"
+            }
+        } else {
+            let miles = meters / 1609.344
+            if miles >= 0.1 {
+                return String(format: "%.2f миль", miles)
+            } else {
+                let feet = meters * 3.28084
+                return "\(Int(feet)) футов"
+            }
+        }
+    }
+    
+    private func formatDuration(_ seconds: TimeInterval) -> String {
+        let mins = Int(seconds) / 60
+        let secs = Int(seconds) % 60
+        return String(format: "%d:%02d", mins, secs)
     }
 }
 

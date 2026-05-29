@@ -81,6 +81,12 @@
 		PC0100000000000000000003 /* Dashboard/PowerCurveChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000003 /* Dashboard/PowerCurveChartView.swift */; };
 		PC0100000000000000000004 /* Dashboard/PowerCurveFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000004 /* Dashboard/PowerCurveFormView.swift */; };
 		PC0100000000000000000005 /* PowerCurveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000005 /* PowerCurveTests.swift */; };
+		SG0100000000000000000001 /* Persistence/Segment.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000001 /* Persistence/Segment.swift */; };
+		SG0100000000000000000002 /* Persistence/SegmentEffort.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000002 /* Persistence/SegmentEffort.swift */; };
+		SG0100000000000000000003 /* TrainingMetrics/SegmentMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000003 /* TrainingMetrics/SegmentMatcher.swift */; };
+		SG0100000000000000000004 /* Dashboard/SegmentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000004 /* Dashboard/SegmentListView.swift */; };
+		SG0100000000000000000005 /* Dashboard/SegmentDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000005 /* Dashboard/SegmentDetailView.swift */; };
+		SG0100000000000000000006 /* SegmentMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000006 /* SegmentMatcherTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -176,6 +182,12 @@
 		PC0200000000000000000003 /* Dashboard/PowerCurveChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/PowerCurveChartView.swift; sourceTree = "<group>"; };
 		PC0200000000000000000004 /* Dashboard/PowerCurveFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/PowerCurveFormView.swift; sourceTree = "<group>"; };
 		PC0200000000000000000005 /* PowerCurveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavTests/PowerCurveTests.swift; sourceTree = "<group>"; };
+		SG0200000000000000000001 /* Persistence/Segment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/Segment.swift; sourceTree = "<group>"; };
+		SG0200000000000000000002 /* Persistence/SegmentEffort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/SegmentEffort.swift; sourceTree = "<group>"; };
+		SG0200000000000000000003 /* TrainingMetrics/SegmentMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/SegmentMatcher.swift; sourceTree = "<group>"; };
+		SG0200000000000000000004 /* Dashboard/SegmentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/SegmentListView.swift; sourceTree = "<group>"; };
+		SG0200000000000000000005 /* Dashboard/SegmentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/SegmentDetailView.swift; sourceTree = "<group>"; };
+		SG0200000000000000000006 /* SegmentMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentMatcherTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -285,6 +297,11 @@
 				PC0200000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift */,
 				PC0200000000000000000003 /* Dashboard/PowerCurveChartView.swift */,
 				PC0200000000000000000004 /* Dashboard/PowerCurveFormView.swift */,
+				SG0200000000000000000001 /* Persistence/Segment.swift */,
+				SG0200000000000000000002 /* Persistence/SegmentEffort.swift */,
+				SG0200000000000000000003 /* TrainingMetrics/SegmentMatcher.swift */,
+				SG0200000000000000000004 /* Dashboard/SegmentListView.swift */,
+				SG0200000000000000000005 /* Dashboard/SegmentDetailView.swift */,
 			);
 			path = TezDav;
 			sourceTree = "<group>";
@@ -299,6 +316,7 @@
 				A00200000000000000000024 /* PersistenceTests.swift */,
 				A00200000000000000000025 /* SyncServiceTests.swift */,
 				RT0200000000000000000001 /* RouteBuilderTests.swift */,
+				SG0200000000000000000006 /* SegmentMatcherTests.swift */,
 			);
 			path = TezDavTests;
 			sourceTree = "<group>";
@@ -508,6 +526,11 @@
 				PC0100000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift in Sources */,
 				PC0100000000000000000003 /* Dashboard/PowerCurveChartView.swift in Sources */,
 				PC0100000000000000000004 /* Dashboard/PowerCurveFormView.swift in Sources */,
+				SG0100000000000000000001 /* Persistence/Segment.swift in Sources */,
+				SG0100000000000000000002 /* Persistence/SegmentEffort.swift in Sources */,
+				SG0100000000000000000003 /* TrainingMetrics/SegmentMatcher.swift in Sources */,
+				SG0100000000000000000004 /* Dashboard/SegmentListView.swift in Sources */,
+				SG0100000000000000000005 /* Dashboard/SegmentDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -523,6 +546,7 @@
 				A00100000000000000000025 /* SyncServiceTests.swift in Sources */,
 				RT0100000000000000000001 /* RouteBuilderTests.swift in Sources */,
 				PC0100000000000000000005 /* PowerCurveTests.swift in Sources */,
+				SG0100000000000000000006 /* SegmentMatcherTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
