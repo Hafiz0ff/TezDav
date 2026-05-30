@@ -1,10 +1,16 @@
 # TezDav 🏃‍♂️🚴‍♀️
 
-[![Swift](https://img.shields.io/badge/Swift-5.10-orange.svg?style=flat-square)](https://developer.apple.com/swift/)
-[![iOS](https://img.shields.io/badge/iOS-17.0%2B-blue.svg?style=flat-square)](https://developer.apple.com/ios/)
-[![watchOS](https://img.shields.io/badge/watchOS-10.0%2B-lightblue.svg?style=flat-square)](https://developer.apple.com/watchos/)
-[![SwiftData](https://img.shields.io/badge/SwiftData-Database-purple.svg?style=flat-square)](https://developer.apple.com/xcode/swiftdata/)
-[![WidgetKit](https://img.shields.io/badge/WidgetKit-Live_Activities-black.svg?style=flat-square)](https://developer.apple.com/widgets/)
+<p align="center">
+  <img src="docs/screenshots/app_icon.png" alt="TezDav Logo" width="128" height="128">
+</p>
+
+<p align="center">
+  <a href="https://developer.apple.com/swift/"><img src="https://img.shields.io/badge/Swift-5.10-orange.svg?style=flat-square" alt="Swift"></a>
+  <a href="https://developer.apple.com/ios/"><img src="https://img.shields.io/badge/iOS-17.0%2B-blue.svg?style=flat-square" alt="iOS"></a>
+  <a href="https://developer.apple.com/watchos/"><img src="https://img.shields.io/badge/watchOS-10.0%2B-lightblue.svg?style=flat-square" alt="watchOS"></a>
+  <a href="https://developer.apple.com/xcode/swiftdata/"><img src="https://img.shields.io/badge/SwiftData-Database-purple.svg?style=flat-square" alt="SwiftData"></a>
+  <a href="https://developer.apple.com/widgets/"><img src="https://img.shields.io/badge/WidgetKit-Live_Activities-black.svg?style=flat-square" alt="WidgetKit"></a>
+</p>
 
 ---
 
@@ -64,6 +70,12 @@
 * Автоматическая оптимизация (даунсэмплинг) точек и кэширование полилайнов в базе данных SwiftData для мгновенной загрузки.
 * Экспорт тепловой карты в высоком разрешении (MKMapSnapshotter + CoreGraphics) для публикации в соцсетях.
 
+#### 9. Беговая динамика (Running Dynamics)
+* Полноценный анализ беговой биомеханики профессионального уровня: каденс (cadence), вертикальные колебания (vertical oscillation), время контакта с землей (ground contact time, GCT), баланс левой/правой ноги (left/right balance) и длина шага (stride length).
+* Оценка эффективности по зонам (Optimal, Good, Fair, Poor) с цветовым кодированием Garmin (фиолетовый, зеленый, оранжевый, красный).
+* Интерактивные Swift Charts графики с тултипом и сменными табами для детального анализа каждого метра тренировки.
+* Корректный пересчет длины шага в футы для имперской системы.
+
 ---
 
 ### 🛠 Стек технологий и Архитектура
@@ -72,10 +84,50 @@
 
 * **Пользовательский интерфейс**: SwiftUI с поддержкой динамических шрифтов, тактильного отклика (Haptics) и плавной анимации переходов.
 * **База данных**: SwiftData (локальное хранилище данных и настроек на основе CoreData с транзакционной целостностью).
-* **Визуализация данных**: Swift Charts (построение интерактивных графиков высоты, кривой мощности и пульсовых зон).
+* **Визуализация данных**: Swift Charts (построение интерактивных графиков высоты, кривой мощности, пульсовых зон и беговой динамики).
 * **Геолокация**: MapKit & CoreLocation (рисование треков, отображение карт, расчет расстояний и геокодирование).
 * **Фоновые вычисления**: Accelerate framework (векторизованный метод наименьших квадратов для регрессии Critical Power).
 * **Синхронизация с часами**: WatchConnectivity (быстрая передача маршрутов и двусторонняя трансляция спортивных показателей).
+
+---
+
+### 🧠 Архитектура и ментальная карта проекта (Project Mind Map)
+
+```mermaid
+graph TD
+    App[TezDav App]
+    
+    %% UI Components
+    UI[SwiftUI Views / Интерфейс]
+    App --> UI
+    UI --> Dash[Dashboard & Profile / Дашборд и Профиль]
+    UI --> Detail[Activity Details / Анализ тренировки и сплиты]
+    UI --> Planner[AI Training Planner / ИИ-планировщик]
+    UI --> RBuilder[Interactive Route Builder / Редактор маршрутов]
+    UI --> Heatmap[Personal Heatmap / Персональная теплокарта]
+    UI --> Recs[Race Predictor Pro / Прогноз результатов]
+    
+    %% Analytics Engine
+    Engines[Sports Science Engines / Физиологические расчеты]
+    App --> Engines
+    Engines --> TRIMP[TRIMP & TSS Load / Расчет тренировочного стресса]
+    Engines --> CP[Critical Power & W' Solver / Порог мощности]
+    Engines --> RP[Riegel Race Predictor v2 / Алгоритм прогнозирования]
+    Engines --> RD[Running Dynamics Engine / Анализ бега]
+    Engines --> Read[HRV & Readiness Score / Индекс готовности]
+    
+    %% Extensions
+    Ext[System Integrations / Системные расширения]
+    App --> Ext
+    Ext --> LA[Live Activities & Dynamic Island]
+    Ext --> HK[HealthKit Dual Sync]
+    Ext --> WC[WatchConnectivity Sync]
+    Ext --> Widget[iOS Widgets & Apple Watch App]
+    
+    %% Storage
+    DB[(SwiftData Local DB / База данных)]
+    App --> DB
+```
 
 ---
 
@@ -94,6 +146,16 @@
   </tr>
   <tr>
     <td width="50%">
+      <p align="center"><b>Индекс готовности к нагрузкам (HRV & Sleep)</b></p>
+      <img src="docs/screenshots/readiness_score_trend.png" alt="Индекс готовности к нагрузкам" width="100%">
+    </td>
+    <td width="50%">
+      <p align="center"><b>Беговая динамика (Running Dynamics)</b></p>
+      <img src="docs/screenshots/running_dynamics.png" alt="Беговая динамика" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
       <p align="center"><b>Индивидуальная кривая мощности</b></p>
       <img src="docs/screenshots/power_curve_form_tab.png" alt="Кривая мощности" width="100%">
     </td>
@@ -102,21 +164,21 @@
       <img src="docs/screenshots/critical_power_zones.png" alt="Зоны мощности" width="100%">
     </td>
   </tr>
+  <tr>
+    <td width="50%">
+      <p align="center"><b>Сопоставление рекордов мощности с историей</b></p>
+      <img src="docs/screenshots/activity_detail_power_curve.png" alt="Детальная кривая тренировки" width="100%">
+    </td>
+    <td width="50%">
+      <p align="center"><b>Детали тренировочного сегмента и лидерборд</b></p>
+      <img src="docs/screenshots/segment_detail_leaderboard.png" alt="Лидерборд сегмента" width="100%">
+    </td>
+  </tr>
 </table>
 
 <p align="center">
-  <b>Сопоставление рекордов мощности тренировки с историей</b><br>
-  <img src="docs/screenshots/activity_detail_power_curve.png" alt="Детальная кривая тренировки" width="50%">
-</p>
-
-<p align="center">
-  <b>Детали тренировочного сегмента и лидерборд</b><br>
-  <img src="docs/screenshots/segment_detail_leaderboard.png" alt="Лидерборд сегмента" width="50%">
-</p>
-
-<p align="center">
   <b>Персональная тепловая карта тренировок (Personal Heatmap)</b><br>
-  <img src="docs/screenshots/personal_heatmap.png" alt="Тепловая карта тренировок" width="50%">
+  <img src="docs/screenshots/personal_heatmap.png" alt="Тепловая карта тренировок" width="60%">
 </p>
 
 ---
@@ -137,14 +199,4 @@
 * **Unified Imperial/Metric Engine**: Global system conversion instantly formatting inputs, charts, and values. Automatically splits running/cycling intervals into 1-mile laps with pace and elevation gains formatted dynamically (mi, ft, lbs, mph, W/lbs).
 * **Segments & Leaderboards**: Local offline snapping of activities (GPX/FIT) with predefined segments using the Haversine formula (25m proximity, 15% distance tolerance). Tracks Personal Records (PRs), shows interactive segment maps, Swift Charts elevation profiles, and lists local leaderboards populated with simulated bots.
 * **Personal Heatmap**: High-fidelity overlay showing all historical GPS tracks on a single interactive map. Features filtering by sport type, map styles (Standard, Satellite, Hybrid), adjustable line thickness, line opacity (glowing effect), and color scheme presets (Orange, Neon Green, Ice Blue, Multisport). Implements automatic path downsampling and encoding/caching in SwiftData for instant offline loads. Supports exporting high-resolution heatmap images (MKMapSnapshotter + CoreGraphics) via standard Share Sheets.
-
----
-
-### 🛠 Technology Stack & Architecture
-
-* **UI Framework**: SwiftUI (declarative interface, custom modifiers, haptic feedbacks, and interactive navigation flows).
-* **Local Persistence**: SwiftData (type-safe SQLite model handling and relationships).
-* **Data Visualization**: Swift Charts (line graphs, logarithmic coordinate axes, cursors, and shaded area mark representations).
-* **Mapping**: MapKit, MapPolyline, and CoreLocation.
-* **Computations**: Accelerate framework (used for fast, vectorized regression solvers).
-* **Watch Companion Integration**: WatchConnectivity (handling route transfers and live telemetry streams).
+* **Running Dynamics**: Professional running biomechanics telemetry tracking cadence, vertical oscillation, ground contact time (GCT), L/R balance, and stride length. Visualizes efficiency zones using standard Garmin colors (purple, green, orange, red) and features interactive Swift Charts with tooltips for telemetry analytics over session distance.
