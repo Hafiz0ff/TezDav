@@ -210,6 +210,10 @@ struct FitParser {
         activity.peakPower20m = peaks[1200]
         activity.peakPower60m = peaks[3600]
         
+        if sport == "Run" {
+            RunningDynamicsEngine.enrich(activity: activity, samples: samples)
+        }
+        
         return (activity, samples)
     }
     

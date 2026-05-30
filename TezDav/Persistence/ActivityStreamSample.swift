@@ -13,6 +13,10 @@ final class ActivityStreamSample {
     var power: Double?
     var speed: Double?
     var altitude: Double?
+    var verticalOscillation: Double? // in cm
+    var groundContactTime: Double?  // in ms
+    var strideLength: Double?       // in meters
+    var leftGCTPercent: Double?     // in %
 
     init(
         activityId: Int64,
@@ -24,7 +28,11 @@ final class ActivityStreamSample {
         cadence: Double? = nil,
         power: Double? = nil,
         speed: Double? = nil,
-        altitude: Double? = nil
+        altitude: Double? = nil,
+        verticalOscillation: Double? = nil,
+        groundContactTime: Double? = nil,
+        strideLength: Double? = nil,
+        leftGCTPercent: Double? = nil
     ) {
         self.activityId = activityId
         self.offsetSeconds = offsetSeconds
@@ -36,5 +44,9 @@ final class ActivityStreamSample {
         self.power = power
         self.speed = speed
         self.altitude = altitude
+        self.verticalOscillation = verticalOscillation
+        self.groundContactTime = groundContactTime
+        self.strideLength = strideLength
+        self.leftGCTPercent = leftGCTPercent
     }
 }

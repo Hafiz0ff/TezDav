@@ -44,6 +44,8 @@ struct ActivityDetailView: View {
     @State private var isShowingShareSheet = false
     @State private var isShowingComparison = false
     @State private var selectedPowerPoint: PowerPoint? = nil
+    @State private var selectedDynamicsTab: Int = 0
+    @State private var selectedDynamicsDistance: Double? = nil
     
     private var activitySegments: [IntervalSegment] {
         allSegments.filter { $0.activityId == activity.stravaId }.sorted { $0.segmentIndex < $1.segmentIndex }
@@ -131,6 +133,10 @@ struct ActivityDetailView: View {
                         // Section 4: Swift Charts
                         chartsSection
 
+                        if activity.sportType.lowercased() == "run" {
+                            runningDynamicsSection
+                        }
+
                         // Section 5: Splits Table (for distance >= 1km, excluding swim)
                         if activity.distanceMeters >= 1000 && !activity.sportType.lowercased().contains("swim") {
                             splitsSection
@@ -161,6 +167,12 @@ struct ActivityDetailView: View {
                         matchedSegmentsSection
                     }
                     .padding()
+                }
+                .onAppear {
+                    if activity.averageStrideLength == nil {
+                        RunningDynamicsEngine.enrich(activity: activity, samples: streamSamples)
+                        try? modelContext.save()
+                    }
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -1703,6 +1715,576 @@ struct ActivityDetailView: View {
         let secs = Int(seconds) % 60
         return String(format: "%d:%02d", mins, secs)
     }
+
+    // MARK: - Running Dynamics Helpers & Views
+    
+    private var selectedDynamicsSample: ActivityStreamSample? {
+        guard let dist = selectedDynamicsDistance, !streamSamples.isEmpty else { return nil }
+        let isMetric = activeUserSettings.isMetric
+        let distDivider = isMetric ? 1000.0 : 1609.344
+        return streamSamples.min(by: {
+            let d1 = abs((($0.distanceMeters ?? Double($0.offsetSeconds) * (activity.averageSpeed ?? 3.0)) / distDivider) - dist)
+            let d2 = abs((($1.distanceMeters ?? Double($1.offsetSeconds) * (activity.averageSpeed ?? 3.0)) / distDivider) - dist)
+            return d1 < d2
+        })
+    }
+    
+    private func makeDynamicsChartData() -> (osc: [ChartDataPoint], gct: [ChartDataPoint], stride: [ChartDataPoint], cadence: [ChartDataPoint]) {
+        guard !streamSamples.isEmpty else { return ([], [], [], []) }
+        
+        let isMetric = activeUserSettings.isMetric
+        let distDivider = isMetric ? 1000.0 : 1609.344
+        let strideMultiplier = isMetric ? 1.0 : 3.28084
+        
+        let step = max(1, streamSamples.count / 100)
+        
+        var oscPoints: [ChartDataPoint] = []
+        var gctPoints: [ChartDataPoint] = []
+        var stridePoints: [ChartDataPoint] = []
+        var cadencePoints: [ChartDataPoint] = []
+        
+        for i in stride(from: 0, to: streamSamples.count, by: step) {
+            let sample = streamSamples[i]
+            let km = (sample.distanceMeters ?? Double(sample.offsetSeconds) * (activity.averageSpeed ?? 3.0)) / distDivider
+            
+            if let osc = sample.verticalOscillation {
+                oscPoints.append(ChartDataPoint(x: km, y: osc))
+            }
+            if let gct = sample.groundContactTime {
+                gctPoints.append(ChartDataPoint(x: km, y: gct))
+            }
+            if let stride = sample.strideLength {
+                stridePoints.append(ChartDataPoint(x: km, y: stride * strideMultiplier))
+            }
+            if let cad = sample.cadence {
+                cadencePoints.append(ChartDataPoint(x: km, y: cad))
+            }
+        }
+        
+        return (oscPoints, gctPoints, stridePoints, cadencePoints)
+    }
+    
+    private var dynamicsChartHeaderView: some View {
+        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isMetric = activeUserSettings.isMetric
+        let strideMultiplier = isMetric ? 1.0 : 3.28084
+        let strideUnit = isMetric ? "м" : "фт"
+        
+        return HStack {
+            if let selected = selectedDynamicsSample {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(isRussian ? "ДЕТАЛИ ТОЧКИ" : "POINT DETAILS")
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.secondary)
+                    
+                    let distValue = (selected.distanceMeters ?? Double(selected.offsetSeconds) * (activity.averageSpeed ?? 3.0)) / (isMetric ? 1000.0 : 1609.344)
+                    Text(String(format: isRussian ? "Дистанция: %.2f км" : "Distance: %.2f mi", distValue))
+                        .font(.caption)
+                        .foregroundStyle(.primary)
+                }
+                
+                Spacer()
+                
+                switch selectedDynamicsTab {
+                case 0:
+                    if let osc = selected.verticalOscillation {
+                        let zone = RunningDynamicsEngine.classifyVerticalOscillation(osc)
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text(isRussian ? "ВЕРТ. КОЛЕБАНИЯ" : "VERT. OSCILLATION")
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.secondary)
+                            HStack(spacing: 6) {
+                                Text(String(format: "%.1f см", osc))
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                Text(localizedZoneText(zone, isRussian: isRussian))
+                                    .font(.caption2)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(zoneColor(zone))
+                            }
+                        }
+                    }
+                case 1:
+                    if let gct = selected.groundContactTime {
+                        let zone = RunningDynamicsEngine.classifyGCT(gct)
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text(isRussian ? "КОНТАКТ С ЗЕМЛЕЙ" : "GROUND CONTACT TIME")
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.secondary)
+                            HStack(spacing: 6) {
+                                Text(String(format: "%.0f мс", gct))
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                Text(localizedZoneText(zone, isRussian: isRussian))
+                                    .font(.caption2)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(zoneColor(zone))
+                            }
+                        }
+                    }
+                case 2:
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(isRussian ? "ДЛИНА / КАДЕНС" : "STRIDE / CADENCE")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.secondary)
+                        HStack(spacing: 8) {
+                            if let stride = selected.strideLength {
+                                Text(String(format: "%.2f \(strideUnit)", stride * strideMultiplier))
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                            }
+                            if let cad = selected.cadence {
+                                let zone = RunningDynamicsEngine.classifyCadence(cad)
+                                HStack(spacing: 2) {
+                                    Text(String(format: "%.0f spm", cad))
+                                        .font(.caption)
+                                        .fontWeight(.bold)
+                                    Circle()
+                                        .fill(zoneColor(zone))
+                                        .frame(width: 6, height: 6)
+                                }
+                            }
+                        }
+                    }
+                default:
+                    EmptyView()
+                }
+            } else {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(isRussian ? "СРЕДНИЕ ПОКАЗАТЕЛИ" : "AVERAGE METRICS")
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.secondary)
+                    Text(isRussian ? "За всю тренировку" : "Entire session")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                }
+                
+                Spacer()
+                
+                switch selectedDynamicsTab {
+                case 0:
+                    if let osc = activity.averageVerticalOscillation {
+                        let zone = RunningDynamicsEngine.classifyVerticalOscillation(osc)
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text(isRussian ? "ВЕРТ. КОЛЕБАНИЯ" : "VERT. OSCILLATION")
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.secondary)
+                            HStack(spacing: 6) {
+                                Text(String(format: "%.1f см", osc))
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                Text(localizedZoneText(zone, isRussian: isRussian))
+                                    .font(.caption2)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(zoneColor(zone))
+                            }
+                        }
+                    }
+                case 1:
+                    if let gct = activity.averageGroundContactTime {
+                        let zone = RunningDynamicsEngine.classifyGCT(gct)
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text(isRussian ? "КОНТАКТ С ЗЕМЛЕЙ" : "GROUND CONTACT TIME")
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.secondary)
+                            HStack(spacing: 6) {
+                                Text(String(format: "%.0f мс", gct))
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                Text(localizedZoneText(zone, isRussian: isRussian))
+                                    .font(.caption2)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(zoneColor(zone))
+                            }
+                        }
+                    }
+                case 2:
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(isRussian ? "ДЛИНА / КАДЕНС" : "STRIDE / CADENCE")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.secondary)
+                        HStack(spacing: 8) {
+                            if let stride = activity.averageStrideLength {
+                                Text(String(format: "%.2f \(strideUnit)", stride * strideMultiplier))
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                            }
+                            if let cad = activity.averageCadence {
+                                let zone = RunningDynamicsEngine.classifyCadence(cad)
+                                HStack(spacing: 2) {
+                                    Text(String(format: "%.0f spm", cad))
+                                        .font(.caption)
+                                        .fontWeight(.bold)
+                                    Circle()
+                                        .fill(zoneColor(zone))
+                                        .frame(width: 6, height: 6)
+                                }
+                            }
+                        }
+                    }
+                default:
+                    EmptyView()
+                }
+            }
+        }
+        .padding(8)
+        .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+    }
+    
+    private func localizedZoneText(_ zone: DynamicsZone, isRussian: Bool) -> String {
+        if isRussian {
+            switch zone {
+            case .optimal: return "Отлично"
+            case .good: return "Хорошо"
+            case .fair: return "Удовл."
+            case .poor: return "Низкий"
+            }
+        } else {
+            switch zone {
+            case .optimal: return "Optimal"
+            case .good: return "Good"
+            case .fair: return "Fair"
+            case .poor: return "Poor"
+            }
+        }
+    }
+    
+    private func zoneColor(_ zone: DynamicsZone) -> Color {
+        switch zone {
+        case .optimal: return .purple
+        case .good: return .green
+        case .fair: return .orange
+        case .poor: return .red
+        }
+    }
+    
+    private var runningDynamicsSection: some View {
+        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isMetric = activeUserSettings.isMetric
+        
+        let avgOsc = activity.averageVerticalOscillation ?? 8.5
+        let avgGCT = activity.averageGroundContactTime ?? 240.0
+        let avgStride = activity.averageStrideLength ?? 1.0
+        let avgBalance = activity.averageLeftGCTPercent ?? 50.0
+        let avgCadenceVal = activity.averageCadence ?? 170.0
+        
+        let strideMultiplier = isMetric ? 1.0 : 3.28084
+        let strideUnit = isMetric ? "м" : "фт"
+        
+        let (oscPoints, gctPoints, stridePoints, cadencePoints) = makeDynamicsChartData()
+        let chartXLabel = isMetric ? "Distance (km)" : "Distance (mi)"
+        let chartXUnit = isMetric ? "%.1f km" : "%.1f mi"
+        
+        return VStack(alignment: .leading, spacing: 16) {
+            Text(isRussian ? "Беговая динамика" : "Running Dynamics")
+                .font(.headline)
+                .padding(.top, 8)
+            
+            let columns = [
+                GridItem(.flexible(), spacing: 12),
+                GridItem(.flexible(), spacing: 12),
+                GridItem(.flexible(), spacing: 12),
+                GridItem(.flexible(), spacing: 12)
+            ]
+            
+            LazyVGrid(columns: columns, spacing: 12) {
+                let cadZone = RunningDynamicsEngine.classifyCadence(avgCadenceVal)
+                DynamicsGridTile(
+                    title: isRussian ? "Каденс" : "Cadence",
+                    value: String(format: "%.0f spm", avgCadenceVal),
+                    zone: cadZone,
+                    scoreText: localizedZoneText(cadZone, isRussian: isRussian),
+                    percent: (avgCadenceVal - 120.0) / (200.0 - 120.0),
+                    color: zoneColor(cadZone)
+                )
+                
+                let oscZone = RunningDynamicsEngine.classifyVerticalOscillation(avgOsc)
+                DynamicsGridTile(
+                    title: isRussian ? "Колебания" : "Oscillation",
+                    value: String(format: "%.1f см", avgOsc),
+                    zone: oscZone,
+                    scoreText: localizedZoneText(oscZone, isRussian: isRussian),
+                    percent: max(0.0, min(1.0, (15.0 - avgOsc) / (15.0 - 4.0))),
+                    color: zoneColor(oscZone)
+                )
+                
+                let gctZone = RunningDynamicsEngine.classifyGCT(avgGCT)
+                DynamicsGridTile(
+                    title: isRussian ? "Контакт" : "Contact Time",
+                    value: String(format: "%.0f мс", avgGCT),
+                    zone: gctZone,
+                    scoreText: localizedZoneText(gctZone, isRussian: isRussian),
+                    percent: max(0.0, min(1.0, (350.0 - avgGCT) / (350.0 - 150.0))),
+                    color: zoneColor(gctZone)
+                )
+                
+                DynamicsGridTile(
+                    title: isRussian ? "Длина шага" : "Stride Length",
+                    value: String(format: "%.2f \(strideUnit)", avgStride * strideMultiplier),
+                    zone: nil,
+                    scoreText: "",
+                    percent: max(0.0, min(1.0, avgStride / 2.0)),
+                    color: .blue
+                )
+            }
+            
+            let balanceZone = RunningDynamicsEngine.classifyLRBalance(avgBalance)
+            LRBalanceBarometer(
+                leftPercent: avgBalance,
+                zone: balanceZone,
+                isRussian: isRussian
+            )
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Picker("Dynamics Chart Tab", selection: $selectedDynamicsTab) {
+                    Text(isRussian ? "Колебания" : "Oscillation").tag(0)
+                    Text(isRussian ? "Контакт" : "Contact").tag(1)
+                    Text(isRussian ? "Шаг / Каденс" : "Stride / Cadence").tag(2)
+                }
+                .pickerStyle(.segmented)
+                .padding(.bottom, 4)
+                
+                dynamicsChartHeaderView
+                
+                if oscPoints.isEmpty {
+                    Text(isRussian ? "Нет данных для построения графиков динамики." : "No data points available for dynamics charts.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .frame(height: 160)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                } else {
+                    Group {
+                        switch selectedDynamicsTab {
+                        case 0:
+                            Chart {
+                                ForEach(oscPoints) { pt in
+                                    LineMark(
+                                        x: .value(chartXLabel, pt.x),
+                                        y: .value("Oscillation", pt.y)
+                                    )
+                                    .foregroundStyle(Color.purple)
+                                    .interpolationMethod(.catmullRom)
+                                    
+                                    AreaMark(
+                                        x: .value(chartXLabel, pt.x),
+                                        y: .value("Oscillation", pt.y)
+                                    )
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            colors: [Color.purple.opacity(0.15), Color.clear],
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
+                                    )
+                                    .interpolationMethod(.catmullRom)
+                                }
+                                
+                                if let selectedDist = selectedDynamicsDistance {
+                                    RuleMark(x: .value("Selected", selectedDist))
+                                        .foregroundStyle(.secondary.opacity(0.5))
+                                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                                    
+                                    if let sample = selectedDynamicsSample, let osc = sample.verticalOscillation {
+                                        PointMark(
+                                            x: .value("Selected", selectedDist),
+                                            y: .value("Oscillation", osc)
+                                        )
+                                        .foregroundStyle(Color.purple)
+                                        .symbol(Circle())
+                                        .symbolSize(80)
+                                    }
+                                }
+                            }
+                            .frame(height: 160)
+                            .chartXSelection(value: $selectedDynamicsDistance)
+                            .chartXAxis {
+                                AxisMarks(values: .automatic) { value in
+                                    if let km = value.as(Double.self) {
+                                        AxisValueLabel(String(format: chartXUnit, km))
+                                    }
+                                }
+                            }
+                        case 1:
+                            Chart {
+                                ForEach(gctPoints) { pt in
+                                    LineMark(
+                                        x: .value(chartXLabel, pt.x),
+                                        y: .value("GCT", pt.y)
+                                    )
+                                    .foregroundStyle(Color.green)
+                                    .interpolationMethod(.catmullRom)
+                                    
+                                    AreaMark(
+                                        x: .value(chartXLabel, pt.x),
+                                        y: .value("GCT", pt.y)
+                                    )
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            colors: [Color.green.opacity(0.15), Color.clear],
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
+                                    )
+                                    .interpolationMethod(.catmullRom)
+                                }
+                                
+                                if let selectedDist = selectedDynamicsDistance {
+                                    RuleMark(x: .value("Selected", selectedDist))
+                                        .foregroundStyle(.secondary.opacity(0.5))
+                                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                                    
+                                    if let sample = selectedDynamicsSample, let gct = sample.groundContactTime {
+                                        PointMark(
+                                            x: .value("Selected", selectedDist),
+                                            y: .value("GCT", gct)
+                                        )
+                                        .foregroundStyle(Color.green)
+                                        .symbol(Circle())
+                                        .symbolSize(80)
+                                    }
+                                }
+                            }
+                            .frame(height: 160)
+                            .chartXSelection(value: $selectedDynamicsDistance)
+                            .chartXAxis {
+                                AxisMarks(values: .automatic) { value in
+                                    if let km = value.as(Double.self) {
+                                        AxisValueLabel(String(format: chartXUnit, km))
+                                    }
+                                }
+                            }
+                        case 2:
+                            VStack(spacing: 12) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(isRussian ? "Длина шага" : "Stride Length")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                    
+                                    Chart {
+                                        ForEach(stridePoints) { pt in
+                                            LineMark(
+                                                x: .value(chartXLabel, pt.x),
+                                                y: .value("Stride", pt.y)
+                                            )
+                                            .foregroundStyle(Color.blue)
+                                            .interpolationMethod(.catmullRom)
+                                            
+                                            AreaMark(
+                                                x: .value(chartXLabel, pt.x),
+                                                y: .value("Stride", pt.y)
+                                            )
+                                            .foregroundStyle(
+                                                LinearGradient(
+                                                    colors: [Color.blue.opacity(0.15), Color.clear],
+                                                    startPoint: .top,
+                                                    endPoint: .bottom
+                                                )
+                                            )
+                                            .interpolationMethod(.catmullRom)
+                                        }
+                                        
+                                        if let selectedDist = selectedDynamicsDistance {
+                                            RuleMark(x: .value("Selected", selectedDist))
+                                                .foregroundStyle(.secondary.opacity(0.5))
+                                                .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                                            
+                                            if let sample = selectedDynamicsSample, let stride = sample.strideLength {
+                                                PointMark(
+                                                    x: .value("Selected", selectedDist),
+                                                    y: .value("Stride", stride * strideMultiplier)
+                                                )
+                                                .foregroundStyle(Color.blue)
+                                                .symbol(Circle())
+                                                .symbolSize(80)
+                                            }
+                                        }
+                                    }
+                                    .frame(height: 100)
+                                    .chartXSelection(value: $selectedDynamicsDistance)
+                                    .chartXAxis {
+                                        AxisMarks(values: .automatic) { value in
+                                            if let km = value.as(Double.self) {
+                                                AxisValueLabel(String(format: chartXUnit, km))
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(isRussian ? "Частота шагов (Каденс)" : "Cadence")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                    
+                                    Chart {
+                                        ForEach(cadencePoints) { pt in
+                                            LineMark(
+                                                x: .value(chartXLabel, pt.x),
+                                                y: .value("Cadence", pt.y)
+                                            )
+                                            .foregroundStyle(Color.orange)
+                                            .interpolationMethod(.catmullRom)
+                                            
+                                            AreaMark(
+                                                x: .value(chartXLabel, pt.x),
+                                                y: .value("Cadence", pt.y)
+                                            )
+                                            .foregroundStyle(
+                                                LinearGradient(
+                                                    colors: [Color.orange.opacity(0.15), Color.clear],
+                                                    startPoint: .top,
+                                                    endPoint: .bottom
+                                                )
+                                            )
+                                            .interpolationMethod(.catmullRom)
+                                        }
+                                        
+                                        if let selectedDist = selectedDynamicsDistance {
+                                            RuleMark(x: .value("Selected", selectedDist))
+                                                .foregroundStyle(.secondary.opacity(0.5))
+                                                .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                                            
+                                            if let sample = selectedDynamicsSample, let cad = sample.cadence {
+                                                PointMark(
+                                                    x: .value("Selected", selectedDist),
+                                                    y: .value("Cadence", cad)
+                                                )
+                                                .foregroundStyle(Color.orange)
+                                                .symbol(Circle())
+                                                .symbolSize(80)
+                                            }
+                                        }
+                                    }
+                                    .frame(height: 100)
+                                    .chartXSelection(value: $selectedDynamicsDistance)
+                                    .chartXAxis {
+                                        AxisMarks(values: .automatic) { value in
+                                            if let km = value.as(Double.self) {
+                                                AxisValueLabel(String(format: chartXUnit, km))
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        default:
+                            EmptyView()
+                        }
+                    }
+                }
+            }
+            .padding(12)
+            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+            
+            Divider()
+        }
+    }
 }
 
 private struct MetricCard: View {
@@ -1781,6 +2363,174 @@ private struct SplitsSectionView: View {
         let mins = Int(seconds) / 60
         let secs = Int(seconds) % 60
         return String(format: "%d:%02d", mins, secs)
+    }
+}
+
+private struct DynamicsGridTile: View {
+    let title: String
+    let value: String
+    let zone: DynamicsZone?
+    let scoreText: String
+    let percent: Double
+    let color: Color
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            Text(title)
+                .font(.system(size: 10, weight: .bold))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+            
+            ZStack {
+                Circle()
+                    .stroke(Color.secondary.opacity(0.12), lineWidth: 4)
+                
+                Circle()
+                    .trim(from: 0.0, to: CGFloat(min(1.0, max(0.0, percent))))
+                    .stroke(
+                        color,
+                        style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                    )
+                    .rotationEffect(Angle(degrees: -90))
+            }
+            .frame(width: 44, height: 44)
+            
+            if let _ = zone {
+                Text(scoreText)
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(color)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(color.opacity(0.12), in: Capsule())
+            } else {
+                Text(Locale.current.identifier.hasPrefix("ru") ? "Метрика" : "Metric")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.blue)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(Color.blue.opacity(0.12), in: Capsule())
+            }
+            
+            Text(value)
+                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .padding(.horizontal, 4)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+    }
+}
+
+private struct LRBalanceBarometer: View {
+    let leftPercent: Double
+    let zone: DynamicsZone
+    let isRussian: Bool
+    
+    private var rightPercent: Double {
+        100.0 - leftPercent
+    }
+    
+    private var zoneColor: Color {
+        switch zone {
+        case .optimal: return .purple
+        case .good: return .green
+        case .fair, .poor: return .red
+        }
+    }
+    
+    private var zoneText: String {
+        if isRussian {
+            switch zone {
+            case .optimal: return "Симметрия"
+            case .good: return "Норма"
+            case .fair, .poor: return "Асимметрия"
+            }
+        } else {
+            switch zone {
+            case .optimal: return "Symmetry"
+            case .good: return "Normal"
+            case .fair, .poor: return "Asymmetry"
+            }
+        }
+    }
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            HStack {
+                Text(String(format: "%.1f%% L", leftPercent))
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.blue)
+                
+                Spacer()
+                
+                Text(zoneText)
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundStyle(zoneColor)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(zoneColor.opacity(0.12), in: Capsule())
+                
+                Spacer()
+                
+                Text(String(format: "%.1f%% R", rightPercent))
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.purple)
+            }
+            
+            // Barometer track
+            GeometryReader { geo in
+                let width = geo.size.width
+                let clampedLeft = max(45.0, min(55.0, leftPercent))
+                let indicatorPosition = CGFloat((clampedLeft - 45.0) / 10.0) * width
+                
+                ZStack(alignment: .leading) {
+                    LinearGradient(
+                        colors: [
+                            .red, .orange, .green, .purple, .green, .orange, .red
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                    .clipShape(Capsule())
+                    
+                    // Tick mark at 50%
+                    Rectangle()
+                        .fill(Color.white.opacity(0.8))
+                        .frame(width: 2, height: 12)
+                        .offset(x: width / 2 - 1)
+                    
+                    // Thumb / Pointer
+                    Circle()
+                        .fill(Color.white)
+                        .frame(width: 14, height: 14)
+                        .shadow(radius: 2)
+                        .overlay(Circle().stroke(zoneColor, lineWidth: 3))
+                        .offset(x: indicatorPosition - 7)
+                }
+            }
+            .frame(height: 12)
+            
+            HStack {
+                Text("45% L")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text("50/50")
+                    .font(.caption2)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text("45% R")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(12)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
     }
 }
 

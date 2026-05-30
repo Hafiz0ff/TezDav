@@ -22,6 +22,12 @@ final class Activity {
     var streamsImported: Bool
     var source: String = "strava"
 
+    // Running Dynamics
+    var averageVerticalOscillation: Double? // in cm
+    var averageGroundContactTime: Double?  // in ms
+    var averageStrideLength: Double?       // in meters
+    var averageLeftGCTPercent: Double?     // in %
+
     // Running records (seconds taken to cover the distance)
     var best1kTime: TimeInterval?
     var best5kTime: TimeInterval?
@@ -64,6 +70,10 @@ final class Activity {
         importedAt: Date = .now,
         streamsImported: Bool = false,
         source: String = "strava",
+        averageVerticalOscillation: Double? = nil,
+        averageGroundContactTime: Double? = nil,
+        averageStrideLength: Double? = nil,
+        averageLeftGCTPercent: Double? = nil,
         best1kTime: TimeInterval? = nil,
         best5kTime: TimeInterval? = nil,
         best10kTime: TimeInterval? = nil,
@@ -100,6 +110,10 @@ final class Activity {
         self.importedAt = importedAt
         self.streamsImported = streamsImported
         self.source = source
+        self.averageVerticalOscillation = averageVerticalOscillation
+        self.averageGroundContactTime = averageGroundContactTime
+        self.averageStrideLength = averageStrideLength
+        self.averageLeftGCTPercent = averageLeftGCTPercent
         self.best1kTime = best1kTime
         self.best5kTime = best5kTime
         self.best10kTime = best10kTime

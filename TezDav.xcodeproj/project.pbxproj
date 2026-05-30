@@ -95,6 +95,8 @@
 		HM010000000000000000000003 /* PolylineEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = HM020000000000000000000003 /* PolylineEncoderTests.swift */; };
 		AI010000000000000000000002 /* TrainingMetrics/AICoachEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AI010000000000000000000001 /* TrainingMetrics/AICoachEngine.swift */; };
 		AI010000000000000000000004 /* AICoachTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AI010000000000000000000003 /* AICoachTests.swift */; };
+		RD010000000000000000000002 /* TrainingMetrics/RunningDynamicsEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = RD010000000000000000000001 /* TrainingMetrics/RunningDynamicsEngine.swift */; };
+		RD010000000000000000000004 /* RunningDynamicsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = RD010000000000000000000003 /* RunningDynamicsTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -204,6 +206,8 @@
 		HM020000000000000000000003 /* PolylineEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolylineEncoderTests.swift; sourceTree = "<group>"; };
 		AI010000000000000000000001 /* TrainingMetrics/AICoachEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/AICoachEngine.swift; sourceTree = "<group>"; };
 		AI010000000000000000000003 /* AICoachTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AICoachTests.swift; sourceTree = "<group>"; };
+		RD010000000000000000000001 /* TrainingMetrics/RunningDynamicsEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/RunningDynamicsEngine.swift; sourceTree = "<group>"; };
+		RD010000000000000000000003 /* RunningDynamicsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningDynamicsTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -251,6 +255,7 @@
 			children = (
 				RP010000000000000000000001 /* TrainingMetrics/RacePredictorEngine.swift */,
 				AI010000000000000000000001 /* TrainingMetrics/AICoachEngine.swift */,
+				RD010000000000000000000001 /* TrainingMetrics/RunningDynamicsEngine.swift */,
 				RP010000000000000000000003 /* Dashboard/PacingWristbandExporter.swift */,
 				A00200000000000000000091 /* Assets.xcassets */,
 				A00200000000000000000081 /* GpxParser.swift */,
@@ -332,6 +337,7 @@
 			children = (
 				RP010000000000000000000005 /* RacePredictorTests.swift */,
 				AI010000000000000000000003 /* AICoachTests.swift */,
+				RD010000000000000000000003 /* RunningDynamicsTests.swift */,
 				A00200000000000000000020 /* TezDavTests.swift */,
 				A00200000000000000000021 /* TrainingLoadCalculatorTests.swift */,
 				A00200000000000000000022 /* StravaOAuthTests.swift */,
@@ -498,6 +504,7 @@
 			files = (
 				RP010000000000000000000002 /* TrainingMetrics/RacePredictorEngine.swift in Sources */,
 				AI010000000000000000000002 /* TrainingMetrics/AICoachEngine.swift in Sources */,
+				RD010000000000000000000002 /* TrainingMetrics/RunningDynamicsEngine.swift in Sources */,
 				RP010000000000000000000004 /* Dashboard/PacingWristbandExporter.swift in Sources */,
 				A00100000000000000000001 /* TezDavApp.swift in Sources */,
 				A00100000000000000000002 /* AppRootView.swift in Sources */,
@@ -569,6 +576,7 @@
 			files = (
 				RP010000000000000000000006 /* RacePredictorTests.swift in Sources */,
 				AI010000000000000000000004 /* AICoachTests.swift in Sources */,
+				RD010000000000000000000004 /* RunningDynamicsTests.swift in Sources */,
 				A00100000000000000000020 /* TezDavTests.swift in Sources */,
 				A00100000000000000000021 /* TrainingLoadCalculatorTests.swift in Sources */,
 				A00100000000000000000022 /* StravaOAuthTests.swift in Sources */,
