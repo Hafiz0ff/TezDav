@@ -18,6 +18,29 @@ struct TrainingPlannerView: View {
         userSettings.first ?? UserSettings()
     }
     
+    // AI coach calculations
+    private var coachRecommendation: CoachRecommendation {
+        AICoachEngine.analyze(
+            activities: activities,
+            plannedWeeks: plannedWeeks,
+            userSettings: activeSettings,
+            now: Date()
+        )
+    }
+    
+    private func autoAdaptPlanIfNeeded() {
+        guard activeSettings.isAutoAdaptationEnabled else { return }
+        let rec = coachRecommendation
+        if rec.isAdjustmentRecommended {
+            AICoachEngine.applyAdaptation(
+                recommendation: rec,
+                in: modelContext,
+                plannedWeeks: plannedWeeks,
+                now: Date()
+            )
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -63,6 +86,8 @@ struct TrainingPlannerView: View {
                 let divisor = isMetric ? 1000.0 : 1609.344
                 currentRunningVolumeKm = activeSettings.targetWeeklyDistanceMeters > 0 ? (activeSettings.targetWeeklyDistanceMeters / divisor) : (isMetric ? 40.0 : 25.0)
                 currentCyclingHours = activeSettings.weeklyCyclingGoalHours > 0 ? activeSettings.weeklyCyclingGoalHours : 3.0
+                
+                autoAdaptPlanIfNeeded()
             }
         }
     }
@@ -132,6 +157,10 @@ struct TrainingPlannerView: View {
     private var plannerDashboardView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
+                // AI Coach section at the top of the dashboard
+                aiCoachSection
+                    .padding(.top, 10)
+                
                 // 1. Horizontal Scroll Weeks
                 Text("Календарь подготовки")
                     .font(.title3.weight(.bold))
@@ -364,7 +393,9 @@ struct TrainingPlannerView: View {
     }
     
     private func weekTypeColor(_ type: String) -> Color {
-        switch type {
+        let cleanType = type.replacingOccurrences(of: " (Адапт.)", with: "")
+                            .replacingOccurrences(of: " (Adapted)", with: "")
+        switch cleanType {
         case "Базовая": return .blue
         case "Развивающая": return .purple
         case "Ударная": return .red
@@ -447,6 +478,162 @@ struct TrainingPlannerView: View {
             ]
         default:
             return []
+        }
+    }
+    
+    // MARK: - AI Coach Assistant UI Section
+    
+    private var aiCoachSection: some View {
+        let rec = coachRecommendation
+        let isMetric = activeSettings.isMetric
+        
+        return VStack(alignment: .leading, spacing: 14) {
+            // Header
+            HStack(spacing: 8) {
+                Image(systemName: "brain.head.profile")
+                    .font(.title2)
+                    .foregroundStyle(.purple.gradient)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(isMetric ? "ИИ-Ассистент Тренера" : "AI Coach Assistant")
+                        .font(.headline)
+                    Text("CTL: \(Int(round(rec.ctl))) | ATL: \(Int(round(rec.atl)))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer()
+                
+                // Status Capsule
+                Text(statusLabel(rec.status, isMetric: isMetric))
+                    .font(.caption2.weight(.bold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(statusColor(rec.status).opacity(0.15))
+                    .foregroundStyle(statusColor(rec.status))
+                    .cornerRadius(6)
+            }
+            
+            Divider()
+            
+            // Insight message
+            Text(isMetric ? rec.insightRU : rec.insightEN)
+                .font(.subheadline)
+                .foregroundStyle(.primary)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+            
+            // Compliance section if previous week exists
+            if rec.runCompliance != nil || rec.bikeCompliance != nil {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(isMetric ? "Выполнение плана за прошлую неделю:" : "Previous week plan compliance:")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                    
+                    if let rc = rec.runCompliance, let targetRun = rec.targetRunMeters, let actualRun = rec.actualRunMeters {
+                        let divisor = isMetric ? 1000.0 : 1609.344
+                        let targetVal = targetRun / divisor
+                        let actualVal = actualRun / divisor
+                        let unit = isMetric ? "км" : "миль"
+                        HStack {
+                            Text(isMetric ? "Бег:" : "Run:")
+                                .font(.caption)
+                                .frame(width: 45, alignment: .leading)
+                            
+                            ProgressView(value: min(1.0, rc))
+                                .tint(.blue)
+                            
+                            Text(String(format: "%.0f%% (%.1f/%.1f %@", rc * 100, actualVal, targetVal, unit))
+                                .font(.caption.weight(.bold))
+                        }
+                    }
+                    
+                    if let bc = rec.bikeCompliance, let targetBike = rec.targetBikeHours, let actualBike = rec.actualBikeHours {
+                        HStack {
+                            Text(isMetric ? "Вело:" : "Bike:")
+                                .font(.caption)
+                                .frame(width: 45, alignment: .leading)
+                            
+                            ProgressView(value: min(1.0, bc))
+                                .tint(.green)
+                            
+                            Text(String(format: "%.0f%% (%.1f/%.1f ч)", bc * 100, actualBike, targetBike))
+                                .font(.caption.weight(.bold))
+                        }
+                    }
+                }
+                .padding(.top, 4)
+            }
+            
+            Divider()
+            
+            // Actions
+            HStack {
+                Toggle(isOn: Binding(
+                    get: { activeSettings.isAutoAdaptationEnabled },
+                    set: { newValue in
+                        activeSettings.isAutoAdaptationEnabled = newValue
+                        try? modelContext.save()
+                        if newValue {
+                            autoAdaptPlanIfNeeded()
+                        }
+                    }
+                )) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(isMetric ? "Авто-адаптация" : "Auto-Adaptation")
+                            .font(.subheadline.weight(.semibold))
+                        Text(isMetric ? "С подстройкой под усталость" : "Adjust targets based on fatigue")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .tint(.purple)
+                
+                if rec.isAdjustmentRecommended && !activeSettings.isAutoAdaptationEnabled {
+                    Spacer()
+                    
+                    Button {
+                        withAnimation {
+                            AICoachEngine.applyAdaptation(
+                                recommendation: rec,
+                                in: modelContext,
+                                plannedWeeks: plannedWeeks,
+                                now: Date()
+                            )
+                        }
+                    } label: {
+                        Text(isMetric ? "Адаптировать" : "Adapt Plan")
+                            .font(.caption.weight(.bold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(Color.purple.gradient)
+                            .cornerRadius(8)
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+    }
+    
+    private func statusColor(_ status: TrainerStatus) -> Color {
+        switch status {
+        case .optimal: return .green
+        case .overload: return .red
+        case .recovery: return .orange
+        case .underload: return .purple
+        case .fresh: return .blue
+        }
+    }
+    
+    private func statusLabel(_ status: TrainerStatus, isMetric: Bool) -> String {
+        switch status {
+        case .optimal: return isMetric ? "ОПТИМАЛЬНО" : "OPTIMAL"
+        case .overload: return isMetric ? "ПЕРЕГРУЗКА" : "OVERLOAD"
+        case .recovery: return isMetric ? "ВОССТАНОВЛЕНИЕ" : "RECOVERY"
+        case .underload: return isMetric ? "НЕДОГРУЗКА" : "UNDERLOAD"
+        case .fresh: return isMetric ? "СВЕЖЕСТЬ" : "FRESH"
         }
     }
 }

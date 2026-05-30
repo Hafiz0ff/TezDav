@@ -40,6 +40,7 @@ final class UserSettings {
     var lastTsbNotificationDate: Date?
     
     var isMetric: Bool = true
+    var isAutoAdaptationEnabled: Bool = false
 
     init(
         key: String = "default",
@@ -65,7 +66,8 @@ final class UserSettings {
         stravaAccountName: String? = nil,
         lastSyncedAt: Date? = nil,
         lastTsbNotificationDate: Date? = nil,
-        isMetric: Bool = true
+        isMetric: Bool = true,
+        isAutoAdaptationEnabled: Bool = false
     ) {
         self.key = key
         self.maxHeartRate = maxHeartRate
@@ -91,6 +93,7 @@ final class UserSettings {
         self.lastSyncedAt = lastSyncedAt
         self.lastTsbNotificationDate = lastTsbNotificationDate
         self.isMetric = isMetric
+        self.isAutoAdaptationEnabled = isAutoAdaptationEnabled
     }
 
     // Dynamic Max HR Calculation: Max HR = 220 - Age (if not explicitly specified)
