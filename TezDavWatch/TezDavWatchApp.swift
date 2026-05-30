@@ -184,6 +184,14 @@ struct WorkoutLiveData: Codable {
     let calories: Int?
     let cadence: Int?
     let elevationGain: Double?
+    
+    let currentLatitude: Double?
+    let currentLongitude: Double?
+    let segmentName: String?
+    let segmentTimeAheadBehind: Double?
+    let segmentDistanceRemaining: Double?
+    let segmentDistanceCovered: Double?
+    let isInsideSegment: Bool?
 }
 
 @main

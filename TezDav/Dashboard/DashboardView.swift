@@ -25,6 +25,7 @@ struct DashboardView: View {
     @State private var localImportedFileURLs: [URL]? = nil
     @State private var selectedSport: SportFilter = .all
     @State private var isShowingWeeklySummary = false
+    @State private var isSimulatorPresented = false
 
     private let config = StravaConfig.fromBundle()
     private let tokenStore = KeychainTokenStore()
@@ -146,11 +147,21 @@ struct DashboardView: View {
         .navigationTitle("Dashboard")
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    HapticManager.trigger(.light)
-                    isFileImporterPresented = true
-                } label: {
-                    Image(systemName: "plus")
+                HStack(spacing: 12) {
+                    Button {
+                        HapticManager.trigger(.light)
+                        isFileImporterPresented = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                    
+                    Button {
+                        HapticManager.trigger(.light)
+                        isSimulatorPresented = true
+                    } label: {
+                        Image(systemName: "play.circle.fill")
+                            .foregroundColor(.orange)
+                    }
                 }
             }
             
@@ -186,6 +197,12 @@ struct DashboardView: View {
         }
         .sheet(isPresented: $isShowingWeeklySummary) {
             WeeklySummaryShareView()
+        }
+        .sheet(isPresented: $isSimulatorPresented) {
+            WorkoutSimulatorSheet()
+        }
+        .overlay {
+            LiveSegmentOverlayView()
         }
         .task {
             triggerSync()

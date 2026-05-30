@@ -140,6 +140,10 @@
 		TZ1700000000000000000008 /* SocialFeedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1700000000000000000007 /* SocialFeedTests.swift */; };
 		FC0100000000000000000002 /* Persistence/PlannedWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0100000000000000000001 /* Persistence/PlannedWorkout.swift */; };
 		FC0100000000000000000004 /* ForecastTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0100000000000000000003 /* ForecastTests.swift */; };
+		LS01000000000000000000001 /* LiveActivity/LiveSegmentCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = LS02000000000000000000001 /* LiveActivity/LiveSegmentCoordinator.swift */; };
+		LS01000000000000000000002 /* LiveActivity/LiveSegmentOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = LS02000000000000000000002 /* LiveActivity/LiveSegmentOverlayView.swift */; };
+		LS01000000000000000000003 /* LiveActivity/WorkoutSimulatorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = LS02000000000000000000003 /* LiveActivity/WorkoutSimulatorSheet.swift */; };
+		LS01000000000000000000004 /* LiveSegmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = LS02000000000000000000004 /* LiveSegmentTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -293,6 +297,10 @@
 		TZ1700000000000000000007 /* SocialFeedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialFeedTests.swift; sourceTree = "<group>"; };
 		FC0100000000000000000001 /* Persistence/PlannedWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/PlannedWorkout.swift; sourceTree = "<group>"; };
 		FC0100000000000000000003 /* ForecastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastTests.swift; sourceTree = "<group>"; };
+		LS02000000000000000000001 /* LiveActivity/LiveSegmentCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/LiveSegmentCoordinator.swift; sourceTree = "<group>"; };
+		LS02000000000000000000002 /* LiveActivity/LiveSegmentOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/LiveSegmentOverlayView.swift; sourceTree = "<group>"; };
+		LS02000000000000000000003 /* LiveActivity/WorkoutSimulatorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/WorkoutSimulatorSheet.swift; sourceTree = "<group>"; };
+		LS02000000000000000000004 /* LiveSegmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveSegmentTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 
@@ -412,6 +420,9 @@
 				LA02000000000000000000001 /* LiveActivity/WorkoutActivityAttributes.swift */,
 				LA02000000000000000000002 /* LiveActivity/LiveActivityManager.swift */,
 				LA02000000000000000000003 /* LiveActivity/WorkoutSimulator.swift */,
+				LS02000000000000000000001 /* LiveActivity/LiveSegmentCoordinator.swift */,
+				LS02000000000000000000002 /* LiveActivity/LiveSegmentOverlayView.swift */,
+				LS02000000000000000000003 /* LiveActivity/WorkoutSimulatorSheet.swift */,
 				RB0200000000000000000001 /* Persistence/SavedRoute.swift */,
 				RB0200000000000000000002 /* RouteBuilder/ElevationService.swift */,
 				RB0200000000000000000003 /* RouteBuilder/RouteEngine.swift */,
@@ -476,6 +487,7 @@
 				A00200000000000000000025 /* SyncServiceTests.swift */,
 				RT0200000000000000000001 /* RouteBuilderTests.swift */,
 				SG0200000000000000000006 /* SegmentMatcherTests.swift */,
+				LS02000000000000000000004 /* LiveSegmentTests.swift */,
 				TZ8000000000000000000007 /* PersonalSegmentMatcherTests.swift */,
 				HM020000000000000000000003 /* PolylineEncoderTests.swift */,
 				TZ1102000000000000000004 /* CasualAndGamificationTests.swift */,
@@ -704,6 +716,9 @@
 				LA01000000000000000000001 /* LiveActivity/WorkoutActivityAttributes.swift in Sources */,
 				LA01000000000000000000002 /* LiveActivity/LiveActivityManager.swift in Sources */,
 				LA01000000000000000000003 /* LiveActivity/WorkoutSimulator.swift in Sources */,
+				LS01000000000000000000001 /* LiveActivity/LiveSegmentCoordinator.swift in Sources */,
+				LS01000000000000000000002 /* LiveActivity/LiveSegmentOverlayView.swift in Sources */,
+				LS01000000000000000000003 /* LiveActivity/WorkoutSimulatorSheet.swift in Sources */,
 				RB0100000000000000000001 /* Persistence/SavedRoute.swift in Sources */,
 				RB0100000000000000000002 /* RouteBuilder/ElevationService.swift in Sources */,
 				RB0100000000000000000003 /* RouteBuilder/RouteEngine.swift in Sources */,
@@ -762,6 +777,7 @@
 				RT0100000000000000000001 /* RouteBuilderTests.swift in Sources */,
 				PC0100000000000000000005 /* PowerCurveTests.swift in Sources */,
 				SG0100000000000000000006 /* SegmentMatcherTests.swift in Sources */,
+				LS01000000000000000000004 /* LiveSegmentTests.swift in Sources */,
 				TZ8000000000000000000008 /* PersonalSegmentMatcherTests.swift in Sources */,
 				HM010000000000000000000003 /* PolylineEncoderTests.swift in Sources */,
 				TZ1101000000000000000004 /* CasualAndGamificationTests.swift in Sources */,

@@ -19,6 +19,49 @@ struct WorkoutActivityAttributes: ActivityAttributes {
         let calories: Int?              // Estimated calories burned
         let cadence: Int?               // Steps/min (run) or RPM (ride)
         let elevationGain: Double?      // Total elevation gain in meters
+        
+        // Live Segments Telemetry
+        let currentLatitude: Double?
+        let currentLongitude: Double?
+        let segmentName: String?
+        let segmentTimeAheadBehind: Double?
+        let segmentDistanceRemaining: Double?
+        let segmentDistanceCovered: Double?
+        let isInsideSegment: Bool?
+        
+        init(
+            elapsedSeconds: Int,
+            distanceMeters: Double,
+            currentPace: Double? = nil,
+            currentSpeed: Double? = nil,
+            heartRate: Int? = nil,
+            calories: Int? = nil,
+            cadence: Int? = nil,
+            elevationGain: Double? = nil,
+            currentLatitude: Double? = nil,
+            currentLongitude: Double? = nil,
+            segmentName: String? = nil,
+            segmentTimeAheadBehind: Double? = nil,
+            segmentDistanceRemaining: Double? = nil,
+            segmentDistanceCovered: Double? = nil,
+            isInsideSegment: Bool? = false
+        ) {
+            self.elapsedSeconds = elapsedSeconds
+            self.distanceMeters = distanceMeters
+            self.currentPace = currentPace
+            self.currentSpeed = currentSpeed
+            self.heartRate = heartRate
+            self.calories = calories
+            self.cadence = cadence
+            self.elevationGain = elevationGain
+            self.currentLatitude = currentLatitude
+            self.currentLongitude = currentLongitude
+            self.segmentName = segmentName
+            self.segmentTimeAheadBehind = segmentTimeAheadBehind
+            self.segmentDistanceRemaining = segmentDistanceRemaining
+            self.segmentDistanceCovered = segmentDistanceCovered
+            self.isInsideSegment = isInsideSegment
+        }
     }
 }
 

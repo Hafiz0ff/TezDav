@@ -9,14 +9,25 @@ struct CompactLeadingView: View {
     
     var body: some View {
         HStack(spacing: 4) {
-            Image(systemName: attributes.sportIcon)
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(sportColor)
-            
-            Text(LiveActivityHelpers.formatDistance(state.distanceMeters))
-                .font(.system(size: 13, design: .rounded).weight(.bold))
-                .foregroundStyle(.white)
-                .contentTransition(.numericText())
+            if state.isInsideSegment == true, let rem = state.segmentDistanceRemaining {
+                Image(systemName: "crown.fill")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(.yellow)
+                
+                Text(String(format: "%.0fм", rem))
+                    .font(.system(size: 13, design: .rounded).weight(.bold))
+                    .foregroundStyle(.white)
+                    .contentTransition(.numericText())
+            } else {
+                Image(systemName: attributes.sportIcon)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(sportColor)
+                
+                Text(LiveActivityHelpers.formatDistance(state.distanceMeters))
+                    .font(.system(size: 13, design: .rounded).weight(.bold))
+                    .foregroundStyle(.white)
+                    .contentTransition(.numericText())
+            }
         }
     }
     
@@ -35,11 +46,18 @@ struct CompactTrailingView: View {
     let state: WorkoutActivityAttributes.ContentState
     
     var body: some View {
-        Text(attributes.startTime, style: .timer)
-            .font(.system(size: 13, design: .monospaced).weight(.medium))
-            .foregroundStyle(.white.opacity(0.85))
-            .multilineTextAlignment(.trailing)
-            .frame(minWidth: 42)
+        if state.isInsideSegment == true, let gap = state.segmentTimeAheadBehind {
+            let isAhead = gap <= 0
+            Text(String(format: "%@%.1fc", isAhead ? "-" : "+", abs(gap)))
+                .font(.system(size: 13, design: .rounded).weight(.bold))
+                .foregroundStyle(isAhead ? Color(red: 1.0, green: 0.48, blue: 0.0) : .red)
+        } else {
+            Text(attributes.startTime, style: .timer)
+                .font(.system(size: 13, design: .monospaced).weight(.medium))
+                .foregroundStyle(.white.opacity(0.85))
+                .multilineTextAlignment(.trailing)
+                .frame(minWidth: 42)
+        }
     }
 }
 
@@ -112,51 +130,84 @@ struct ExpandedTrailingView: View {
     }
 }
 
-// MARK: — Expanded Center
-
 struct ExpandedCenterView: View {
     let attributes: WorkoutActivityAttributes
     let state: WorkoutActivityAttributes.ContentState
     
     var body: some View {
-        HStack(spacing: 16) {
-            // Distance
-            VStack(spacing: 1) {
-                Text(LiveActivityHelpers.formatDistance(state.distanceMeters))
-                    .font(.system(size: 20, design: .rounded).weight(.bold))
-                    .foregroundStyle(.white)
-                    .contentTransition(.numericText())
+        if state.isInsideSegment == true {
+            HStack(spacing: 16) {
+                // Remaining Distance
+                VStack(spacing: 1) {
+                    Text(String(format: "%.0f м", state.segmentDistanceRemaining ?? 0.0))
+                        .font(.system(size: 20, design: .rounded).weight(.bold))
+                        .foregroundStyle(.white)
+                        .contentTransition(.numericText())
+                    
+                    Text("осталось")
+                        .font(.system(size: 9, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.5))
+                }
                 
-                Text("км")
-                    .font(.system(size: 9, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.5))
+                // Divider
+                Rectangle()
+                    .fill(.white.opacity(0.2))
+                    .frame(width: 1, height: 28)
+                
+                // Time Gap
+                if let gap = state.segmentTimeAheadBehind {
+                    let isAhead = gap <= 0
+                    VStack(spacing: 1) {
+                        Text(String(format: "%@%.1fc", isAhead ? "-" : "+", abs(gap)))
+                            .font(.system(size: 20, design: .rounded).weight(.bold))
+                            .foregroundStyle(isAhead ? Color(red: 1.0, green: 0.48, blue: 0.0) : .red)
+                        
+                        Text(isAhead ? "опережение" : "отставание")
+                            .font(.system(size: 9, weight: .medium))
+                            .foregroundStyle(isAhead ? Color(red: 1.0, green: 0.48, blue: 0.0).opacity(0.8) : .red.opacity(0.8))
+                    }
+                }
             }
-            
-            // Divider
-            Rectangle()
-                .fill(.white.opacity(0.2))
-                .frame(width: 1, height: 28)
-            
-            // Pace or Speed
-            VStack(spacing: 1) {
-                if WorkoutActivityAttributes.usesPace(for: attributes.sportType) {
-                    Text(LiveActivityHelpers.formatPace(state.currentPace))
+        } else {
+            HStack(spacing: 16) {
+                // Distance
+                VStack(spacing: 1) {
+                    Text(LiveActivityHelpers.formatDistance(state.distanceMeters))
                         .font(.system(size: 20, design: .rounded).weight(.bold))
                         .foregroundStyle(.white)
                         .contentTransition(.numericText())
                     
-                    Text("/км")
+                    Text("км")
                         .font(.system(size: 9, weight: .medium))
                         .foregroundStyle(.white.opacity(0.5))
-                } else {
-                    Text(LiveActivityHelpers.formatSpeed(state.currentSpeed))
-                        .font(.system(size: 20, design: .rounded).weight(.bold))
-                        .foregroundStyle(.white)
-                        .contentTransition(.numericText())
-                    
-                    Text("км/ч")
-                        .font(.system(size: 9, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.5))
+                }
+                
+                // Divider
+                Rectangle()
+                    .fill(.white.opacity(0.2))
+                    .frame(width: 1, height: 28)
+                
+                // Pace or Speed
+                VStack(spacing: 1) {
+                    if WorkoutActivityAttributes.usesPace(for: attributes.sportType) {
+                        Text(LiveActivityHelpers.formatPace(state.currentPace))
+                            .font(.system(size: 20, design: .rounded).weight(.bold))
+                            .foregroundStyle(.white)
+                            .contentTransition(.numericText())
+                        
+                        Text("/км")
+                            .font(.system(size: 9, weight: .medium))
+                            .foregroundStyle(.white.opacity(0.5))
+                    } else {
+                        Text(LiveActivityHelpers.formatSpeed(state.currentSpeed))
+                            .font(.system(size: 20, design: .rounded).weight(.bold))
+                            .foregroundStyle(.white)
+                            .contentTransition(.numericText())
+                        
+                        Text("км/ч")
+                            .font(.system(size: 9, weight: .medium))
+                            .foregroundStyle(.white.opacity(0.5))
+                    }
                 }
             }
         }
@@ -170,45 +221,71 @@ struct ExpandedBottomView: View {
     let state: WorkoutActivityAttributes.ContentState
     
     var body: some View {
-        HStack {
-            // Timer
-            HStack(spacing: 3) {
-                Image(systemName: "timer")
-                    .font(.system(size: 10))
-                    .foregroundStyle(.white.opacity(0.5))
+        if state.isInsideSegment == true, let name = state.segmentName {
+            HStack {
+                HStack(spacing: 4) {
+                    Image(systemName: "crown.fill")
+                        .font(.system(size: 10))
+                        .foregroundColor(.yellow)
+                    Text(name)
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.yellow)
+                        .lineLimit(1)
+                }
                 
-                Text(attributes.startTime, style: .timer)
-                    .font(.system(size: 12, design: .monospaced).weight(.medium))
-                    .foregroundStyle(.white.opacity(0.7))
-            }
-            
-            Spacer()
-            
-            // Cadence
-            if let cadence = state.cadence {
+                Spacer()
+                
                 HStack(spacing: 3) {
-                    Image(systemName: "metronome")
+                    Image(systemName: "timer")
                         .font(.system(size: 10))
                         .foregroundStyle(.white.opacity(0.5))
                     
-                    Text("\(cadence)")
-                        .font(.system(size: 12, design: .rounded).weight(.medium))
+                    Text(attributes.startTime, style: .timer)
+                        .font(.system(size: 12, design: .monospaced).weight(.medium))
                         .foregroundStyle(.white.opacity(0.7))
                 }
             }
-            
-            Spacer()
-            
-            // Elevation
-            if let elev = state.elevationGain, elev > 0 {
-                HStack(spacing: 2) {
-                    Image(systemName: "arrow.up.right")
+        } else {
+            HStack {
+                // Timer
+                HStack(spacing: 3) {
+                    Image(systemName: "timer")
                         .font(.system(size: 10))
                         .foregroundStyle(.white.opacity(0.5))
                     
-                    Text(String(format: "%.0f м", elev))
-                        .font(.system(size: 12, design: .rounded).weight(.medium))
+                    Text(attributes.startTime, style: .timer)
+                        .font(.system(size: 12, design: .monospaced).weight(.medium))
                         .foregroundStyle(.white.opacity(0.7))
+                }
+                
+                Spacer()
+                
+                // Cadence
+                if let cadence = state.cadence {
+                    HStack(spacing: 3) {
+                        Image(systemName: "metronome")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.white.opacity(0.5))
+                        
+                        Text("\(cadence)")
+                            .font(.system(size: 12, design: .rounded).weight(.medium))
+                            .foregroundStyle(.white.opacity(0.7))
+                    }
+                }
+                
+                Spacer()
+                
+                // Elevation
+                if let elev = state.elevationGain, elev > 0 {
+                    HStack(spacing: 2) {
+                        Image(systemName: "arrow.up.right")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.white.opacity(0.5))
+                        
+                        Text(String(format: "%.0f м", elev))
+                            .font(.system(size: 12, design: .rounded).weight(.medium))
+                            .foregroundStyle(.white.opacity(0.7))
+                    }
                 }
             }
         }
