@@ -134,6 +134,10 @@
 		SH1200000000000000000010 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000009 /* PrivacyInfo.xcprivacy */; };
 		SH1200000000000000000012 /* AppStoreAndSharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000011 /* AppStoreAndSharingTests.swift */; };
 		TZ8000000000000000000008 /* PersonalSegmentMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ8000000000000000000007 /* PersonalSegmentMatcherTests.swift */; };
+		TZ1700000000000000000002 /* Persistence/FriendActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1700000000000000000001 /* Persistence/FriendActivity.swift */; };
+		TZ1700000000000000000004 /* Persistence/FriendComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1700000000000000000003 /* Persistence/FriendComment.swift */; };
+		TZ1700000000000000000006 /* Dashboard/SocialFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1700000000000000000005 /* Dashboard/SocialFeedView.swift */; };
+		TZ1700000000000000000008 /* SocialFeedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1700000000000000000007 /* SocialFeedTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -281,7 +285,12 @@
 		SH1200000000000000000009 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		SH1200000000000000000011 /* AppStoreAndSharingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStoreAndSharingTests.swift; sourceTree = "<group>"; };
 		TZ8000000000000000000007 /* PersonalSegmentMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalSegmentMatcherTests.swift; sourceTree = "<group>"; };
+		TZ1700000000000000000001 /* Persistence/FriendActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/FriendActivity.swift; sourceTree = "<group>"; };
+		TZ1700000000000000000003 /* Persistence/FriendComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/FriendComment.swift; sourceTree = "<group>"; };
+		TZ1700000000000000000005 /* Dashboard/SocialFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/SocialFeedView.swift; sourceTree = "<group>"; };
+		TZ1700000000000000000007 /* SocialFeedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialFeedTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
 
 /* Begin PBXFrameworksBuildPhase section */
 		A00600000000000000000001 /* Frameworks */ = {
@@ -328,6 +337,9 @@
 			children = (
 				RP010000000000000000000001 /* TrainingMetrics/RacePredictorEngine.swift */,
 				AI010000000000000000000001 /* TrainingMetrics/AICoachEngine.swift */,
+				TZ1700000000000000000001 /* Persistence/FriendActivity.swift */,
+				TZ1700000000000000000003 /* Persistence/FriendComment.swift */,
+				TZ1700000000000000000005 /* Dashboard/SocialFeedView.swift */,
 				SH1200000000000000000001 /* Dashboard/WorkoutCardShareView.swift */,
 				SH1200000000000000000003 /* Dashboard/WeeklySummaryShareView.swift */,
 				SH1200000000000000000005 /* RouteBuilder/GlobalHeatmapTileOverlay.swift */,
@@ -444,6 +456,7 @@
 				TZ100000000000000000000D /* FTPTestTests.swift */,
 				TZ100000000000000000000F /* RouteMatcherTests.swift */,
 				AI010000000000000000000003 /* AICoachTests.swift */,
+				TZ1700000000000000000007 /* SocialFeedTests.swift */,
 				SH1200000000000000000011 /* AppStoreAndSharingTests.swift */,
 				TZ900000000000000000000E /* CoachingEngineTests.swift */,
 				TZ9000000000000000000010 /* GearTrackingTests.swift */,
@@ -620,6 +633,9 @@
 			files = (
 				RP010000000000000000000002 /* TrainingMetrics/RacePredictorEngine.swift in Sources */,
 				AI010000000000000000000002 /* TrainingMetrics/AICoachEngine.swift in Sources */,
+				TZ1700000000000000000002 /* Persistence/FriendActivity.swift in Sources */,
+				TZ1700000000000000000004 /* Persistence/FriendComment.swift in Sources */,
+				TZ1700000000000000000006 /* Dashboard/SocialFeedView.swift in Sources */,
 				SH1200000000000000000002 /* Dashboard/WorkoutCardShareView.swift in Sources */,
 				SH1200000000000000000004 /* Dashboard/WeeklySummaryShareView.swift in Sources */,
 				SH1200000000000000000006 /* RouteBuilder/GlobalHeatmapTileOverlay.swift in Sources */,
@@ -723,6 +739,7 @@
 				TZ100000000000000000000E /* FTPTestTests.swift in Sources */,
 				TZ1000000000000000000010 /* RouteMatcherTests.swift in Sources */,
 				AI010000000000000000000004 /* AICoachTests.swift in Sources */,
+				TZ1700000000000000000008 /* SocialFeedTests.swift in Sources */,
 				SH1200000000000000000012 /* AppStoreAndSharingTests.swift in Sources */,
 				TZ900000000000000000000F /* CoachingEngineTests.swift in Sources */,
 				TZ9000000000000000000011 /* GearTrackingTests.swift in Sources */,

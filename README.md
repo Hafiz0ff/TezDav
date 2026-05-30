@@ -110,6 +110,12 @@
 * Подсчет исследованной площади на основе виртуальной сетки с шагом 1x1 км.
 * Поиск географических экстремумов тренировок (самая северная, южная, восточная и западная точки).
 
+#### 16. Социальная лента и Kudos (Social Feed & Kudos)
+* Интерактивная лента спортивной активности ваших друзей с отображением мини-карт MapKit и оранжевых треков маршрутов.
+* Система оценки тренировок («Kudos») с тактильным откликом (Haptics) и оранжевым свечением, активируемая как кнопкой, так и двойным тапом по карточке с анимированным всплывающим значком.
+* Интерактивные комментарии с возможностью добавлять ответы на тренировки друзей прямо из ленты.
+* Локальная база данных SwiftData со встроенным механизмом наполнения (seeding) реалистичными тренировками из Таджикистана при первом запуске.
+
 ---
 
 
@@ -143,6 +149,7 @@ graph TD
     UI --> Recs[Race Predictor Pro / Прогноз результатов]
     UI --> Gear[Gear Tracker / Учёт экипировки]
     UI --> CoachingView[AI Coach Insights / Ежедневный ИИ-тренер]
+    UI --> SocialFeed[Social Feed & Kudos / Социальная лента]
     
     %% Analytics Engine
     Engines[Sports Science Engines / Физиологические расчеты]
@@ -169,6 +176,7 @@ graph TD
     App --> DB
     DB --> GearDB[(GearItem DB)]
     DB --> WeatherDB[(WeatherSnapshot DB)]
+    DB --> SocialDB[(FriendActivity & Comment DB)]
 ```
 
 ---
@@ -282,4 +290,5 @@ graph TD
 * **Casual Mode, Achievements & Gamification**: Lightweight app mode tailored for daily walking and light activity. Tracks daily steps, active minutes, and calories, coupled with a GitHub-style Activity Contribution Heatmap. Rewards performance with a personal Achievements Showcase featuring streak awards and distance milestones.
 * **Workout Card Sharing & Weekly Summary Cards**: Generates high-fidelity visual cards for social media sharing. Supports 1:1 Square and 9:16 Stories formats, customizable styling themes (Dark, Light, Gradient), high-resolution route track map rendering, and weekly activity recap cards with multi-run visual clusters.
 * **Personal Geography & Exploring Stats**: In-depth geographical analysis automatically clustering visited cities and neighborhoods. Computes total explored land area on a 1x1 km virtual grid and identifies spatial extrema (northernmost, southernmost, easternmost, and westernmost GPS coordinates of your workouts).
+* **Social Feed & Kudos**: Interactive feed of friends' workouts with MapKit route overlays, thumbs-up Kudos interactions (featuring single-tap toggle and double-tap pop-up animation with haptics), and expandable, interactive comment sections. Fully persisted using SwiftData and populated with mock Tajikistan running/cycling seed data.
 

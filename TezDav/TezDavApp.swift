@@ -16,7 +16,7 @@ struct TezDavApp: App {
                 Activity.self, ActivityStreamSample.self, SyncState.self, UserSettings.self,
                 IntervalSegment.self, TrainingWeek.self, SavedRoute.self, Segment.self,
                 SegmentEffort.self, PersonalSegment.self, GearItem.self, WeatherSnapshot.self,
-                Achievement.self
+                Achievement.self, FriendActivity.self, FriendComment.self
             ])
             
             if NSClassFromString("XCTestCase") != nil {
@@ -29,10 +29,12 @@ struct TezDavApp: App {
                 schema: Schema([
                     Activity.self, SyncState.self, UserSettings.self, IntervalSegment.self,
                     TrainingWeek.self, SavedRoute.self, Segment.self, SegmentEffort.self,
-                    PersonalSegment.self, GearItem.self, WeatherSnapshot.self, Achievement.self
+                    PersonalSegment.self, GearItem.self, WeatherSnapshot.self, Achievement.self,
+                    FriendActivity.self, FriendComment.self
                 ]),
                 cloudKitDatabase: .private("iCloud.com.example.TezDav")
             )
+
             
             let localConfig = ModelConfiguration(
                 "TezDavLocal",

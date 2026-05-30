@@ -71,9 +71,12 @@ struct AppRootView: View {
                                 Label("Routes", systemImage: "map.fill")
                             }
                             NavigationLink(value: 3) {
-                                Label("Records", systemImage: "trophy.fill")
+                                Label("Social", systemImage: "person.2.fill")
                             }
                             NavigationLink(value: 4) {
+                                Label("Records", systemImage: "trophy.fill")
+                            }
+                            NavigationLink(value: 5) {
                                 Label("Profile", systemImage: "person.crop.circle.fill")
                             }
                         }
@@ -84,8 +87,9 @@ struct AppRootView: View {
                         case 0: DashboardView()
                         case 1: FormView()
                         case 2: RouteListView()
-                        case 3: RecordsView()
-                        case 4: ProfileView()
+                        case 3: SocialFeedView()
+                        case 4: RecordsView()
+                        case 5: ProfileView()
                         default: DashboardView()
                         }
                     }
@@ -149,17 +153,23 @@ struct AppRootView: View {
                             }
                             .tag(2)
 
+                        SocialFeedView()
+                            .tabItem {
+                                Label("Social", systemImage: "person.2.fill")
+                            }
+                            .tag(3)
+
                         RecordsView()
                             .tabItem {
                                 Label("Records", systemImage: "trophy.fill")
                             }
-                            .tag(3)
+                            .tag(4)
                             
                         ProfileView()
                             .tabItem {
                                 Label("Profile", systemImage: "person.crop.circle.fill")
                             }
-                            .tag(4)
+                            .tag(5)
                     }
                     .sheet(item: $activityIdWrapper) { wrapper in
                         if let targetAct = allActivities.first(where: { $0.stravaId == wrapper.id }) {
