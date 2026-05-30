@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		RP010000000000000000000002 /* TrainingMetrics/RacePredictorEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP010000000000000000000001 /* TrainingMetrics/RacePredictorEngine.swift */; };
+		RP010000000000000000000004 /* Dashboard/PacingWristbandExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP010000000000000000000003 /* Dashboard/PacingWristbandExporter.swift */; };
+		RP010000000000000000000006 /* RacePredictorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP010000000000000000000005 /* RacePredictorTests.swift */; };
 		A00100000000000000000091 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000091 /* Assets.xcassets */; };
 		A00100000000000000000081 /* GpxParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000081 /* GpxParser.swift */; };
 		A00100000000000000000082 /* FitParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000082 /* FitParser.swift */; };
@@ -110,6 +113,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		RP010000000000000000000001 /* TrainingMetrics/RacePredictorEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/RacePredictorEngine.swift; sourceTree = "<group>"; };
+		RP010000000000000000000003 /* Dashboard/PacingWristbandExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/PacingWristbandExporter.swift; sourceTree = "<group>"; };
+		RP010000000000000000000005 /* RacePredictorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RacePredictorTests.swift; sourceTree = "<group>"; };
 		A00200000000000000000091 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A00200000000000000000081 /* GpxParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/GpxParser.swift; sourceTree = "<group>"; };
 		A00200000000000000000082 /* FitParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/FitParser.swift; sourceTree = "<group>"; };
@@ -239,6 +245,8 @@
 		A00700000000000000000002 /* TezDav */ = {
 			isa = PBXGroup;
 			children = (
+				RP010000000000000000000001 /* TrainingMetrics/RacePredictorEngine.swift */,
+				RP010000000000000000000003 /* Dashboard/PacingWristbandExporter.swift */,
 				A00200000000000000000091 /* Assets.xcassets */,
 				A00200000000000000000081 /* GpxParser.swift */,
 				A00200000000000000000082 /* FitParser.swift */,
@@ -317,6 +325,7 @@
 		A00700000000000000000003 /* TezDavTests */ = {
 			isa = PBXGroup;
 			children = (
+				RP010000000000000000000005 /* RacePredictorTests.swift */,
 				A00200000000000000000020 /* TezDavTests.swift */,
 				A00200000000000000000021 /* TrainingLoadCalculatorTests.swift */,
 				A00200000000000000000022 /* StravaOAuthTests.swift */,
@@ -481,6 +490,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				RP010000000000000000000002 /* TrainingMetrics/RacePredictorEngine.swift in Sources */,
+				RP010000000000000000000004 /* Dashboard/PacingWristbandExporter.swift in Sources */,
 				A00100000000000000000001 /* TezDavApp.swift in Sources */,
 				A00100000000000000000002 /* AppRootView.swift in Sources */,
 				A00100000000000000000003 /* TrainingMetrics/TrainingLoadCalculator.swift in Sources */,
@@ -549,6 +560,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				RP010000000000000000000006 /* RacePredictorTests.swift in Sources */,
 				A00100000000000000000020 /* TezDavTests.swift in Sources */,
 				A00100000000000000000021 /* TrainingLoadCalculatorTests.swift in Sources */,
 				A00100000000000000000022 /* StravaOAuthTests.swift in Sources */,
