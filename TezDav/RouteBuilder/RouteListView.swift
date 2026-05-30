@@ -23,7 +23,7 @@ struct RouteListView: View {
         }
     }
     
-    @State private var selectedTabMode = 0 // 0 for Routes, 1 for Segments
+    @State private var selectedTabMode = 0 // 0 for Routes, 1 for Segments, 2 for Heatmap
     
     var body: some View {
         NavigationStack {
@@ -31,6 +31,7 @@ struct RouteListView: View {
                 Picker("Режим", selection: $selectedTabMode) {
                     Text("Маршруты").tag(0)
                     Text("Сегменты").tag(1)
+                    Text("Теплокарта").tag(2)
                 }
                 .pickerStyle(.segmented)
                 .padding(.horizontal, 16)
@@ -39,11 +40,13 @@ struct RouteListView: View {
                 
                 if selectedTabMode == 0 {
                     routesListSection
-                } else {
+                } else if selectedTabMode == 1 {
                     SegmentListView()
+                } else {
+                    PersonalHeatmapView()
                 }
             }
-            .navigationTitle(selectedTabMode == 0 ? "Маршруты" : "Сегменты")
+            .navigationTitle(selectedTabMode == 0 ? "Маршруты" : (selectedTabMode == 1 ? "Сегменты" : "Тепловая карта"))
             .toolbar {
                 if selectedTabMode == 0 {
                     ToolbarItem(placement: .navigationBarTrailing) {

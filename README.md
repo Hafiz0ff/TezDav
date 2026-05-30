@@ -57,6 +57,13 @@
 * Виртуальные соперники (боты) с реалистичным распределением результатов для поддержания духа соревнований.
 * Интерактивный детальный просмотр сегмента: наложение трека на карту золотым цветом, график высот с помощью Swift Charts и полные таблицы лидерборда.
 
+#### 8. Персональная тепловая карта (Personal Heatmap)
+* Интерактивная визуализация всех пройденных маршрутов на одной карте (MapKit).
+* Фильтрация треков по видам спорта (Бег, Велоспорт, Все) и поддержка трех типов карт (схема, спутник, гибрид).
+* Индивидуальная настройка визуального стиля: толщина линий, выбор цветовой схемы (Оранжевая, Неоновый зеленый, Синий лед, Мультиспорт с кодированием по типу активности) и слайдер прозрачности (свечения).
+* Автоматическая оптимизация (даунсэмплинг) точек и кэширование полилайнов в базе данных SwiftData для мгновенной загрузки.
+* Экспорт тепловой карты в высоком разрешении (MKMapSnapshotter + CoreGraphics) для публикации в соцсетях.
+
 ---
 
 ### 🛠 Стек технологий и Архитектура
@@ -107,6 +114,11 @@
   <img src="docs/screenshots/segment_detail_leaderboard.png" alt="Лидерборд сегмента" width="50%">
 </p>
 
+<p align="center">
+  <b>Персональная тепловая карта тренировок (Personal Heatmap)</b><br>
+  <img src="docs/screenshots/personal_heatmap.png" alt="Тепловая карта тренировок" width="50%">
+</p>
+
 ---
 
 ## 🇬🇧 English Section
@@ -124,6 +136,7 @@
 * **Structured Training Planner**: Dynamic training schedule generator adapting blocks into recovery, developmental, and tapering cycles based on historical workloads.
 * **Unified Imperial/Metric Engine**: Global system conversion instantly formatting inputs, charts, and values. Automatically splits running/cycling intervals into 1-mile laps with pace and elevation gains formatted dynamically (mi, ft, lbs, mph, W/lbs).
 * **Segments & Leaderboards**: Local offline snapping of activities (GPX/FIT) with predefined segments using the Haversine formula (25m proximity, 15% distance tolerance). Tracks Personal Records (PRs), shows interactive segment maps, Swift Charts elevation profiles, and lists local leaderboards populated with simulated bots.
+* **Personal Heatmap**: High-fidelity overlay showing all historical GPS tracks on a single interactive map. Features filtering by sport type, map styles (Standard, Satellite, Hybrid), adjustable line thickness, line opacity (glowing effect), and color scheme presets (Orange, Neon Green, Ice Blue, Multisport). Implements automatic path downsampling and encoding/caching in SwiftData for instant offline loads. Supports exporting high-resolution heatmap images (MKMapSnapshotter + CoreGraphics) via standard Share Sheets.
 
 ---
 

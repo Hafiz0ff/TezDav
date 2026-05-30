@@ -87,6 +87,9 @@
 		SG0100000000000000000004 /* Dashboard/SegmentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000004 /* Dashboard/SegmentListView.swift */; };
 		SG0100000000000000000005 /* Dashboard/SegmentDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000005 /* Dashboard/SegmentDetailView.swift */; };
 		SG0100000000000000000006 /* SegmentMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000006 /* SegmentMatcherTests.swift */; };
+		HM010000000000000000000001 /* RouteBuilder/PolylineEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = HM020000000000000000000001 /* RouteBuilder/PolylineEncoder.swift */; };
+		HM010000000000000000000002 /* RouteBuilder/PersonalHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = HM020000000000000000000002 /* RouteBuilder/PersonalHeatmapView.swift */; };
+		HM010000000000000000000003 /* PolylineEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = HM020000000000000000000003 /* PolylineEncoderTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -188,6 +191,9 @@
 		SG0200000000000000000004 /* Dashboard/SegmentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/SegmentListView.swift; sourceTree = "<group>"; };
 		SG0200000000000000000005 /* Dashboard/SegmentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/SegmentDetailView.swift; sourceTree = "<group>"; };
 		SG0200000000000000000006 /* SegmentMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentMatcherTests.swift; sourceTree = "<group>"; };
+		HM020000000000000000000001 /* RouteBuilder/PolylineEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/PolylineEncoder.swift; sourceTree = "<group>"; };
+		HM020000000000000000000002 /* RouteBuilder/PersonalHeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/PersonalHeatmapView.swift; sourceTree = "<group>"; };
+		HM020000000000000000000003 /* PolylineEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolylineEncoderTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -302,6 +308,8 @@
 				SG0200000000000000000003 /* TrainingMetrics/SegmentMatcher.swift */,
 				SG0200000000000000000004 /* Dashboard/SegmentListView.swift */,
 				SG0200000000000000000005 /* Dashboard/SegmentDetailView.swift */,
+				HM020000000000000000000001 /* RouteBuilder/PolylineEncoder.swift */,
+				HM020000000000000000000002 /* RouteBuilder/PersonalHeatmapView.swift */,
 			);
 			path = TezDav;
 			sourceTree = "<group>";
@@ -317,6 +325,7 @@
 				A00200000000000000000025 /* SyncServiceTests.swift */,
 				RT0200000000000000000001 /* RouteBuilderTests.swift */,
 				SG0200000000000000000006 /* SegmentMatcherTests.swift */,
+				HM020000000000000000000003 /* PolylineEncoderTests.swift */,
 			);
 			path = TezDavTests;
 			sourceTree = "<group>";
@@ -531,6 +540,8 @@
 				SG0100000000000000000003 /* TrainingMetrics/SegmentMatcher.swift in Sources */,
 				SG0100000000000000000004 /* Dashboard/SegmentListView.swift in Sources */,
 				SG0100000000000000000005 /* Dashboard/SegmentDetailView.swift in Sources */,
+				HM010000000000000000000001 /* RouteBuilder/PolylineEncoder.swift in Sources */,
+				HM010000000000000000000002 /* RouteBuilder/PersonalHeatmapView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -547,6 +558,7 @@
 				RT0100000000000000000001 /* RouteBuilderTests.swift in Sources */,
 				PC0100000000000000000005 /* PowerCurveTests.swift in Sources */,
 				SG0100000000000000000006 /* SegmentMatcherTests.swift in Sources */,
+				HM010000000000000000000003 /* PolylineEncoderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
