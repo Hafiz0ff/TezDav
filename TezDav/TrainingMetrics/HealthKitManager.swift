@@ -153,8 +153,14 @@ final class HealthKitManager: ObservableObject {
     
     // Queries sleep duration for the past 24 hours (returns hours slept as asleep)
     func fetchSleepDurationLastNight() async -> Double? {
+        let details = await fetchSleepDetailsLastNight()
+        return details.total
+    }
+
+    // Queries detailed sleep duration for the past 24 hours (returns total and deep sleep in hours)
+    func fetchSleepDetailsLastNight() async -> (total: Double?, deep: Double?) {
         guard let healthStore = healthStore else {
-            return 7.5 // simulator default
+            return (7.5, 1.5) // simulator default
         }
         
         let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
@@ -171,11 +177,11 @@ final class HealthKitManager: ObservableObject {
                 sortDescriptors: nil
             ) { _, samples, error in
                 guard error == nil, let sleepSamples = samples as? [HKCategorySample] else {
-                    continuation.resume(returning: nil)
+                    continuation.resume(returning: (nil, nil))
                     return
                 }
                 
-                // Filter only 'asleep' samples (includes deep, light, rem)
+                // Filter only 'asleep' samples (includes deep, light, rem, or generic asleep)
                 let asleepSamples = sleepSamples.filter { sample in
                     sample.value == HKCategoryValueSleepAnalysis.asleep.rawValue ||
                     sample.value == HKCategoryValueSleepAnalysis.asleepCore.rawValue ||
@@ -183,11 +189,22 @@ final class HealthKitManager: ObservableObject {
                     sample.value == HKCategoryValueSleepAnalysis.asleepREM.rawValue
                 }
                 
+                let deepSamples = sleepSamples.filter { sample in
+                    sample.value == HKCategoryValueSleepAnalysis.asleepDeep.rawValue
+                }
+                
                 let totalDurationSeconds = asleepSamples.reduce(0.0) { sum, sample in
                     sum + sample.endDate.timeIntervalSince(sample.startDate)
                 }
                 
-                continuation.resume(returning: totalDurationSeconds / 3600.0)
+                let deepDurationSeconds = deepSamples.reduce(0.0) { sum, sample in
+                    sum + sample.endDate.timeIntervalSince(sample.startDate)
+                }
+                
+                let totalHours = totalDurationSeconds > 0 ? (totalDurationSeconds / 3600.0) : nil
+                let deepHours = deepDurationSeconds > 0 ? (deepDurationSeconds / 3600.0) : nil
+                
+                continuation.resume(returning: (totalHours, deepHours))
             }
             healthStore.execute(query)
         }
@@ -213,7 +230,8 @@ final class HealthKitManager: ObservableObject {
     func fetchReadinessHistory(
         daysCount: Int = 7,
         ctlList: [Date: Double] = [:],
-        atlList: [Date: Double] = [:]
+        atlList: [Date: Double] = [:],
+        hardWorkoutDates: Set<Date> = []
     ) async -> [ReadinessHistoryPoint] {
         guard let healthStore = healthStore else {
             // Simulator mock data generator
@@ -228,16 +246,21 @@ final class HealthKitManager: ObservableObject {
                 let dayStart = calendar.startOfDay(for: date)
                 let tsb = (ctlList[dayStart] ?? 40.0) - (atlList[dayStart] ?? 45.0)
                 
-                let score = calculateRecoveryScore(
+                let lastHardDate = hardWorkoutDates.filter { $0 <= dayStart }.max()
+                let days = lastHardDate != nil ? (calendar.dateComponents([.day], from: lastHardDate!, to: dayStart).day ?? 30) : 30
+                
+                let details = calculateDetailedReadiness(
                     hrvToday: mockHRV,
                     hrvBaseline: mockBaseline,
-                    sleepHours: mockSleep,
-                    restingHR: mockRHR,
-                    tsb: tsb
+                    sleepTotalHours: mockSleep,
+                    sleepDeepHours: mockSleep * 0.2,
+                    tsb: tsb,
+                    daysSinceLastHardWorkout: days
                 )
+                
                 points.append(ReadinessHistoryPoint(
                     date: date,
-                    readinessScore: score,
+                    readinessScore: details.score,
                     hrv: mockHRV,
                     hrvBaseline: mockBaseline
                 ))
@@ -283,17 +306,21 @@ final class HealthKitManager: ObservableObject {
             let dayKey = calendar.startOfDay(for: targetDate)
             let tsb = (ctlList[dayKey] ?? 35.0) - (atlList[dayKey] ?? 40.0)
             
-            let score = calculateRecoveryScore(
+            let lastHardDate = hardWorkoutDates.filter { $0 <= startOfTarget }.max()
+            let days = lastHardDate != nil ? (calendar.dateComponents([.day], from: lastHardDate!, to: startOfTarget).day ?? 30) : 30
+            
+            let details = calculateDetailedReadiness(
                 hrvToday: dayHrvAvg,
                 hrvBaseline: baselineVal,
-                sleepHours: daySleepDuration > 0 ? daySleepDuration : nil,
-                restingHR: dayRhrAvg,
-                tsb: tsb
+                sleepTotalHours: daySleepDuration > 0 ? daySleepDuration : nil,
+                sleepDeepHours: daySleepDuration > 0 ? daySleepDuration * 0.2 : nil,
+                tsb: tsb,
+                daysSinceLastHardWorkout: days
             )
             
             points.append(ReadinessHistoryPoint(
                 date: targetDate,
-                readinessScore: score,
+                readinessScore: details.score,
                 hrv: dayHrvAvg ?? (baselineVal + Double.random(in: -3...3)),
                 hrvBaseline: baselineVal
             ))
@@ -348,6 +375,33 @@ final class HealthKitManager: ObservableObject {
         }
     }
 
+    // Detailed composite readiness structure
+    struct ReadinessDetails: Sendable {
+        let score: Int
+        let category: String // "Отличная" / "Хорошая" / "Умеренная" / "Низкая"
+        let hrvScore: Int
+        let hrvValue: Double
+        let hrvBaseline: Double
+        let sleepScore: Int
+        let sleepHours: Double
+        let deepHours: Double
+        let tsbScore: Int
+        let tsbValue: Double
+        let restDaysScore: Int
+        let daysSinceLastHardWorkout: Int
+        let explanation: String
+        let detailsText: String
+        
+        var categoryColorName: String {
+            switch score {
+            case 85...100: return "green"
+            case 70..<85: return "blue"
+            case 50..<70: return "orange"
+            default: return "red"
+            }
+        }
+    }
+
     // Scientific Readiness/Recovery Score Formula (0-100 scale)
     nonisolated func calculateRecoveryScore(
         hrvToday: Double?,
@@ -356,40 +410,124 @@ final class HealthKitManager: ObservableObject {
         restingHR: Double? = nil,
         tsb: Double
     ) -> Int {
+        let total = sleepHours ?? 7.5
+        let deep = total * 0.2
+        let details = calculateDetailedReadiness(
+            hrvToday: hrvToday,
+            hrvBaseline: hrvBaseline,
+            sleepTotalHours: total,
+            sleepDeepHours: deep,
+            tsb: tsb,
+            daysSinceLastHardWorkout: 30
+        )
+        return details.score
+    }
+    
+    nonisolated func calculateDetailedReadiness(
+        hrvToday: Double?,
+        hrvBaseline: Double?,
+        sleepTotalHours: Double?,
+        sleepDeepHours: Double?,
+        tsb: Double,
+        daysSinceLastHardWorkout: Int
+    ) -> ReadinessDetails {
         let todayHRV = hrvToday ?? 55.0
         let baselineHRV = hrvBaseline ?? 50.0
-        let sleep = sleepHours ?? 7.5
-        let rhr = restingHR ?? 58.0
+        let totalSleep = sleepTotalHours ?? 7.5
+        var deepSleep = sleepDeepHours ?? 0.0
+        if deepSleep <= 0 {
+            deepSleep = totalSleep * 0.2
+        }
         
-        // 1. HRV Factor (45% weight)
+        // 1. HRV relative to 30-day baseline (35% weight)
         let hrvRatio = baselineHRV > 0 ? (todayHRV / baselineHRV) : 1.0
-        let hrvFactor: Double
-        if hrvRatio >= 1.0 {
-            hrvFactor = min(100.0, 100.0 + (hrvRatio - 1.0) * 100.0)
+        let hrvScore = Int(round(min(100.0, max(0.0, hrvRatio * 100.0))))
+        
+        // 2. Sleep Quality - deep sleep hours relative to 1.5 hr target (25% weight)
+        let sleepScore = Int(round(min(100.0, max(0.0, (deepSleep / 1.5) * 100.0))))
+        
+        // 3. TSB current (25% weight)
+        let tsbScore: Int
+        if tsb >= -10 && tsb <= 5 {
+            tsbScore = 100
+        } else if tsb < -10 {
+            tsbScore = Int(round(max(0.0, 100.0 - (-10.0 - tsb) * 5.0)))
         } else {
-            hrvFactor = max(0.0, hrvRatio * 100.0)
+            tsbScore = Int(round(max(50.0, 100.0 - (tsb - 5.0) * 2.5)))
         }
         
-        // 2. Sleep Factor (35% weight)
-        let sleepFactor = min(100.0, (sleep / 8.0) * 100.0)
-        
-        // 3. Resting HR Factor (10% weight)
-        let restingHrFactor: Double
-        if rhr <= 60.0 {
-            restingHrFactor = 100.0
-        } else {
-            restingHrFactor = max(0.0, 100.0 - (rhr - 60.0) * 4.0)
+        // 4. Rest days since last hard workout (15% weight)
+        let restDaysScore: Int
+        switch daysSinceLastHardWorkout {
+        case 0:
+            restDaysScore = 30
+        case 1:
+            restDaysScore = 60
+        case 2:
+            restDaysScore = 100
+        case 3:
+            restDaysScore = 90
+        case 4:
+            restDaysScore = 80
+        default:
+            restDaysScore = 70
         }
         
-        // 4. TSB Factor (10% weight)
-        let tsbScore = (tsb + 30.0) / 45.0
-        let tsbFactor = max(0.0, min(100.0, tsbScore * 100.0))
+        let composite = (Double(hrvScore) * 0.35) + (Double(sleepScore) * 0.25) + (Double(tsbScore) * 0.25) + (Double(restDaysScore) * 0.15)
+        let finalScore = max(0, min(100, Int(round(composite))))
         
-        // Combine weights
-        let composite = (hrvFactor * 0.45) + (sleepFactor * 0.35) + (restingHrFactor * 0.10) + (tsbFactor * 0.10)
+        let isRussian = Locale.current.identifier.hasPrefix("ru")
         
-        let finalScore = Int(round(composite))
-        return max(0, min(100, finalScore))
+        let category: String
+        switch finalScore {
+        case 85...100: category = isRussian ? "Отличная" : "Excellent"
+        case 70..<85: category = isRussian ? "Хорошая" : "Good"
+        case 50..<70: category = isRussian ? "Умеренная" : "Moderate"
+        default: category = isRussian ? "Низкая" : "Low"
+        }
+        
+        // Identify lowest components (pulling the score down)
+        var problems: [String] = []
+        if hrvScore < 85 {
+            problems.append(isRussian ? "снижен HRV (вариабельность)" : "reduced HRV")
+        }
+        if sleepScore < 85 {
+            problems.append(isRussian ? "мало глубокого сна" : "insufficient deep sleep")
+        }
+        if tsbScore < 85 {
+            problems.append(isRussian ? "высокая нагрузка (TSB)" : "high training load")
+        }
+        if restDaysScore < 85 {
+            problems.append(isRussian ? "недостаточно дней отдыха" : "not enough rest days")
+        }
+        
+        let explanation: String
+        let detailsText: String
+        if problems.isEmpty {
+            explanation = isRussian ? "Все показатели в норме! Отличный день для тренировок." : "All metrics are normal! Great day for workouts."
+            detailsText = ""
+        } else {
+            let joined = problems.joined(separator: ", ")
+            explanation = isRussian ? "Снижают готовность: \(joined)." : "Pulling readiness down: \(joined)."
+            detailsText = problems.joined(separator: "\n")
+        }
+        
+        return ReadinessDetails(
+            score: finalScore,
+            category: category,
+            hrvScore: hrvScore,
+            hrvValue: todayHRV,
+            hrvBaseline: baselineHRV,
+            sleepScore: sleepScore,
+            sleepHours: totalSleep,
+            deepHours: deepSleep,
+            tsbScore: tsbScore,
+            tsbValue: tsb,
+            restDaysScore: restDaysScore,
+            daysSinceLastHardWorkout: daysSinceLastHardWorkout,
+            explanation: explanation,
+            detailsText: detailsText
+        )
     }
     
     // MARK: - Query Helper Methods

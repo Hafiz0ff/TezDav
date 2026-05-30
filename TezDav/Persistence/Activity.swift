@@ -22,11 +22,27 @@ final class Activity {
     var streamsImported: Bool
     var source: String = "strava"
 
+    // Gear & Weather Correlation
+    var startLatitude: Double?
+    var startLongitude: Double?
+    var gearItem: GearItem?
+    var weatherSnapshot: WeatherSnapshot?
+
     // Running Dynamics
     var averageVerticalOscillation: Double? // in cm
     var averageGroundContactTime: Double?  // in ms
     var averageStrideLength: Double?       // in meters
     var averageLeftGCTPercent: Double?     // in %
+
+    // Advanced Cycling Dynamics
+    var isFTPTest: Bool = false
+    var averageLeftRightBalance: Double?     // in % Left
+    var averageTorqueEffectiveness: Double?  // in %
+    var averagePedalSmoothness: Double?      // in %
+    
+    // Route matching
+    var isPlanned: Bool = false
+    var plannedRouteId: UUID?
 
     // Running records (seconds taken to cover the distance)
     var best1kTime: TimeInterval?
@@ -50,6 +66,15 @@ final class Activity {
     // Cycling speed records (seconds taken)
     var best10kSpeedTime: TimeInterval?
     var best40kSpeedTime: TimeInterval?
+
+    // Casual, Walk, Hike, Swim specific metrics
+    var stepsCount: Int?
+    var activeMinutes: Int?
+    var maxAltitude: Double?
+    var totalElevationLoss: Double?
+    var swimStrokeCount: Int?
+    var swimSWOLF: Int?
+    var pace100m: Double?
 
     init(
         stravaId: Int64,
@@ -90,7 +115,22 @@ final class Activity {
         peakPower20m: Double? = nil,
         peakPower60m: Double? = nil,
         best10kSpeedTime: TimeInterval? = nil,
-        best40kSpeedTime: TimeInterval? = nil
+        best40kSpeedTime: TimeInterval? = nil,
+        startLatitude: Double? = nil,
+        startLongitude: Double? = nil,
+        isFTPTest: Bool = false,
+        averageLeftRightBalance: Double? = nil,
+        averageTorqueEffectiveness: Double? = nil,
+        averagePedalSmoothness: Double? = nil,
+        isPlanned: Bool = false,
+        plannedRouteId: UUID? = nil,
+        stepsCount: Int? = nil,
+        activeMinutes: Int? = nil,
+        maxAltitude: Double? = nil,
+        totalElevationLoss: Double? = nil,
+        swimStrokeCount: Int? = nil,
+        swimSWOLF: Int? = nil,
+        pace100m: Double? = nil
     ) {
         self.stravaId = stravaId
         self.sportType = sportType
@@ -131,5 +171,20 @@ final class Activity {
         self.peakPower60m = peakPower60m
         self.best10kSpeedTime = best10kSpeedTime
         self.best40kSpeedTime = best40kSpeedTime
+        self.startLatitude = startLatitude
+        self.startLongitude = startLongitude
+        self.isFTPTest = isFTPTest
+        self.averageLeftRightBalance = averageLeftRightBalance
+        self.averageTorqueEffectiveness = averageTorqueEffectiveness
+        self.averagePedalSmoothness = averagePedalSmoothness
+        self.isPlanned = isPlanned
+        self.plannedRouteId = plannedRouteId
+        self.stepsCount = stepsCount
+        self.activeMinutes = activeMinutes
+        self.maxAltitude = maxAltitude
+        self.totalElevationLoss = totalElevationLoss
+        self.swimStrokeCount = swimStrokeCount
+        self.swimSWOLF = swimSWOLF
+        self.pace100m = pace100m
     }
 }

@@ -21,12 +21,30 @@ struct WeeklyMetric: Identifiable, Equatable {
 struct FormView: View {
     @Query(sort: \Activity.startDate, order: .forward) private var activities: [Activity]
     @Query(sort: \TrainingWeek.startDate, order: .forward) private var plannedWeeks: [TrainingWeek]
+    @Query private var userSettings: [UserSettings]
+    
+    private var activeUserSettings: UserSettings {
+        userSettings.first ?? UserSettings()
+    }
     
     enum FormTab: String, CaseIterable, Identifiable {
         case pmc = "PMC"
         case hrv = "Готовность (HRV)"
         case powerCurve = "Кривая мощности"
+        case dynamics = "Динамика бега"
+        case weather = "Погода"
         var id: String { self.rawValue }
+        
+        var displayName: String {
+            let isRussian = Locale.current.identifier.hasPrefix("ru")
+            switch self {
+            case .pmc: return isRussian ? "Форма" : "PMC"
+            case .hrv: return isRussian ? "Готовность" : "Readiness"
+            case .powerCurve: return isRussian ? "Мощность" : "Power Curve"
+            case .dynamics: return isRussian ? "Динамика" : "Dynamics"
+            case .weather: return isRussian ? "Погода" : "Weather"
+            }
+        }
     }
     
     @State private var selectedTab: FormTab = .pmc
@@ -37,6 +55,7 @@ struct FormView: View {
     
     @State private var readinessHistory: [HealthKitManager.ReadinessHistoryPoint] = []
     @State private var sleepHoursToday: Double? = nil
+    @State private var sleepDeepHoursToday: Double? = nil
     @State private var restingHRToday: Double? = nil
     @State private var hrvToday: Double? = nil
     @State private var hrvBaseline: Double? = nil
@@ -76,7 +95,7 @@ struct FormView: View {
                     VStack(spacing: 0) {
                         Picker("Анализ", selection: $selectedTab) {
                             ForEach(FormTab.allCases) { tab in
-                                Text(tab.rawValue).tag(tab)
+                                Text(tab.displayName).tag(tab)
                             }
                         }
                         .pickerStyle(.segmented)
@@ -131,11 +150,24 @@ struct FormView: View {
                                 readinessScoreFormView()
                                     .padding()
                             }
-                        } else {
+                        } else if selectedTab == .powerCurve {
                             PowerCurveFormView()
+                        } else if selectedTab == .dynamics {
+                            ScrollView {
+                                runningDynamicsFormView()
+                                    .padding()
+                            }
+                        } else if selectedTab == .weather {
+                            WeatherAnalyticsView()
                         }
                     }
-                    .navigationTitle(selectedTab == .pmc ? "Анализ формы" : (selectedTab == .hrv ? "Готовность (HRV)" : "Кривая мощности"))
+                    .navigationTitle(
+                        selectedTab == .pmc ? (Locale.current.identifier.hasPrefix("ru") ? "Анализ формы" : "Form Analysis") :
+                        selectedTab == .hrv ? (Locale.current.identifier.hasPrefix("ru") ? "Готовность (HRV)" : "Readiness (HRV)") :
+                        selectedTab == .powerCurve ? (Locale.current.identifier.hasPrefix("ru") ? "Кривая мощности" : "Power Curve") :
+                        selectedTab == .dynamics ? (Locale.current.identifier.hasPrefix("ru") ? "Динамика бега" : "Running Dynamics") :
+                        (Locale.current.identifier.hasPrefix("ru") ? "Аналитика погоды" : "Weather Analytics")
+                    )
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
@@ -151,7 +183,7 @@ struct FormView: View {
                     }
                     .onAppear {
                         drawTracker = 0.0
-                        withAnimation(.easeOut(duration: 0.6)) {
+                        withAnimation(UIAccessibility.isReduceMotionEnabled ? nil : .easeOut(duration: 0.6)) {
                             drawTracker = 1.0
                         }
                         if selectedTab == .hrv {
@@ -231,6 +263,8 @@ struct FormView: View {
                     .foregroundStyle(.blue)
                     .interpolationMethod(.catmullRom)
                     .lineStyle(point.isPrediction ? StrokeStyle(lineWidth: 2, dash: [4, 4]) : StrokeStyle(lineWidth: 2))
+                    .accessibilityLabel("Фитнес CTL")
+                    .accessibilityValue("Фитнес \(Int(point.ctl)) на \(formatChartDate(point.date))\(point.isPrediction ? " (Прогноз)" : "")")
 
                     // ATL Line (Fatigue)
                     LineMark(
@@ -240,6 +274,8 @@ struct FormView: View {
                     .foregroundStyle(.red)
                     .interpolationMethod(.catmullRom)
                     .lineStyle(point.isPrediction ? StrokeStyle(lineWidth: 2, dash: [4, 4]) : StrokeStyle(lineWidth: 2))
+                    .accessibilityLabel("Усталость ATL")
+                    .accessibilityValue("Усталость \(Int(point.atl)) на \(formatChartDate(point.date))\(point.isPrediction ? " (Прогноз)" : "")")
                     
                     // TSB Area (Form - shaded under/above zero)
                     AreaMark(
@@ -504,22 +540,25 @@ struct FormView: View {
         isLoadingReadiness = true
         Task {
             let hrv = await HealthKitManager.shared.fetchHRVSDNN()
-            let sleep = await HealthKitManager.shared.fetchSleepDurationLastNight()
+            let sleep = await HealthKitManager.shared.fetchSleepDetailsLastNight()
             let resting = await HealthKitManager.shared.fetchRestingHR()
             
             let ctlList = getCtlMap()
             let atlList = getAtlMap()
             
+            let hardWorkoutDates = Set(activities.filter { $0.trainingLoad > 100 || $0.trimp > 100 }.map { Calendar.current.startOfDay(for: $0.startDate) })
             let history = await HealthKitManager.shared.fetchReadinessHistory(
                 daysCount: readinessPeriodDays,
                 ctlList: ctlList,
-                atlList: atlList
+                atlList: atlList,
+                hardWorkoutDates: hardWorkoutDates
             )
             
             await MainActor.run {
                 self.hrvToday = hrv.today
                 self.hrvBaseline = hrv.baseline30Day
-                self.sleepHoursToday = sleep
+                self.sleepHoursToday = sleep.total
+                self.sleepDeepHoursToday = sleep.deep
                 self.restingHRToday = resting
                 self.readinessHistory = history
                 self.isLoadingReadiness = false
@@ -586,13 +625,24 @@ struct FormView: View {
             } else {
                 // 1. circular progress readiness score
                 let summary = DashboardViewModel.summary(from: activities)
-                let currentReadiness = HealthKitManager.shared.calculateRecoveryScore(
+                let daysSinceHard = {
+                    let hardActivity = activities.first { $0.trainingLoad > 100 || $0.trimp > 100 }
+                    guard let hardActivity else { return 30 }
+                    let calendar = Calendar.current
+                    let startOfToday = calendar.startOfDay(for: Date())
+                    let startOfWorkout = calendar.startOfDay(for: hardActivity.startDate)
+                    return max(0, calendar.dateComponents([.day], from: startOfWorkout, to: startOfToday).day ?? 30)
+                }()
+                
+                let details = HealthKitManager.shared.calculateDetailedReadiness(
                     hrvToday: hrvToday,
                     hrvBaseline: hrvBaseline,
-                    sleepHours: sleepHoursToday,
-                    restingHR: restingHRToday,
-                    tsb: summary.tsb
+                    sleepTotalHours: sleepHoursToday,
+                    sleepDeepHours: sleepDeepHoursToday,
+                    tsb: summary.tsb,
+                    daysSinceLastHardWorkout: daysSinceHard
                 )
+                let currentReadiness = details.score
                 
                 VStack(spacing: 16) {
                     ZStack {
@@ -609,13 +659,13 @@ struct FormView: View {
                         VStack {
                             Text("\(currentReadiness)%")
                                 .font(.system(size: 32, weight: .bold))
-                            Text("Готовность")
+                            Text(details.category)
                                 .font(.caption.weight(.medium))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(readinessColor(currentReadiness))
                         }
                     }
                     
-                    Text(readinessAdvice(currentReadiness))
+                    Text(details.explanation)
                         .font(.subheadline)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
@@ -627,10 +677,11 @@ struct FormView: View {
                 
                 // 2. Metrics grid
                 LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                    let deepVal = sleepDeepHoursToday ?? ((sleepHoursToday ?? 7.5) * 0.2)
                     ReadinessMetricCard(
-                        title: "Сон",
-                        value: sleepHoursToday != nil ? String(format: "%.1f ч", sleepHoursToday!) : "-- ч",
-                        subtitle: "Цель: 8.0 ч",
+                        title: "Сон (Глубокий / Всего)",
+                        value: sleepHoursToday != nil ? String(format: "%.1f ч / %.1f ч", deepVal, sleepHoursToday!) : "-- ч",
+                        subtitle: "Цель гл: 1.5 ч",
                         icon: "bed.double.fill",
                         iconColor: .purple
                     )
@@ -644,11 +695,11 @@ struct FormView: View {
                     )
                     
                     ReadinessMetricCard(
-                        title: "Пульс покоя",
-                        value: restingHRToday != nil ? String(format: "%.0f уд/м", restingHRToday!) : "-- уд/м",
-                        subtitle: "Норма: <60 уд/м",
-                        icon: "heart.fill",
-                        iconColor: .pink
+                        title: "Дни отдыха",
+                        value: daysSinceHard < 30 ? "\(daysSinceHard) дн" : "Отдых >30 дн",
+                        subtitle: daysSinceHard == 0 ? "Сегодня тяжелая" : (daysSinceHard == 1 ? "Вчера тяжелая" : "Восстановление"),
+                        icon: "calendar.badge.clock",
+                        iconColor: .green
                     )
                     
                     ReadinessMetricCard(
@@ -682,6 +733,8 @@ struct FormView: View {
                             )
                             .foregroundStyle(Color.blue.gradient)
                             .interpolationMethod(.catmullRom)
+                            .accessibilityLabel("Индекс готовности")
+                            .accessibilityValue("Готовность \(point.readinessScore)% на \(formatChartDate(point.date))")
                             
                             PointMark(
                                 x: .value("Дата", point.date, unit: .day),
@@ -724,6 +777,8 @@ struct FormView: View {
                             )
                             .foregroundStyle(Color.secondary)
                             .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
+                            .accessibilityLabel("Базовый HRV")
+                            .accessibilityValue("Базовый показатель HRV \(Int(point.hrvBaseline)) мс на \(formatChartDate(point.date))")
                             
                             LineMark(
                                 x: .value("Дата", point.date, unit: .day),
@@ -731,6 +786,8 @@ struct FormView: View {
                             )
                             .foregroundStyle(Color.red.gradient)
                             .interpolationMethod(.catmullRom)
+                            .accessibilityLabel("Текущий HRV")
+                            .accessibilityValue("Текущий HRV \(Int(point.hrv)) мс на \(formatChartDate(point.date))")
                             
                             PointMark(
                                 x: .value("Дата", point.date, unit: .day),
@@ -753,6 +810,192 @@ struct FormView: View {
                 }
             }
         }
+    }
+    
+    struct MonthlyDynamics: Identifiable {
+        let id = UUID()
+        let monthStart: Date
+        let avgCadence: Double
+        let avgStride: Double
+    }
+    
+    private func calculateMonthlyDynamics() -> [MonthlyDynamics] {
+        let calendar = Calendar.current
+        let runs = activities.filter { $0.sportType.lowercased() == "run" && ($0.averageCadence ?? 0.0) > 0.0 }
+        
+        let grouped = Dictionary(grouping: runs) { run -> Date in
+            let components = calendar.dateComponents([.year, .month], from: run.startDate)
+            return calendar.date(from: components) ?? Date()
+        }
+        
+        return grouped.map { (monthDate, monthRuns) -> MonthlyDynamics in
+            let cadSum = monthRuns.reduce(0.0) { $0 + ($1.averageCadence ?? 0.0) }
+            let strideSum = monthRuns.reduce(0.0) { $0 + ($1.averageStrideLength ?? 0.0) }
+            let count = Double(monthRuns.count)
+            return MonthlyDynamics(
+                monthStart: monthDate,
+                avgCadence: count > 0 ? cadSum / count : 0.0,
+                avgStride: count > 0 ? strideSum / count : 0.0
+            )
+        }.sorted { $0.monthStart < $1.monthStart }
+    }
+    
+    private func runningDynamicsFormView() -> some View {
+        let monthlyData = calculateMonthlyDynamics()
+        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isMetric = activeUserSettings.isMetric
+        let strideMultiplier = isMetric ? 1.0 : 3.28084
+        let strideUnit = isRussian ? (isMetric ? "м" : "фт") : (isMetric ? "m" : "ft")
+        
+        return VStack(spacing: 24) {
+            if monthlyData.isEmpty {
+                ContentUnavailableView(
+                    isRussian ? "Нет данных динамики бега" : "No Running Dynamics Data",
+                    systemImage: "figure.run",
+                    description: Text(isRussian ? "Для построения трендов необходимы пробежки с данными о каденсе." : "Need running activities with cadence data to plot trends.")
+                )
+                .frame(maxHeight: .infinity)
+            } else {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(isRussian ? "Каденс по месяцам" : "Monthly Average Cadence")
+                        .font(.headline)
+                        .padding(.horizontal, 4)
+                    
+                    Chart {
+                        ForEach(monthlyData) { point in
+                            LineMark(
+                                x: .value(isRussian ? "Месяц" : "Month", point.monthStart, unit: .month),
+                                y: .value(isRussian ? "Каденс" : "Cadence", point.avgCadence)
+                            )
+                            .foregroundStyle(Color.blue.gradient)
+                            .interpolationMethod(.catmullRom)
+                            .accessibilityLabel(isRussian ? "Средний каденс" : "Average Cadence")
+                            .accessibilityValue("\(isRussian ? "Средний каденс" : "Average Cadence") \(Int(point.avgCadence)) шагов/мин на \(formatMonthDate(point.monthStart, isRussian: isRussian))")
+                            
+                            PointMark(
+                                x: .value(isRussian ? "Месяц" : "Month", point.monthStart, unit: .month),
+                                y: .value(isRussian ? "Каденс" : "Cadence", point.avgCadence)
+                            )
+                            .foregroundStyle(Color.blue)
+                        }
+                    }
+                    .frame(height: 180)
+                    .chartYScale(domain: 150...200)
+                    .chartXAxis {
+                        AxisMarks(values: .stride(by: .month, count: 1)) { _ in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel(format: .dateTime.month(.abbreviated).year(.twoDigits))
+                        }
+                    }
+                    .padding()
+                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                }
+                
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(isRussian ? "Длина шага по месяцам" : "Monthly Average Stride Length")
+                        .font(.headline)
+                        .padding(.horizontal, 4)
+                    
+                    Chart {
+                        ForEach(monthlyData) { point in
+                            BarMark(
+                                x: .value(isRussian ? "Месяц" : "Month", point.monthStart, unit: .month),
+                                y: .value(isRussian ? "Длина шага" : "Stride Length", point.avgStride * strideMultiplier)
+                            )
+                            .foregroundStyle(Color.green.gradient)
+                        }
+                    }
+                    .frame(height: 180)
+                    .chartYScale(domain: (isMetric ? 0.6 : 2.0)...(isMetric ? 1.6 : 5.0))
+                    .chartXAxis {
+                        AxisMarks(values: .stride(by: .month, count: 1)) { _ in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel(format: .dateTime.month(.abbreviated).year(.twoDigits))
+                        }
+                    }
+                    .padding()
+                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                }
+                
+                // A summary block showing overall averages
+                let overallCadence = monthlyData.reduce(0.0) { $0 + $1.avgCadence } / Double(monthlyData.count)
+                let overallStride = monthlyData.reduce(0.0) { $0 + $1.avgStride } / Double(monthlyData.count)
+                
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(isRussian ? "Общая сводка" : "Overall Summary")
+                        .font(.headline)
+                        .padding(.horizontal, 4)
+                    
+                    HStack(spacing: 16) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(isRussian ? "Каденс" : "Cadence")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            Text(String(format: "%.0f SPM", overallCadence))
+                                .font(.title2.bold())
+                            let zone = RunningDynamicsEngine.classifyCadence(overallCadence)
+                            Text(localizedZoneText(zone, isRussian: isRussian))
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(zoneColor(zone))
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(isRussian ? "Длина шага" : "Stride Length")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            Text(String(format: "%.2f %@", overallStride * strideMultiplier, strideUnit))
+                                .font(.title2.bold())
+                            let zone = RunningDynamicsEngine.classifyStrideLength(overallStride)
+                            Text(localizedZoneText(zone, isRussian: isRussian))
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(zoneColor(zone))
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    }
+                }
+            }
+        }
+    }
+    
+    private func zoneColor(_ zone: DynamicsZone) -> Color {
+        switch zone {
+        case .optimal: return .purple
+        case .good: return .blue
+        case .fair: return .green
+        case .poor: return .red
+        }
+    }
+
+    private func localizedZoneText(_ zone: DynamicsZone, isRussian: Bool) -> String {
+        switch zone {
+        case .optimal: return isRussian ? "Отлично" : "Optimal"
+        case .good: return isRussian ? "Хорошо" : "Good"
+        case .fair: return isRussian ? "Удовл." : "Fair"
+        case .poor: return isRussian ? "Низкий" : "Poor"
+        }
+    }
+    
+    private func formatChartDate(_ date: Date) -> String {
+        let df = DateFormatter()
+        df.dateFormat = "d MMMM"
+        df.locale = Locale(identifier: "ru_RU")
+        return df.string(from: date)
+    }
+    
+    private func formatMonthDate(_ date: Date, isRussian: Bool) -> String {
+        let df = DateFormatter()
+        df.dateFormat = "LLLL yyyy"
+        df.locale = Locale(identifier: isRussian ? "ru_RU" : "en_US")
+        return df.string(from: date)
     }
 }
 

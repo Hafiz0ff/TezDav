@@ -12,7 +12,35 @@ struct TezDavApp: App {
 
     static let modelContainer: ModelContainer = {
         do {
-            return try ModelContainer(for: Activity.self, ActivityStreamSample.self, SyncState.self, UserSettings.self, IntervalSegment.self, TrainingWeek.self, SavedRoute.self, Segment.self, SegmentEffort.self)
+            let combinedSchema = Schema([
+                Activity.self, ActivityStreamSample.self, SyncState.self, UserSettings.self,
+                IntervalSegment.self, TrainingWeek.self, SavedRoute.self, Segment.self,
+                SegmentEffort.self, PersonalSegment.self, GearItem.self, WeatherSnapshot.self,
+                Achievement.self
+            ])
+            
+            if NSClassFromString("XCTestCase") != nil {
+                let testConfig = ModelConfiguration(isStoredInMemoryOnly: true)
+                return try ModelContainer(for: combinedSchema, configurations: testConfig)
+            }
+            
+            let cloudConfig = ModelConfiguration(
+                "TezDavCloud",
+                schema: Schema([
+                    Activity.self, SyncState.self, UserSettings.self, IntervalSegment.self,
+                    TrainingWeek.self, SavedRoute.self, Segment.self, SegmentEffort.self,
+                    PersonalSegment.self, GearItem.self, WeatherSnapshot.self, Achievement.self
+                ]),
+                cloudKitDatabase: .private("iCloud.com.example.TezDav")
+            )
+            
+            let localConfig = ModelConfiguration(
+                "TezDavLocal",
+                schema: Schema([ActivityStreamSample.self]),
+                cloudKitDatabase: .none
+            )
+            
+            return try ModelContainer(for: combinedSchema, configurations: [cloudConfig, localConfig])
         } catch {
             preconditionFailure("Unable to create SwiftData container: \(error)")
         }

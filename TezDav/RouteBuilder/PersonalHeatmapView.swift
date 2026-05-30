@@ -23,11 +23,19 @@ struct PersonalHeatmapView: View {
     @State private var progressText = ""
     
     // Filters and Styling
-    @State private var filterSport = "All" // "All", "Run", "Ride"
+    @State private var filterSport = "All" // "All", "Run", "Ride", "Walk", "Swim"
     @State private var opacity: Double = 0.6
     @State private var lineWidth: Double = 3.5
     @State private var colorScheme = HeatmapColorScheme.orange
     @State private var mapStyle = MapStyleSelection.standard
+    @State private var periodDays: Int? = nil // nil = All time, 30, 180, 365
+    
+    // Zone stats popup
+    @State private var showZoneCard = false
+    @State private var selectedZoneName = ""
+    @State private var selectedZoneCount = 0
+    @State private var selectedZoneDistance = 0.0
+    @State private var selectedZoneMaxDistance = 0.0
     
     // Map State
     @State private var mapPosition: MapCameraPosition = .automatic
@@ -60,56 +68,73 @@ struct PersonalHeatmapView: View {
         case hybrid = "Гибрид"
         
         var id: String { rawValue }
-        
-        var style: MapStyle {
-            switch self {
-            case .standard: return .standard
-            case .imagery: return .imagery
-            case .hybrid: return .hybrid
-            }
-        }
     }
     
     private var filteredTracks: [HeatmapTrack] {
         tracks.filter { track in
-            if filterSport == "All" { return true }
-            return track.sportType == filterSport
+            // Sport check
+            let sportMatch = (filterSport == "All" || track.sportType == filterSport)
+            
+            // Date check
+            var dateMatch = true
+            if let days = periodDays, let activity = activities.first(where: { $0.stravaId == track.id }) {
+                let limitDate = Date().addingTimeInterval(-86400 * Double(days))
+                dateMatch = activity.startDate >= limitDate
+            }
+            
+            return sportMatch && dateMatch
         }
     }
     
     private var totalDistanceText: String {
         let totalMeters = filteredTracks.reduce(0.0) { $0 + $1.distanceMeters }
+        return formatDistanceText(totalMeters)
+    }
+    
+    private func formatDistanceText(_ meters: Double) -> String {
         let isMetric = activeUserSettings.isMetric
         let divisor = isMetric ? 1000.0 : 1609.34
         let unit = isMetric ? "км" : "миль"
-        return String(format: "%.1f %@", totalMeters / divisor, unit)
+        return String(format: "%.1f %@", meters / divisor, unit)
     }
     
     var body: some View {
         ZStack {
-            // Main Map View
-            Map(position: $mapPosition, interactionModes: .all) {
-                ForEach(filteredTracks) { track in
-                    MapPolyline(coordinates: track.coordinates)
-                        .stroke(
-                            getSwiftUIColor(for: track, scheme: colorScheme).opacity(opacity),
-                            style: StrokeStyle(lineWidth: CGFloat(lineWidth), lineCap: .round, lineJoin: .round)
-                        )
+            // Main Map View with Tile Overlay
+            HeatmapMapView(
+                tracks: filteredTracks,
+                filterSport: filterSport,
+                periodDays: periodDays,
+                opacity: opacity,
+                lineWidth: lineWidth,
+                colorScheme: colorScheme,
+                mapStyle: mapStyle,
+                onZoneSelected: { coordinate, zoneName, count, totalDist, maxDist in
+                    self.selectedZoneName = zoneName
+                    self.selectedZoneCount = count
+                    self.selectedZoneDistance = totalDist
+                    self.selectedZoneMaxDistance = maxDist
+                    withAnimation {
+                        self.showZoneCard = true
+                    }
                 }
-            }
-            .mapStyle(mapStyle.style)
-            .onMapCameraChange { context in
-                currentRegion = context.region
-            }
+            )
+            .ignoresSafeArea()
             
             // UI Overlays
             VStack {
-                // Top floating selector (Sport type & Map type)
+                // Top floating selector (Sport type & Map type & Period)
                 topControlPanel
                 
                 Spacer()
                 
-                // Bottom drawer control panel (Opacity, width, color schemes, stats)
+                // Floating District Info Card
+                if showZoneCard {
+                    zoneStatsCard
+                        .padding(.bottom, 8)
+                }
+                
+                // Bottom drawer control panel
                 bottomControlDrawer
             }
             .padding(.horizontal, 16)
@@ -150,25 +175,38 @@ struct PersonalHeatmapView: View {
     
     private var topControlPanel: some View {
         VStack(spacing: 8) {
-            HStack(spacing: 8) {
-                // Sport type filter picker
-                Picker("Вид спорта", selection: $filterSport) {
-                    Text("Все").tag("All")
-                    Text("Бег").tag("Run")
-                    Text("Вело").tag("Ride")
-                }
-                .pickerStyle(.segmented)
-                
-                // Map Style picker
-                Picker("Тип карты", selection: $mapStyle) {
-                    ForEach(MapStyleSelection.allCases) { style in
-                        Text(style.rawValue).tag(style)
+            VStack(spacing: 6) {
+                HStack(spacing: 8) {
+                    // Sport type filter picker (including Walk and Swim)
+                    Picker("Вид спорта", selection: $filterSport) {
+                        Text("Все").tag("All")
+                        Text("Бег").tag("Run")
+                        Text("Вело").tag("Ride")
+                        Text("Ходьба").tag("Walk")
+                        Text("Плав").tag("Swim")
                     }
+                    .pickerStyle(.segmented)
+                    
+                    // Map Style picker
+                    Picker("Тип карты", selection: $mapStyle) {
+                        ForEach(MapStyleSelection.allCases) { style in
+                            Text(style.rawValue).tag(style)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 170)
+                }
+                
+                // Period Slider/Segmented Control
+                Picker("Период", selection: $periodDays) {
+                    Text("30 дней").tag(Int?(30))
+                    Text("6 мес").tag(Int?(180))
+                    Text("Год").tag(Int?(365))
+                    Text("Всё время").tag(Int?(nil))
                 }
                 .pickerStyle(.segmented)
-                .frame(width: 170)
             }
-            .padding(6)
+            .padding(8)
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(.ultraThinMaterial)
@@ -177,12 +215,75 @@ struct PersonalHeatmapView: View {
         }
     }
     
+    private var zoneStatsCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Image(systemName: "mappin.circle.fill")
+                    .foregroundColor(.orange)
+                    .font(.headline)
+                
+                Text(selectedZoneName)
+                    .font(.headline)
+                    .bold()
+                    .lineLimit(1)
+                
+                Spacer()
+                
+                Button(action: {
+                    withAnimation {
+                        showZoneCard = false
+                    }
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.secondary)
+                        .font(.title3)
+                }
+            }
+            
+            HStack(spacing: 24) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("ПОСЕЩЕНИЙ")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    Text("\(selectedZoneCount)")
+                        .font(.subheadline)
+                        .bold()
+                }
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("КИЛОМЕТРАЖ")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    Text(formatDistanceText(selectedZoneDistance))
+                        .font(.subheadline)
+                        .bold()
+                }
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("РЕКОРД ЗОНЫ")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    Text(formatDistanceText(selectedZoneMaxDistance))
+                        .font(.subheadline)
+                        .bold()
+                        .foregroundColor(.orange)
+                }
+            }
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(.ultraThinMaterial)
+                .shadow(color: Color.black.opacity(0.15), radius: 8, y: 4)
+        )
+    }
+    
     private var bottomControlDrawer: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 12) {
             // Stats Panel
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Активностей на карте")
+                    Text("Треков на карте")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Text("\(filteredTracks.count)")
@@ -192,7 +293,7 @@ struct PersonalHeatmapView: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text("Общая дистанция")
+                    Text("Суммарная дистанция")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Text(totalDistanceText)
@@ -203,10 +304,10 @@ struct PersonalHeatmapView: View {
             Divider()
             
             // Customization Options
-            VStack(spacing: 10) {
+            VStack(spacing: 8) {
                 // Color Scheme Choice
                 HStack {
-                    Text("Цветовая схема")
+                    Text("Палитра свечения")
                         .font(.subheadline)
                         .bold()
                     Spacer()
@@ -289,7 +390,7 @@ struct PersonalHeatmapView: View {
                 .disabled(isExporting)
             }
         }
-        .padding(16)
+        .padding(14)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(.ultraThinMaterial)
@@ -301,15 +402,14 @@ struct PersonalHeatmapView: View {
     
     private func loadHeatmapTracks() async {
         isLoading = true
-        progressText = "Инициализация базы данных..."
+        progressText = "Инициализация треков базы данных..."
         
         let allActs = activities
         let total = allActs.count
         var loadedTracks: [HeatmapTrack] = []
         
-        // Ensure background context calculations do not block main UI thread
         for (idx, activity) in allActs.enumerated() {
-            progressText = "Обработка треков... (\(idx + 1)/\(total))"
+            progressText = "Загрузка маршрутов... (\(idx + 1)/\(total))"
             
             var coords: [CLLocationCoordinate2D] = []
             
@@ -329,7 +429,6 @@ struct PersonalHeatmapView: View {
                     }
                     
                     if !points.isEmpty {
-                        // Downsample for performance (approx 150 points is enough for heat trace)
                         coords = downsample(coordinates: points, maxPoints: 150)
                         let encoded = PolylineEncoder.encode(coordinates: coords)
                         activity.encodedPolyline = encoded
@@ -402,29 +501,10 @@ struct PersonalHeatmapView: View {
             longitude: (minLng + maxLng) / 2.0
         )
         let span = MKCoordinateSpan(
-            latitudeDelta: (maxLat - minLat) * 1.3 + 0.005,
-            longitudeDelta: (maxLng - minLng) * 1.3 + 0.005
+            latitudeDelta: (maxLat - minLat) * 1.35 + 0.005,
+            longitudeDelta: (maxLng - minLng) * 1.35 + 0.005
         )
         return MKCoordinateRegion(center: center, span: span)
-    }
-    
-    private func getSwiftUIColor(for track: HeatmapTrack, scheme: HeatmapColorScheme) -> Color {
-        switch scheme {
-        case .orange:
-            return .orange
-        case .green:
-            return .green
-        case .blue:
-            return .blue
-        case .multisport:
-            if track.sportType == "Run" {
-                return .green
-            } else if track.sportType == "Ride" {
-                return .blue
-            } else {
-                return .purple
-            }
-        }
     }
     
     private func getUIKitColor(for track: HeatmapTrack, scheme: HeatmapColorScheme) -> UIColor {
@@ -456,7 +536,6 @@ struct PersonalHeatmapView: View {
         options.region = currentRegion
         options.size = CGSize(width: 1024, height: 1024)
         
-        // Configure map style for export options
         switch mapStyle {
         case .standard:
             options.mapType = .standard
@@ -472,7 +551,6 @@ struct PersonalHeatmapView: View {
             let snapshot = try await snapshotter.start()
             let baseImage = snapshot.image
             
-            // Draw overlay tracks in UIKit Graphics Context
             UIGraphicsBeginImageContextWithOptions(baseImage.size, true, baseImage.scale)
             baseImage.draw(at: .zero)
             
@@ -492,7 +570,7 @@ struct PersonalHeatmapView: View {
                 context.beginPath()
                 let strokeColor = getUIKitColor(for: track, scheme: colorScheme).withAlphaComponent(CGFloat(opacity))
                 context.setStrokeColor(strokeColor.cgColor)
-                context.setLineWidth(CGFloat(lineWidth) * 2.0) // Scale line width up slightly for high-res export
+                context.setLineWidth(CGFloat(lineWidth) * 2.0)
                 
                 let firstPoint = snapshot.point(for: track.coordinates[0])
                 context.move(to: firstPoint)
@@ -517,20 +595,4 @@ struct PersonalHeatmapView: View {
         
         isExporting = false
     }
-}
-
-// System Share sheet wrapper for SwiftUI sheet
-struct HeatmapShareSheet: UIViewControllerRepresentable {
-    let activityItems: [Any]
-    let applicationActivities: [UIActivity]? = nil
-    
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        let controller = UIActivityViewController(
-            activityItems: activityItems,
-            applicationActivities: applicationActivities
-        )
-        return controller
-    }
-    
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

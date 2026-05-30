@@ -5,5 +5,6 @@ import WidgetKit
 struct TezDavLiveActivityBundle: WidgetBundle {
     var body: some Widget {
         WorkoutLiveActivity()
+        TezSyncLiveActivity()
     }
 }

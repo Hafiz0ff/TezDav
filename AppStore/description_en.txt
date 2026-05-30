@@ -1,0 +1,58 @@
+TezDav — your professional training analysis center for running, cycling, hiking, and outdoor activities.
+
+Built for both dedicated competitive athletes and casual park walkers, TezDav transforms raw GPS tracks and heart rate data into deep, intuitive, and actionable insights. Connect your sensors, analyze your biomechanics, and share your achievements with premium-grade visuals.
+
+KEY FEATURES:
+
+1. PROFESSIONAL RUNNING BIOMECHANICS
+Analyze every step just like elite runners. TezDav calculates and visualizes key running metrics directly on your device:
+• Cadence (step frequency) and its impact on your running economy.
+• Ground Contact Time (GCT) in milliseconds to identify step asymmetry.
+• Vertical Oscillation to measure vertical bounding efficiency.
+• Stride Length with automatic metric/imperial units selection.
+• Comprehensive running efficiency index combining speed, cadence, and vertical oscillation.
+
+2. CARDIO-TRAINING METRICS (CTL / ATL / TSB)
+Maintain the perfect balance between workload and recovery using classic sports physiology models:
+• CTL (Fitness) — a cumulative measure of your long-term physical capacity.
+• ATL (Fatigue) — your current fatigue level from recent training sessions.
+• TSB (Form) — your freshness balance, showing when you are ready to set personal records.
+• Readiness Score calculation and HRV (Heart Rate Variability) baseline tracking for smart workload planning.
+
+3. POWER CURVES & ZONES
+For runners and cyclists utilizing power meters, TezDav builds a comprehensive strength profile:
+• Interactive Critical Power Curve covering intervals from 1 second to 2 hours.
+• Comparison of the current session against 30-day and all-time power peaks.
+• Automatic calculation of power zones for targeted interval workouts.
+
+4. PERSONAL GEOGRAPHY & HISTORICAL HEATMAPS
+Explore the world around you and gamify your active lifestyle:
+• High-performance global Heatmaps of your history with variable glow density overlays.
+• Track your total explored territory in square kilometers using a precise 1x1 km grid system.
+• Automatic offline detection of unique cities and regions (15km clustering of route starts).
+• Geographical extremes tracking: discover your most Northern, Southern, Eastern, and Western training points.
+• Local district statistics card: tap any point on the map to see nearby activities, total mileage, and records within a 1km zone.
+
+5. PREMIUM SOCIAL SHARING & WORKOUT CARDS
+Share your achievements beautifully. TezDav generates high-resolution (1080p) workout cards tailored for social media:
+• Aesthetics themes: Dark, Light, and Neon Gradient backgrounds.
+• Layout formats: Square (1:1) and Vertical (9:16 Stories).
+• Map snapshots showing route tracks rendered onto the card.
+• Weekly Summary cards automatically generated every Sunday to celebrate your weekly achievements.
+
+6. AI COACHING & WEATHER INSIGHTS
+• Get individual recovery and technique tips from the built-in AI Coach.
+• Analyze how temperature, humidity, and wind speed affect your heart rate and pacing.
+
+7. GEAR TRACKING & LIVE SEGMENTS
+• Track mileage for shoes and bike components with maintenance reminders.
+• Compete with yourself on specific route segments, complete with leaderboard rankings and segment-by-segment breakdowns.
+
+ACCESSIBILITY & UTILITIES
+• Full VoiceOver support for all charts, including power curves, HRV, heart rate, and running dynamics.
+• Responsive design with Dynamic Type support to match your system font sizes.
+• Reduce Motion override: instantly disables animations and slide effects when system accessibility is set to Reduce Motion.
+
+Privacy first: all calculations, offline geocoding, and fitness file processing happen locally on your device. Your data remains private and secure.
+
+Elevate your performance and explore new boundaries with TezDav!

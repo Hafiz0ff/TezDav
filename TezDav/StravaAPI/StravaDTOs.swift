@@ -14,6 +14,8 @@ struct StravaActivitySummary: Decodable, Sendable {
     let averageCadence: Double?
     let averageSpeed: Double?
     let map: StravaMap?
+    let startLatlng: [Double]?
+    let gearId: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -29,6 +31,42 @@ struct StravaActivitySummary: Decodable, Sendable {
         case averageCadence = "average_cadence"
         case averageSpeed = "average_speed"
         case map
+        case startLatlng = "start_latlng"
+        case gearId = "gear_id"
+    }
+
+    init(
+        id: Int64,
+        name: String,
+        sportType: String,
+        startDate: Date,
+        distance: Double,
+        movingTime: Int,
+        elapsedTime: Int,
+        totalElevationGain: Double,
+        averageHeartrate: Double? = nil,
+        averageWatts: Double? = nil,
+        averageCadence: Double? = nil,
+        averageSpeed: Double? = nil,
+        map: StravaMap? = nil,
+        startLatlng: [Double]? = nil,
+        gearId: String? = nil
+    ) {
+        self.id = id
+        self.name = name
+        self.sportType = sportType
+        self.startDate = startDate
+        self.distance = distance
+        self.movingTime = movingTime
+        self.elapsedTime = elapsedTime
+        self.totalElevationGain = totalElevationGain
+        self.averageHeartrate = averageHeartrate
+        self.averageWatts = averageWatts
+        self.averageCadence = averageCadence
+        self.averageSpeed = averageSpeed
+        self.map = map
+        self.startLatlng = startLatlng
+        self.gearId = gearId
     }
 }
 

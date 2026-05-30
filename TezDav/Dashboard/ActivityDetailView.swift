@@ -39,10 +39,12 @@ struct ActivityDetailView: View {
     @State private var streamLoadingError: String? = nil
     @State private var selectedChartTab: ChartTab = .heartRate
     @State private var isMapExpanded = false
+    @State private var showCreatePersonalSegment = false
     
     @State private var shareURL: URL? = nil
     @State private var isShowingShareSheet = false
     @State private var isShowingComparison = false
+    @State private var isShowingWorkoutCardShare = false
     @State private var selectedPowerPoint: PowerPoint? = nil
     @State private var selectedDynamicsTab: Int = 0
     @State private var selectedDynamicsDistance: Double? = nil
@@ -130,41 +132,56 @@ struct ActivityDetailView: View {
                         // Section 3: Key Metrics Grid
                         metricsGridSection
 
+                        // Hike stats (Naismith's rule)
+                        if activity.sportType.lowercased().contains("walk") || activity.sportType.lowercased().contains("hike") {
+                            hikeStatisticsSection
+                        }
+
                         // Section 4: Swift Charts
                         chartsSection
 
-                        if activity.sportType.lowercased() == "run" {
-                            runningDynamicsSection
+                        if activeUserSettings.appMode == .pro {
+                            if activity.sportType.lowercased() == "run" {
+                                runningDynamicsSection
+                            }
+
+                            // Section 5: Splits Table (for distance >= 1km, excluding swim)
+                            if activity.distanceMeters >= 1000 && !activity.sportType.lowercased().contains("swim") {
+                                splitsSection
+                            }
+
+                            // Section 6: Heart Rate Zones
+                            if activity.averageHeartRate != nil {
+                                heartRateZonesSection
+                            }
+
+                            // Section 7: Training Load (TRIMP, TSS, CTL/ATL impact)
+                            trainingLoadSection
+
+                            // Section 8: Similar Activities Comparison
+                            similarActivitiesSection
+                            
+                            // Section 9: Interval Analysis
+                            if activitySegments.count >= 3 {
+                                intervalAnalysisSection
+                            }
+
+                            // Section 10: Power Curve
+                            if hasPowerCurveData {
+                                activityPowerCurveSection
+                            }
+
+                            // Section 11: Matched Segments
+                            matchedSegmentsSection
+                        } else {
+                            // Casual mode additions: we still want splits and heart rate zones if they exist!
+                            if activity.distanceMeters >= 1000 && !activity.sportType.lowercased().contains("swim") {
+                                splitsSection
+                            }
+                            if activity.averageHeartRate != nil {
+                                heartRateZonesSection
+                            }
                         }
-
-                        // Section 5: Splits Table (for distance >= 1km, excluding swim)
-                        if activity.distanceMeters >= 1000 && !activity.sportType.lowercased().contains("swim") {
-                            splitsSection
-                        }
-
-                        // Section 6: Heart Rate Zones
-                        if activity.averageHeartRate != nil {
-                            heartRateZonesSection
-                        }
-
-                        // Section 7: Training Load (TRIMP, TSS, CTL/ATL impact)
-                        trainingLoadSection
-
-                        // Section 8: Similar Activities Comparison
-                        similarActivitiesSection
-                        
-                        // Section 9: Interval Analysis
-                        if activitySegments.count >= 3 {
-                            intervalAnalysisSection
-                        }
-
-                        // Section 10: Power Curve
-                        if hasPowerCurveData {
-                            activityPowerCurveSection
-                        }
-
-                        // Section 11: Matched Segments
-                        matchedSegmentsSection
                     }
                     .padding()
                 }
@@ -178,6 +195,12 @@ struct ActivityDetailView: View {
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Menu {
+                            Button {
+                                isShowingWorkoutCardShare = true
+                            } label: {
+                                Label("Поделиться карточкой", systemImage: "square.and.arrow.up.on.square")
+                            }
+                            
                             Button {
                                 triggerGPXExport()
                             } label: {
@@ -193,6 +216,9 @@ struct ActivityDetailView: View {
                             Image(systemName: "square.and.arrow.up")
                         }
                     }
+                }
+                .sheet(isPresented: $isShowingWorkoutCardShare) {
+                    WorkoutCardShareView(activity: activity)
                 }
                 .sheet(isPresented: $isShowingShareSheet) {
                     if let url = shareURL {
@@ -225,7 +251,40 @@ struct ActivityDetailView: View {
                 }
                 Spacer()
             }
+            
+            if let weather = activity.weatherSnapshot {
+                HStack(spacing: 8) {
+                    Text(weatherConditionIcon(weather.condition))
+                    Text(String(format: "%.1f°C", weather.temperature))
+                        .fontWeight(.semibold)
+                    Text("·")
+                        .foregroundStyle(.secondary)
+                    Text(String(format: "💧 %.0f%%", weather.humidity))
+                    Text("·")
+                        .foregroundStyle(.secondary)
+                    Text(String(format: "💨 %.1f м/с", weather.windSpeed))
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.vertical, 4)
+                .padding(.horizontal, 10)
+                .background(.thinMaterial, in: Capsule())
+                .padding(.top, 4)
+            }
+            
             Divider()
+        }
+    }
+
+    private func weatherConditionIcon(_ condition: String) -> String {
+        switch condition {
+        case "Clear": return "☀️"
+        case "Cloudy": return "☁️"
+        case "Fog": return "🌫️"
+        case "Drizzle", "Rain", "RainShowers": return "🌧️"
+        case "Snow": return "❄️"
+        case "Thunderstorm": return "⛈️"
+        default: return "☀️"
         }
     }
 
@@ -250,25 +309,44 @@ struct ActivityDetailView: View {
                 .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
             } else {
                 let segments = makeMapSegments(from: streamSamples)
-                Map {
-                    ForEach(segments) { segment in
-                        MapPolyline(coordinates: segment.coordinates)
-                            .stroke(segment.color, lineWidth: 5)
+                VStack(spacing: 8) {
+                    Map {
+                        ForEach(segments) { segment in
+                            MapPolyline(coordinates: segment.coordinates)
+                                .stroke(segment.color, lineWidth: 5)
+                        }
+                    }
+                    .frame(height: 220)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .overlay(
+                        Button {
+                            isMapExpanded = true
+                        } label: {
+                            Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                .padding(8)
+                                .background(.ultraThinMaterial, in: Circle())
+                        }
+                        .padding(8),
+                        alignment: .topTrailing
+                    )
+                    
+                    HStack {
+                        Spacer()
+                        Button {
+                            showCreatePersonalSegment = true
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "plus.circle")
+                                Text(Locale.current.identifier.hasPrefix("ru") ? "Создать личный сегмент" : "Create Personal Segment")
+                            }
+                            .font(.caption.bold())
+                            .foregroundStyle(.purple)
+                            .padding(.vertical, 6)
+                            .padding(.horizontal, 12)
+                            .background(Color.purple.opacity(0.1), in: Capsule())
+                        }
                     }
                 }
-                .frame(height: 220)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(
-                    Button {
-                        isMapExpanded = true
-                    } label: {
-                        Image(systemName: "arrow.up.left.and.arrow.down.right")
-                            .padding(8)
-                            .background(.ultraThinMaterial, in: Circle())
-                    }
-                    .padding(8),
-                    alignment: .topTrailing
-                )
                 .sheet(isPresented: $isMapExpanded) {
                     NavigationStack {
                         Map {
@@ -288,21 +366,42 @@ struct ActivityDetailView: View {
                         }
                     }
                 }
+                .sheet(isPresented: $showCreatePersonalSegment) {
+                    CreatePersonalSegmentView(activity: activity, samples: streamSamples)
+                }
 
+                let isWalkOrHike = activity.sportType.lowercased().contains("walk") || activity.sportType.lowercased().contains("hike")
                 HStack {
                     Spacer()
-                    HStack(spacing: 12) {
-                        HStack(spacing: 4) {
-                            Circle().fill(.red).frame(width: 8, height: 8)
-                            Text("Slow").font(.caption).foregroundStyle(.secondary)
+                    if isWalkOrHike {
+                        HStack(spacing: 12) {
+                            HStack(spacing: 4) {
+                                Circle().fill(Color(hue: 0.75, saturation: 0.9, brightness: 0.9)).frame(width: 8, height: 8)
+                                Text(Locale.current.identifier.hasPrefix("ru") ? "Низкая высота" : "Low Elevation").font(.caption).foregroundStyle(.secondary)
+                            }
+                            HStack(spacing: 4) {
+                                Circle().fill(Color(hue: 0.55, saturation: 0.9, brightness: 0.9)).frame(width: 8, height: 8)
+                                Text(Locale.current.identifier.hasPrefix("ru") ? "Средняя высота" : "Medium").font(.caption).foregroundStyle(.secondary)
+                            }
+                            HStack(spacing: 4) {
+                                Circle().fill(Color(hue: 0.35, saturation: 0.9, brightness: 0.9)).frame(width: 8, height: 8)
+                                Text(Locale.current.identifier.hasPrefix("ru") ? "Высокая высота" : "High Elevation").font(.caption).foregroundStyle(.secondary)
+                            }
                         }
-                        HStack(spacing: 4) {
-                            Circle().fill(.yellow).frame(width: 8, height: 8)
-                            Text("Average").font(.caption).foregroundStyle(.secondary)
-                        }
-                        HStack(spacing: 4) {
-                            Circle().fill(.green).frame(width: 8, height: 8)
-                            Text("Fast").font(.caption).foregroundStyle(.secondary)
+                    } else {
+                        HStack(spacing: 12) {
+                            HStack(spacing: 4) {
+                                Circle().fill(.red).frame(width: 8, height: 8)
+                                Text(Locale.current.identifier.hasPrefix("ru") ? "Медленно" : "Slow").font(.caption).foregroundStyle(.secondary)
+                            }
+                            HStack(spacing: 4) {
+                                Circle().fill(.yellow).frame(width: 8, height: 8)
+                                Text(Locale.current.identifier.hasPrefix("ru") ? "Средне" : "Average").font(.caption).foregroundStyle(.secondary)
+                            }
+                            HStack(spacing: 4) {
+                                Circle().fill(.green).frame(width: 8, height: 8)
+                                Text(Locale.current.identifier.hasPrefix("ru") ? "Быстро" : "Fast").font(.caption).foregroundStyle(.secondary)
+                            }
                         }
                     }
                     Spacer()
@@ -426,6 +525,15 @@ struct ActivityDetailView: View {
                     let isMetric = activeUserSettings.isMetric
                     let chartXLabel = isMetric ? "Distance (km)" : "Distance (mi)"
                     let chartXUnit = isMetric ? "%.1f km" : "%.1f mi"
+                    let isRussian = Locale.current.identifier.hasPrefix("ru")
+                    let accessibilityLabelText: String = {
+                        switch selectedChartTab {
+                        case .heartRate: return isRussian ? "Пульс" : "Heart Rate"
+                        case .pace: return isRussian ? "Темп" : "Pace"
+                        case .elevation: return isRussian ? "Высота" : "Elevation"
+                        case .power: return isRussian ? "Мощность" : "Power"
+                        }
+                    }()
                     
                     Chart {
                         ForEach(chartData) { point in
@@ -434,6 +542,8 @@ struct ActivityDetailView: View {
                                 y: .value(selectedChartTab.rawValue, point.y)
                             )
                             .foregroundStyle(chartColor(selectedChartTab))
+                            .accessibilityLabel(accessibilityLabelText)
+                            .accessibilityValue(String(format: isRussian ? "%@ на расстоянии %.2f \(isMetric ? "км" : "миль")" : "%@ at distance %.2f \(isMetric ? "km" : "mi")", formatValue(point.y, tab: selectedChartTab), point.x))
                             
                             AreaMark(
                                 x: .value(chartXLabel, point.x),
@@ -676,6 +786,111 @@ struct ActivityDetailView: View {
         }
     }
 
+    private var naismithEstimatedTime: TimeInterval {
+        let distanceKm = activity.distanceMeters / 1000.0
+        let ascentMeters = activity.elevationGain
+        let hours = (distanceKm / 5.0) + (ascentMeters / 600.0)
+        return hours * 3600.0 // in seconds
+    }
+
+    private var hikeStatisticsSection: some View {
+        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isMetric = activeUserSettings.isMetric
+        let elevMultiplier = isMetric ? 1.0 : 3.28084
+        let elevUnit = isMetric ? "м" : "фт"
+        
+        let maxAlt = activity.maxAltitude ?? (streamSamples.compactMap { $0.altitude }.max() ?? 0.0)
+        let descent = activity.totalElevationLoss ?? 0.0
+        
+        let actualTime = activity.movingTime
+        let estTime = naismithEstimatedTime
+        let speedDiffPercent = estTime > 0 ? ((estTime - actualTime) / estTime) * 100 : 0.0
+        
+        return VStack(alignment: .leading, spacing: 14) {
+            Text(isRussian ? "Анализ похода (Правило Найсмита)" : "Hike Analysis (Naismith's Rule)")
+                .font(.headline)
+            
+            VStack(spacing: 12) {
+                HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(isRussian ? "Макс. высота" : "Max Altitude")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text(String(format: "%.0f %@", maxAlt * elevMultiplier, elevUnit))
+                            .font(.title3.bold())
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                    .background(Color.primary.opacity(0.02))
+                    .cornerRadius(12)
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(isRussian ? "Спуск (Потеря)" : "Total Descent")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text(String(format: "%.0f %@", descent * elevMultiplier, elevUnit))
+                            .font(.title3.bold())
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                    .background(Color.primary.opacity(0.02))
+                    .cornerRadius(12)
+                }
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(isRussian ? "Сравнение с нормой Найсмита" : "Comparison to Naismith Standard")
+                        .font(.caption.bold())
+                        .foregroundStyle(.secondary)
+                    
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(isRussian ? "Расчетное время" : "Estimated Time")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                            Text(formattedDuration(estTime))
+                                .font(.subheadline.bold())
+                        }
+                        
+                        Spacer()
+                        
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text(isRussian ? "Фактическое время" : "Actual Time")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                            Text(formattedDuration(actualTime))
+                                .font(.subheadline.bold())
+                        }
+                    }
+                    
+                    Divider()
+                        .padding(.vertical, 4)
+                    
+                    let diffText: String = {
+                        if speedDiffPercent > 0 {
+                            return isRussian ? String(format: "Вы шли на %.0f%% быстрее нормы Найсмита! 🚀", speedDiffPercent) : String(format: "You walked %.0f%% faster than Naismith rate! 🚀", speedDiffPercent)
+                        } else {
+                            return isRussian ? String(format: "Вы шли на %.0f%% медленнее нормы Найсмита.", abs(speedDiffPercent)) : String(format: "You walked %.0f%% slower than Naismith rate.", abs(speedDiffPercent))
+                        }
+                    }()
+                    
+                    Text(diffText)
+                        .font(.caption)
+                        .foregroundStyle(speedDiffPercent > 0 ? .green : .orange)
+                        .fontWeight(.semibold)
+                }
+                .padding()
+                .background(Color.primary.opacity(0.02))
+                .cornerRadius(12)
+            }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color(uiColor: .secondarySystemGroupedBackground))
+                    .shadow(color: Color.black.opacity(0.03), radius: 8)
+            )
+        }
+    }
+
     // MARK: - Helper Struct for Chart Plot Points
     private struct ChartDataPoint: Identifiable {
         let id = UUID()
@@ -779,6 +994,7 @@ struct ActivityDetailView: View {
         // Calculate and cache personal records for this activity
         PersonalRecordCalculator.calculateAndSetRecords(for: activity, samples: samplesArray)
         SegmentMatcher.matchSegments(for: activity, samples: samplesArray, context: modelContext)
+        PersonalSegmentMatcher.matchPersonalSegments(for: activity, samples: samplesArray, context: modelContext)
 
         // Delete any existing interval segments first
         try? modelContext.delete(model: IntervalSegment.self, where: #Predicate<IntervalSegment> { segment in
@@ -815,6 +1031,13 @@ struct ActivityDetailView: View {
         let maxSpeed = speeds.max() ?? 10.0
         let speedRange = max(0.1, maxSpeed - minSpeed)
 
+        let elevations = validSamples.compactMap { $0.altitude }
+        let minElev = elevations.min() ?? 0.0
+        let maxElev = elevations.max() ?? 1.0
+        let elevRange = max(1.0, maxElev - minElev)
+        
+        let isWalkOrHike = activity.sportType.lowercased().contains("walk") || activity.sportType.lowercased().contains("hike")
+
         var i = 0
         while i < validSamples.count - 1 {
             let nextIndex = min(i + strideFactor, validSamples.count - 1)
@@ -825,13 +1048,22 @@ struct ActivityDetailView: View {
             }
             
             if coords.count >= 2 {
-                let avgSpeed = chunk.compactMap { $0.speed }.reduce(0, +) / Double(chunk.count)
-                let ratio = min(1.0, max(0.0, (avgSpeed - minSpeed) / speedRange))
-                
-                // Color mapping: Red (slow) -> Orange -> Yellow -> Green (fast)
-                // Using HSL Hue spectrum: 0.0 (red) to 0.35 (green)
-                let hue = ratio * 0.35
-                let color = Color(hue: hue, saturation: 0.9, brightness: 0.9)
+                let color: Color
+                if isWalkOrHike {
+                    let avgElev = chunk.compactMap { $0.altitude }.reduce(0, +) / Double(chunk.count)
+                    let ratio = min(1.0, max(0.0, (avgElev - minElev) / elevRange))
+                    // Color mapping: Purple (low elevation) -> Blue -> Teal -> Green (high elevation)
+                    // Using HSL Hue spectrum: 0.75 (purple) to 0.35 (green)
+                    let hue = 0.75 - (ratio * 0.40)
+                    color = Color(hue: hue, saturation: 0.9, brightness: 0.9)
+                } else {
+                    let avgSpeed = chunk.compactMap { $0.speed }.reduce(0, +) / Double(chunk.count)
+                    let ratio = min(1.0, max(0.0, (avgSpeed - minSpeed) / speedRange))
+                    // Color mapping: Red (slow) -> Orange -> Yellow -> Green (fast)
+                    // Using HSL Hue spectrum: 0.0 (red) to 0.35 (green)
+                    let hue = ratio * 0.35
+                    color = Color(hue: hue, saturation: 0.9, brightness: 0.9)
+                }
                 
                 segments.append(MapSegment(coordinates: coords, color: color))
             }
@@ -1147,6 +1379,7 @@ struct ActivityDetailView: View {
             }
             
             let workReps = activitySegments.filter { $0.type == "work" }
+            let isRussian = Locale.current.identifier.hasPrefix("ru")
             
             // Best & Worst work repeats
             let bestRep = workReps.max(by: { $0.averageSpeed < $1.averageSpeed }) // highest speed is best
@@ -1211,6 +1444,8 @@ struct ActivityDetailView: View {
                             )
                             .foregroundStyle(.blue.gradient)
                             .symbol(Circle())
+                            .accessibilityLabel(isRussian ? "Деградация темпа серии" : "Pace Degradation")
+                            .accessibilityValue(String(format: isRussian ? "Повтор №%d, темп: %@" : "Repeat #%d, pace: %@", rep.segmentIndex / 2 + 1, formattedPace(1000.0 / rep.averageSpeed)))
                         }
                     }
                     .frame(height: 100)
@@ -2026,13 +2261,14 @@ struct ActivityDetailView: View {
                     color: zoneColor(gctZone)
                 )
                 
+                let strideZone = RunningDynamicsEngine.classifyStrideLength(avgStride)
                 DynamicsGridTile(
                     title: isRussian ? "Длина шага" : "Stride Length",
                     value: String(format: "%.2f \(strideUnit)", avgStride * strideMultiplier),
-                    zone: nil,
-                    scoreText: "",
-                    percent: max(0.0, min(1.0, avgStride / 2.0)),
-                    color: .blue
+                    zone: strideZone,
+                    scoreText: localizedZoneText(strideZone, isRussian: isRussian),
+                    percent: max(0.0, min(1.0, (avgStride - 0.5) / (2.0 - 0.5))),
+                    color: zoneColor(strideZone)
                 )
             }
             
@@ -2042,6 +2278,52 @@ struct ActivityDetailView: View {
                 zone: balanceZone,
                 isRussian: isRussian
             )
+            
+            // Running Efficiency & 30-Day Averages Comparison
+            let currentSpeed = activity.averageSpeed ?? 0.0
+            let runningEfficiency = (avgOsc > 0 && avgCadenceVal > 0) ? (currentSpeed / (avgCadenceVal * avgOsc)) * 10000.0 : 0.0
+            
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(isRussian ? "Эффективность бега" : "Running Efficiency")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(.secondary)
+                    
+                    Text(String(format: "%.2f", runningEfficiency))
+                        .font(.title2.weight(.bold))
+                        .foregroundStyle(.purple)
+                    
+                    Text(isRussian ? "Индекс (скорость / (каденс × колебания))" : "Index (speed / (cadence × osc))")
+                        .font(.system(size: 8))
+                        .foregroundStyle(.tertiary)
+                }
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                
+                if let averages = last30DaysRunningDynamicsAvg {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(isRussian ? "Сравнение с 30-дн. средним" : "Vs 30-Day Average")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.secondary)
+                        
+                        let cadDiff = avgCadenceVal - averages.cadence
+                        let strideDiff = avgStride - averages.stride
+                        let oscDiff = avgOsc - averages.osc
+                        let gctDiff = avgGCT - averages.gct
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            diffText(label: isRussian ? "Каденс" : "Cad", diff: cadDiff, format: "%+.0f spm", inverseColor: false)
+                            diffText(label: isRussian ? "Шаг" : "Stride", diff: strideDiff * strideMultiplier, format: "%+.2f \(strideUnit)", inverseColor: false)
+                            diffText(label: isRussian ? "Колебания" : "Osc", diff: oscDiff, format: "%+.1f см", inverseColor: true)
+                            diffText(label: isRussian ? "Контакт" : "Contact", diff: gctDiff, format: "%+.0f мс", inverseColor: true)
+                        }
+                    }
+                    .padding(8)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                }
+            }
             
             VStack(alignment: .leading, spacing: 8) {
                 Picker("Dynamics Chart Tab", selection: $selectedDynamicsTab) {
@@ -2072,6 +2354,8 @@ struct ActivityDetailView: View {
                                     )
                                     .foregroundStyle(Color.purple)
                                     .interpolationMethod(.catmullRom)
+                                    .accessibilityLabel(isRussian ? "Вертикальные колебания" : "Vertical Oscillation")
+                                    .accessibilityValue(String(format: isRussian ? "%.1f см на расстоянии %.2f \(isMetric ? "км" : "миль")" : "%.1f cm at distance %.2f \(isMetric ? "km" : "mi")", pt.y, pt.x))
                                     
                                     AreaMark(
                                         x: .value(chartXLabel, pt.x),
@@ -2121,6 +2405,8 @@ struct ActivityDetailView: View {
                                     )
                                     .foregroundStyle(Color.green)
                                     .interpolationMethod(.catmullRom)
+                                    .accessibilityLabel(isRussian ? "Время контакта с землей" : "Ground Contact Time")
+                                    .accessibilityValue(String(format: isRussian ? "%.0f мс на расстоянии %.2f \(isMetric ? "км" : "миль")" : "%.0f ms at distance %.2f \(isMetric ? "km" : "mi")", pt.y, pt.x))
                                     
                                     AreaMark(
                                         x: .value(chartXLabel, pt.x),
@@ -2176,6 +2462,8 @@ struct ActivityDetailView: View {
                                             )
                                             .foregroundStyle(Color.blue)
                                             .interpolationMethod(.catmullRom)
+                                            .accessibilityLabel(isRussian ? "Длина шага" : "Stride Length")
+                                            .accessibilityValue(String(format: isRussian ? "%.2f \(strideUnit) на расстоянии %.2f \(isMetric ? "км" : "миль")" : "%.2f \(strideUnit) at distance %.2f \(isMetric ? "km" : "mi")", pt.y, pt.x))
                                             
                                             AreaMark(
                                                 x: .value(chartXLabel, pt.x),
@@ -2231,6 +2519,8 @@ struct ActivityDetailView: View {
                                             )
                                             .foregroundStyle(Color.orange)
                                             .interpolationMethod(.catmullRom)
+                                            .accessibilityLabel(isRussian ? "Каденс" : "Cadence")
+                                            .accessibilityValue(String(format: isRussian ? "%.0f шагов/мин на расстоянии %.2f \(isMetric ? "км" : "миль")" : "%.0f spm at distance %.2f \(isMetric ? "km" : "mi")", pt.y, pt.x))
                                             
                                             AreaMark(
                                                 x: .value(chartXLabel, pt.x),
@@ -2283,6 +2573,49 @@ struct ActivityDetailView: View {
             .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
             
             Divider()
+        }
+    }
+    
+    private var last30DaysRunningDynamicsAvg: (cadence: Double, stride: Double, osc: Double, gct: Double)? {
+        let calendar = Calendar.current
+        guard let thirtyDaysAgo = calendar.date(byAdding: .day, value: -30, to: .now) else { return nil }
+        let runs = allActivities.filter {
+            $0.sportType.lowercased() == "run" &&
+            $0.startDate >= thirtyDaysAgo &&
+            $0.averageCadence != nil
+        }
+        guard !runs.isEmpty else { return nil }
+        
+        let cadSum = runs.reduce(0.0) { $0 + ($1.averageCadence ?? 0.0) }
+        let strideSum = runs.reduce(0.0) { $0 + ($1.averageStrideLength ?? 0.0) }
+        let oscSum = runs.reduce(0.0) { $0 + ($1.averageVerticalOscillation ?? 0.0) }
+        let gctSum = runs.reduce(0.0) { $0 + ($1.averageGroundContactTime ?? 0.0) }
+        
+        let count = Double(runs.count)
+        return (
+            cadence: cadSum / count,
+            stride: strideSum / count,
+            osc: oscSum / count,
+            gct: gctSum / count
+        )
+    }
+    
+    private func diffText(label: String, diff: Double, format: String, inverseColor: Bool) -> some View {
+        let isBetter: Bool
+        if inverseColor {
+            isBetter = diff < 0
+        } else {
+            isBetter = diff > 0
+        }
+        let color: Color = abs(diff) < 0.001 ? .secondary : (isBetter ? .green : .red)
+        return HStack(spacing: 4) {
+            Text("\(label):")
+                .font(.system(size: 9))
+                .foregroundStyle(.secondary)
+            Spacer()
+            Text(String(format: format, diff))
+                .font(.system(size: 9, weight: .bold))
+                .foregroundStyle(color)
         }
     }
 }
@@ -2364,6 +2697,7 @@ private struct SplitsSectionView: View {
         let secs = Int(seconds) % 60
         return String(format: "%d:%02d", mins, secs)
     }
+
 }
 
 private struct DynamicsGridTile: View {

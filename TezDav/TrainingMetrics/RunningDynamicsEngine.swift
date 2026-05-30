@@ -42,6 +42,14 @@ struct RunningDynamicsEngine {
         return .poor
     }
     
+    // Classify Stride Length (m)
+    static func classifyStrideLength(_ meters: Double) -> DynamicsZone {
+        if meters >= 1.2 { return .optimal }
+        if meters >= 1.0 { return .good }
+        if meters >= 0.8 { return .fair }
+        return .poor
+    }
+    
     // Auto-enrich running activity and its stream samples
     static func enrich(activity: Activity, samples: [ActivityStreamSample]) {
         guard activity.sportType.lowercased() == "run" else { return }
@@ -59,7 +67,7 @@ struct RunningDynamicsEngine {
             // cadence in spm (default 170 spm)
             let cad = sample.cadence ?? activity.averageCadence ?? 170.0
             
-            // 1. Stride Length = speed * 60 / cadence
+            // 1. Stride Length = speed / (cadence / 60.0) = speed * 60.0 / cadence
             let stride = sample.strideLength ?? (cad > 0 ? (speed * 60.0) / cad : 1.0)
             sample.strideLength = stride
             

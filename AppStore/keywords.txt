@@ -1,0 +1,1 @@
+running,cycling,heatmap,sharing,workout,strava,gps,cardio,fitness,tracker,gct,cadence,map,analytics,hrv

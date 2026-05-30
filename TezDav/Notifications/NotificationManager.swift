@@ -26,6 +26,22 @@ final class NotificationManager {
         return settings.authorizationStatus == .authorized
     }
     
+    // Sends an immediate local notification
+    func sendNotification(title: String, body: String, userInfo: [String: Any]) {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = .default
+        content.userInfo = userInfo
+        
+        let request = UNNotificationRequest(
+            identifier: UUID().uuidString,
+            content: content,
+            trigger: nil
+        )
+        UNUserNotificationCenter.current().add(request)
+    }
+    
     // Trigger 1: Check and notify if synced activities broke all-time personal records
     func checkAndNotifyNewRecords(activitiesSynced: [Activity], context: ModelContext) {
         let descriptor = FetchDescriptor<Activity>()

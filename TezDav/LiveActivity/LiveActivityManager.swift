@@ -112,7 +112,110 @@ final class LiveActivityManager {
             for activity in ActivityKit.Activity<WorkoutActivityAttributes>.activities {
                 await activity.end(nil, dismissalPolicy: .immediate)
             }
+            for activity in ActivityKit.Activity<TezDavAttributes>.activities {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
             currentActivity = nil
+            syncActivity = nil
+        }
+    }
+    
+    // MARK: - Sync & Post-Workout Live Activity
+    
+    private var syncActivity: ActivityKit.Activity<TezDavAttributes>?
+    
+    func startSyncActivity(totalCount: Int) {
+        guard isAvailable else { return }
+        // End any existing sync activity first
+        endSyncActivity()
+        
+        let attributes = TezDavAttributes(title: "Strava Sync")
+        let initialState = TezDavAttributes.ContentState(
+            loadedCount: 0,
+            totalCount: totalCount,
+            isSyncing: true,
+            workoutName: nil,
+            sportType: nil,
+            distanceMeters: nil,
+            durationSeconds: nil,
+            trainingLoad: nil
+        )
+        
+        do {
+            let content = ActivityContent(state: initialState, staleDate: nil)
+            syncActivity = try ActivityKit.Activity.request(
+                attributes: attributes,
+                content: content,
+                pushType: nil
+            )
+            print("[LiveActivity] Started sync: \(syncActivity?.id ?? "nil")")
+        } catch {
+            print("[LiveActivity] Failed to start sync: \(error)")
+        }
+    }
+    
+    func updateSyncProgress(loadedCount: Int, totalCount: Int) {
+        guard let activity = syncActivity else { return }
+        Task {
+            let state = TezDavAttributes.ContentState(
+                loadedCount: loadedCount,
+                totalCount: totalCount,
+                isSyncing: true,
+                workoutName: nil,
+                sportType: nil,
+                distanceMeters: nil,
+                durationSeconds: nil,
+                trainingLoad: nil
+            )
+            let content = ActivityContent(state: state, staleDate: nil)
+            await activity.update(content)
+        }
+    }
+    
+    func endSyncActivity() {
+        guard let activity = syncActivity else { return }
+        Task {
+            await activity.end(nil, dismissalPolicy: .immediate)
+            syncActivity = nil
+            print("[LiveActivity] Ended sync immediately.")
+        }
+    }
+    
+    func showWorkoutSummary(name: String, sportType: String, distance: Double, duration: Double, load: Double) {
+        guard isAvailable else { return }
+        // End any existing sync activity first
+        endSyncActivity()
+        
+        let attributes = TezDavAttributes(title: "Workout Summary")
+        let summaryState = TezDavAttributes.ContentState(
+            loadedCount: 0,
+            totalCount: 0,
+            isSyncing: false,
+            workoutName: name,
+            sportType: sportType,
+            distanceMeters: distance,
+            durationSeconds: duration,
+            trainingLoad: load
+        )
+        
+        do {
+            let content = ActivityContent(state: summaryState, staleDate: nil)
+            syncActivity = try ActivityKit.Activity.request(
+                attributes: attributes,
+                content: content,
+                pushType: nil
+            )
+            let act = syncActivity
+            Task {
+                try? await Task.sleep(nanoseconds: 30 * 60 * 1_000_000_000) // Keep for 30 minutes
+                if syncActivity?.id == act?.id {
+                    await act?.end(nil, dismissalPolicy: .immediate)
+                    syncActivity = nil
+                }
+            }
+            print("[LiveActivity] Started workout summary: \(syncActivity?.id ?? "nil")")
+        } catch {
+            print("[LiveActivity] Failed to start summary: \(error)")
         }
     }
 }

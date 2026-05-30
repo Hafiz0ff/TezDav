@@ -29,3 +29,8 @@ GoogleService-Info.plist
 # Local Environment
 .env
 .env.*
+
+# Local agent scratch files
+.superpowers/
+scratch/
+

@@ -1,11 +1,13 @@
 import SwiftData
 import SwiftUI
+import CoreLocation
 
 struct ProfileView: View {
     @Query(sort: \Activity.startDate, order: .reverse) private var activities: [Activity]
     @Query private var settingsList: [UserSettings]
     @Query(sort: \TrainingWeek.startDate, order: .forward) private var plannedWeeksList: [TrainingWeek]
     @Query private var allSegmentsList: [IntervalSegment]
+    @Query private var gearsList: [GearItem]
     @Environment(\.modelContext) private var modelContext
     
     @StateObject private var progress = SyncProgress()
@@ -40,6 +42,9 @@ struct ProfileView: View {
     @State private var showDeleteConfirmation = false
     @State private var isMetric = true
     @State private var notificationStatusGranted = false
+    
+    @State private var appMode: AppMode = .pro
+    @State private var targetWeeklyActiveMinutes: String = "150"
     
     @State private var isHealthKitEnabled = false
     @State private var stepsToday: Double = 0
@@ -92,6 +97,30 @@ struct ProfileView: View {
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
+                        
+                        Spacer()
+                        
+                        // Streaks indicators
+                        VStack(alignment: .trailing, spacing: 4) {
+                            if dailyStreak > 0 {
+                                HStack(spacing: 4) {
+                                    Text("🔥")
+                                    Text("\(dailyStreak) дн")
+                                        .font(.subheadline.bold())
+                                        .foregroundColor(.orange)
+                                }
+                            }
+                            if weeklyStreak > 0 {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "calendar.badge.clock")
+                                        .font(.caption)
+                                        .foregroundColor(.purple)
+                                    Text("\(weeklyStreak) нед")
+                                        .font(.caption.bold())
+                                        .foregroundColor(.purple)
+                                }
+                            }
+                        }
                     }
                     .padding(.vertical, 4)
                     
@@ -126,6 +155,22 @@ struct ProfileView: View {
                         }
                     }
                     
+                    Picker("Режим приложения", selection: $appMode) {
+                        Text("Любитель (Casual)").tag(AppMode.casual)
+                        Text("Спортсмен (Pro)").tag(AppMode.pro)
+                    }
+                    
+                    if appMode == .casual {
+                        HStack {
+                            Text("Цель активных минут")
+                            Spacer()
+                            TextField("150", text: $targetWeeklyActiveMinutes)
+                                .keyboardType(.numberPad)
+                                .multilineTextAlignment(.trailing)
+                                .frame(width: 80)
+                        }
+                    }
+                    
                     HStack {
                         Text(isMetric ? "Вес (кг)" : "Вес (фунты)")
                         Spacer()
@@ -139,6 +184,8 @@ struct ProfileView: View {
                         Text("Бег").tag("Run")
                         Text("Велосипед").tag("Ride")
                         Text("Триатлон").tag("Triathlon")
+                        Text("Ходьба").tag("Walk")
+                        Text("Плавание").tag("Swim")
                     }
                 }
                 
@@ -308,6 +355,47 @@ struct ProfileView: View {
                         }
                     }
                 }
+                // Section: Gear & Equipment
+                Section(Locale.current.identifier.hasPrefix("ru") ? "Снаряжение & Экипировка" : "Gear & Equipment") {
+                    NavigationLink(destination: GearListView()) {
+                        HStack {
+                            Label(Locale.current.identifier.hasPrefix("ru") ? "Управление экипировкой" : "Manage Equipment", systemImage: "shoeprints.fill")
+                            
+                            Spacer()
+                            
+                            let redGears = gearsList.filter { $0.isActive && ($0.maxDistanceKm > 0 && ($0.currentDistanceKm / $0.maxDistanceKm) >= 0.85) }
+                            if !redGears.isEmpty {
+                                Text("\(redGears.count)")
+                                    .font(.caption.bold())
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.red, in: Capsule())
+                            }
+                        }
+                    }
+                }
+                
+                // Section: Gamification & Achievements
+                Section(Locale.current.identifier.hasPrefix("ru") ? "Достижения & Награды" : "Gamification & Achievements") {
+                    NavigationLink(destination: AchievementsShowcaseView()) {
+                        Label(
+                            Locale.current.identifier.hasPrefix("ru") ? "Мои награды и значки" : "My Badges & Rewards",
+                            systemImage: "trophy.fill"
+                        )
+                    }
+                }
+                
+                // Section: Activity Heatmap
+                Section(Locale.current.identifier.hasPrefix("ru") ? "Карта активности" : "Activity Heatmap") {
+                    ContributionsHeatmapView(activities: activities)
+                        .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+                }
+                
+                // Section: Personal Geography
+                Section(Locale.current.identifier.hasPrefix("ru") ? "Личная география" : "Personal Geography") {
+                    personalGeographySection
+                }
                 
                 // Section: Apple Health & Telemetry
                 Section("Синхронизация Apple Health") {
@@ -338,6 +426,41 @@ struct ProfileView: View {
                             Text(String(format: "%.0f ккал", activeCaloriesToday))
                                 .foregroundStyle(.secondary)
                         }
+                    }
+                }
+                
+                // Section: iCloud Synchronization
+                Section(Locale.current.identifier.hasPrefix("ru") ? "Синхронизация iCloud" : "iCloud Synchronization") {
+                    HStack {
+                        Label(Locale.current.identifier.hasPrefix("ru") ? "Статус iCloud" : "iCloud Status", systemImage: "cloud.fill")
+                            .foregroundColor(.blue)
+                        Spacer()
+                        Text(Locale.current.identifier.hasPrefix("ru") ? "Синхронизировано" : "Synced")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    HStack {
+                        Text(Locale.current.identifier.hasPrefix("ru") ? "Контейнер CloudKit" : "CloudKit Container")
+                        Spacer()
+                        Text("iCloud.com.example.TezDav")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    HStack {
+                        Text(Locale.current.identifier.hasPrefix("ru") ? "Последнее обновление" : "Last Synced")
+                        Spacer()
+                        Text(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Button(action: {
+                        try? modelContext.save()
+                    }) {
+                        Text(Locale.current.identifier.hasPrefix("ru") ? "Синхронизировать сейчас" : "Force Sync Now")
+                            .foregroundColor(.blue)
                     }
                 }
                 
@@ -509,6 +632,9 @@ struct ProfileView: View {
         } else {
             raceDistanceKm = ""
         }
+        
+        appMode = settings.appMode
+        targetWeeklyActiveMinutes = String(format: "%.0f", settings.targetWeeklyActiveMinutes)
     }
     
     private func checkHealthKitStatus() {
@@ -564,6 +690,9 @@ struct ProfileView: View {
         } else {
             settings.bikeWeightKg = nil
         }
+        
+        settings.appMode = appMode
+        settings.targetWeeklyActiveMinutes = Double(targetWeeklyActiveMinutes) ?? 150.0
         
         let rawGoal = Double(weeklyRunningGoalKm) ?? 0.0
         settings.targetWeeklyDistanceMeters = isMetric ? (rawGoal * 1000.0) : (rawGoal * 1609.344)
@@ -708,5 +837,187 @@ struct ProfileView: View {
         } catch {
             print("Failed to write temporary JSON export: \(error)")
         }
+    }
+    
+    private var dailyStreak: Int {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: .now)
+        let activeDates = Set(activities.map { calendar.startOfDay(for: $0.startDate) })
+        
+        var streak = 0
+        var checkDate = today
+        if activeDates.contains(today) {
+            streak = 1
+            checkDate = calendar.date(byAdding: .day, value: -1, to: today)!
+            while activeDates.contains(checkDate) {
+                streak += 1
+                checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate)!
+            }
+        } else {
+            let yesterday = calendar.date(byAdding: .day, value: -1, to: today)!
+            if activeDates.contains(yesterday) {
+                streak = 1
+                checkDate = calendar.date(byAdding: .day, value: -2, to: today)!
+                while activeDates.contains(checkDate) {
+                    streak += 1
+                    checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate)!
+                }
+            }
+        }
+        return streak
+    }
+    
+    private var weeklyStreak: Int {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: .now)
+        
+        var activeWeeks: Set<Int> = []
+        for activity in activities {
+            let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: activity.startDate)
+            if let year = components.yearForWeekOfYear, let week = components.weekOfYear {
+                let weekId = year * 100 + week
+                activeWeeks.insert(weekId)
+            }
+        }
+        
+        var streak = 0
+        var checkDate = today
+        
+        while true {
+            let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: checkDate)
+            if let year = components.yearForWeekOfYear, let week = components.weekOfYear {
+                let weekId = year * 100 + week
+                if activeWeeks.contains(weekId) {
+                    streak += 1
+                    guard let prevWeek = calendar.date(byAdding: .weekOfYear, value: -1, to: checkDate) else { break }
+                    checkDate = prevWeek
+                } else {
+                    let currentWeekComponents = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: .now)
+                    let currentWeekId = (currentWeekComponents.yearForWeekOfYear ?? 0) * 100 + (currentWeekComponents.weekOfYear ?? 0)
+                    if weekId == currentWeekId && streak == 0 {
+                        guard let prevWeek = calendar.date(byAdding: .weekOfYear, value: -1, to: checkDate) else { break }
+                        checkDate = prevWeek
+                        continue
+                    }
+                    break
+                }
+            } else {
+                break
+            }
+        }
+        return streak
+    }
+    
+    // MARK: - Personal Geography Calculations
+    
+    private var uniqueCitiesCount: Int {
+        var clusters: [CLLocationCoordinate2D] = []
+        for act in activities {
+            guard let lat = act.startLatitude, let lng = act.startLongitude else { continue }
+            let coord = CLLocationCoordinate2D(latitude: lat, longitude: lng)
+            let isNewCluster = !clusters.contains { existing in
+                let l1 = CLLocation(latitude: coord.latitude, longitude: coord.longitude)
+                let l2 = CLLocation(latitude: existing.latitude, longitude: existing.longitude)
+                return l1.distance(from: l2) <= 15000.0 // 15 km threshold for distinct cities
+            }
+            if isNewCluster {
+                clusters.append(coord)
+            }
+        }
+        return max(1, clusters.count)
+    }
+    
+    private var exploredAreaSqKm: Double {
+        var visitedCells = Set<String>()
+        for act in activities {
+            guard let poly = act.encodedPolyline, !poly.isEmpty else { continue }
+            let coords = PolylineEncoder.decode(polyline: poly)
+            for coord in coords {
+                let latCell = Int(coord.latitude / 0.009)
+                let cosLat = cos(coord.latitude * .pi / 180.0)
+                let lngCellFactor = cosLat > 0 ? (0.009 / cosLat) : 0.009
+                let lngCell = Int(coord.longitude / lngCellFactor)
+                visitedCells.insert("\(latCell),\(lngCell)")
+            }
+        }
+        return Double(visitedCells.count)
+    }
+    
+    struct ExtremePoints {
+        var north: Double = 38.56
+        var south: Double = 38.56
+        var east: Double = 68.79
+        var west: Double = 68.79
+    }
+    
+    private var extremePoints: ExtremePoints {
+        var points = ExtremePoints()
+        var hasData = false
+        
+        for act in activities {
+            guard let poly = act.encodedPolyline, !poly.isEmpty else { continue }
+            let coords = PolylineEncoder.decode(polyline: poly)
+            for coord in coords {
+                if !hasData {
+                    points.north = coord.latitude
+                    points.south = coord.latitude
+                    points.east = coord.longitude
+                    points.west = coord.longitude
+                    hasData = true
+                } else {
+                    points.north = max(points.north, coord.latitude)
+                    points.south = min(points.south, coord.latitude)
+                    points.east = max(points.east, coord.longitude)
+                    points.west = min(points.west, coord.longitude)
+                }
+            }
+        }
+        return points
+    }
+    
+    private var personalGeographySection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Label(Locale.current.identifier.hasPrefix("ru") ? "Уникальные города" : "Unique Cities", systemImage: "building.2.fill")
+                Spacer()
+                Text("\(uniqueCitiesCount)")
+                    .bold()
+            }
+            
+            HStack {
+                Label(Locale.current.identifier.hasPrefix("ru") ? "Площадь исследования" : "Explored Area", systemImage: "square.dashed")
+                Spacer()
+                Text(String(format: "%.1f км²", exploredAreaSqKm))
+                    .bold()
+            }
+            
+            Divider()
+            
+            Text(Locale.current.identifier.hasPrefix("ru") ? "Крайние географические точки:" : "Extreme Geographical Points:")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            
+            let pts = extremePoints
+            Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 6) {
+                GridRow {
+                    Text(Locale.current.identifier.hasPrefix("ru") ? "Север:" : "North:").foregroundColor(.secondary)
+                    Text(String(format: "%.5f° N", pts.north)).monospacedDigit()
+                }
+                GridRow {
+                    Text(Locale.current.identifier.hasPrefix("ru") ? "Юг:" : "South:").foregroundColor(.secondary)
+                    Text(String(format: "%.5f° N", pts.south)).monospacedDigit()
+                }
+                GridRow {
+                    Text(Locale.current.identifier.hasPrefix("ru") ? "Восток:" : "East:").foregroundColor(.secondary)
+                    Text(String(format: "%.5f° E", pts.east)).monospacedDigit()
+                }
+                GridRow {
+                    Text(Locale.current.identifier.hasPrefix("ru") ? "Запад:" : "West:").foregroundColor(.secondary)
+                    Text(String(format: "%.5f° E", pts.west)).monospacedDigit()
+                }
+            }
+            .font(.caption)
+        }
+        .padding(.vertical, 4)
     }
 }

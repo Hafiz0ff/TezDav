@@ -177,6 +177,9 @@ struct FitParser {
         
         let name = activityName == "FIT Activity" ? url.deletingPathExtension().lastPathComponent : activityName
         
+        let startLat = sortedPoints.first?.lat
+        let startLon = sortedPoints.first?.lon
+        
         let activity = Activity(
             stravaId: uniqueId,
             sportType: sport,
@@ -195,7 +198,9 @@ struct FitParser {
             trainingLoad: loadVal,
             importedAt: .now,
             streamsImported: true,
-            source: "imported"
+            source: "imported",
+            startLatitude: startLat,
+            startLongitude: startLon
         )
         
         let peaks = PowerCurveCalculator.calculatePeaks(from: samples)
@@ -210,8 +215,37 @@ struct FitParser {
         activity.peakPower20m = peaks[1200]
         activity.peakPower60m = peaks[3600]
         
+        if sport == "Walk" || sport == "Hike" || sport == "Run" {
+            let cad = finalCad ?? (sport == "Run" ? 85.0 : 50.0)
+            let steps = Int(cad * 2.0 * (movingTime / 60.0))
+            activity.stepsCount = steps
+            activity.activeMinutes = Int(movingTime / 60.0)
+            
+            let elevations = sortedPoints.compactMap { $0.ele }
+            activity.maxAltitude = elevations.max()
+            
+            var descent = 0.0
+            for i in 1..<sortedPoints.count {
+                if let prevEle = sortedPoints[i-1].ele, let currEle = sortedPoints[i].ele {
+                    let diff = prevEle - currEle
+                    if diff > 0 {
+                        descent += diff
+                    }
+                }
+            }
+            activity.totalElevationLoss = descent
+        } else if sport == "Swim" {
+            let strokes = Int(finalDistance * 0.4)
+            activity.swimStrokeCount = strokes
+            activity.swimSWOLF = 40
+            activity.pace100m = finalSpeed > 0 ? (100.0 / finalSpeed) : 0.0
+            activity.activeMinutes = Int(movingTime / 60.0)
+        }
+
         if sport == "Run" {
             RunningDynamicsEngine.enrich(activity: activity, samples: samples)
+        } else if sport == "Ride" {
+            CyclingDynamicsEngine.enrich(activity: activity, samples: samples)
         }
         
         return (activity, samples)
@@ -221,6 +255,15 @@ struct FitParser {
         let type = rawType.lowercased()
         if type.contains("bike") || type.contains("ride") || type.contains("cycl") {
             return "Ride"
+        }
+        if type.contains("walk") {
+            return "Walk"
+        }
+        if type.contains("hike") {
+            return "Hike"
+        }
+        if type.contains("swim") {
+            return "Swim"
         }
         return "Run"
     }

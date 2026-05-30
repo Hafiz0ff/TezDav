@@ -1,6 +1,11 @@
 import Foundation
 import SwiftData
 
+enum AppMode: String, Codable {
+    case casual
+    case pro
+}
+
 @Model
 final class UserSettings {
     @Attribute(.unique) var key: String
@@ -12,7 +17,7 @@ final class UserSettings {
     // Personal details
     var birthDate: Date?
     var weightKg: Double
-    var mainSport: String // "Run", "Ride", "Triathlon"
+    var mainSport: String // "Run", "Ride", "Triathlon", "Walk", "Swim"
 
     // Heart rate zones details
     var isHeartRateZonesAutomatic: Bool
@@ -38,9 +43,18 @@ final class UserSettings {
 
     // Notifications state
     var lastTsbNotificationDate: Date?
+    var lastMorningHrv: Double? = nil
     
     var isMetric: Bool = true
     var isAutoAdaptationEnabled: Bool = false
+    
+    var appModeRaw: String = "pro"
+    var targetWeeklyActiveMinutes: Double = 150.0
+
+    var appMode: AppMode {
+        get { AppMode(rawValue: appModeRaw) ?? .pro }
+        set { appModeRaw = newValue.rawValue }
+    }
 
     init(
         key: String = "default",
@@ -66,8 +80,11 @@ final class UserSettings {
         stravaAccountName: String? = nil,
         lastSyncedAt: Date? = nil,
         lastTsbNotificationDate: Date? = nil,
+        lastMorningHrv: Double? = nil,
         isMetric: Bool = true,
-        isAutoAdaptationEnabled: Bool = false
+        isAutoAdaptationEnabled: Bool = false,
+        appMode: AppMode = .pro,
+        targetWeeklyActiveMinutes: Double = 150.0
     ) {
         self.key = key
         self.maxHeartRate = maxHeartRate
@@ -92,8 +109,11 @@ final class UserSettings {
         self.stravaAccountName = stravaAccountName
         self.lastSyncedAt = lastSyncedAt
         self.lastTsbNotificationDate = lastTsbNotificationDate
+        self.lastMorningHrv = lastMorningHrv
         self.isMetric = isMetric
         self.isAutoAdaptationEnabled = isAutoAdaptationEnabled
+        self.appModeRaw = appMode.rawValue
+        self.targetWeeklyActiveMinutes = targetWeeklyActiveMinutes
     }
 
     // Dynamic Max HR Calculation: Max HR = 220 - Age (if not explicitly specified)

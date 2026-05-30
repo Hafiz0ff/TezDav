@@ -17,6 +17,11 @@ final class ActivityStreamSample {
     var groundContactTime: Double?  // in ms
     var strideLength: Double?       // in meters
     var leftGCTPercent: Double?     // in %
+    
+    // Cycling Dynamics
+    var leftRightBalance: Double?   // in % Left
+    var torqueEffectiveness: Double? // in %
+    var pedalSmoothness: Double?     // in %
 
     init(
         activityId: Int64,
@@ -32,7 +37,10 @@ final class ActivityStreamSample {
         verticalOscillation: Double? = nil,
         groundContactTime: Double? = nil,
         strideLength: Double? = nil,
-        leftGCTPercent: Double? = nil
+        leftGCTPercent: Double? = nil,
+        leftRightBalance: Double? = nil,
+        torqueEffectiveness: Double? = nil,
+        pedalSmoothness: Double? = nil
     ) {
         self.activityId = activityId
         self.offsetSeconds = offsetSeconds
@@ -48,5 +56,8 @@ final class ActivityStreamSample {
         self.groundContactTime = groundContactTime
         self.strideLength = strideLength
         self.leftGCTPercent = leftGCTPercent
+        self.leftRightBalance = leftRightBalance
+        self.torqueEffectiveness = torqueEffectiveness
+        self.pedalSmoothness = pedalSmoothness
     }
 }

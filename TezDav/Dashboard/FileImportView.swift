@@ -289,6 +289,8 @@ struct FileImportView: View {
                 // Run personal records scan immediately for this workout
                 PersonalRecordCalculator.calculateAndSetRecords(for: item.activity, samples: item.samples)
                 SegmentMatcher.matchSegments(for: item.activity, samples: item.samples, context: modelContext)
+                PersonalSegmentMatcher.matchPersonalSegments(for: item.activity, samples: item.samples, context: modelContext)
+                RouteMatcher.matchRoute(for: item.activity, samples: item.samples, context: modelContext)
             }
         }
         
@@ -297,8 +299,19 @@ struct FileImportView: View {
         // Triggers full PMC and notification updates instantly reflecting new load values
         Task {
             let descriptor = FetchDescriptor<UserSettings>()
-            if let settings = try? modelContext.fetch(descriptor).first {
-                await TrainingLoadCalculator.recalculateAllActivities(context: modelContext, settings: settings)
+            let settings = (try? modelContext.fetch(descriptor).first) ?? UserSettings()
+            
+            await TrainingLoadCalculator.recalculateAllActivities(context: modelContext, settings: settings)
+            
+            // Fetch weather snapshots
+            let activitiesDescriptor = FetchDescriptor<Activity>()
+            if let allAct = try? modelContext.fetch(activitiesDescriptor) {
+                await WeatherService.shared.fetchWeather(for: allAct, context: modelContext)
+                
+                // Scan for Achievements!
+                await MainActor.run {
+                    AchievementManager.shared.scanAndAwardAchievements(context: modelContext, activities: allAct, settings: settings)
+                }
             }
         }
     }

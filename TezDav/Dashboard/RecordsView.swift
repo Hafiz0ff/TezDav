@@ -6,6 +6,7 @@ struct RecordsView: View {
     @Query(sort: \Activity.startDate, order: .reverse) private var activities: [Activity]
     @Query private var userSettings: [UserSettings]
     @Query(sort: \SavedRoute.createdAt, order: .reverse) private var savedRoutes: [SavedRoute]
+    @Query(sort: \PersonalSegment.name) private var personalSegments: [PersonalSegment]
     @Environment(\.modelContext) private var modelContext
     
     // Riegel Calculator state
@@ -47,6 +48,9 @@ struct RecordsView: View {
 
                             // Cycling Critical Power Curve
                             cyclingCriticalPowerSection
+                            
+                            // Personal Route Segments List
+                            personalSegmentsSection
                             
                             // Riegel Race Predictor Calculator
                             racePredictorSection
@@ -657,6 +661,7 @@ struct RecordsView: View {
                 if let samples = try? modelContext.fetch(descriptor), !samples.isEmpty {
                     PersonalRecordCalculator.calculateAndSetRecords(for: act, samples: samples)
                     SegmentMatcher.matchSegments(for: act, samples: samples, context: modelContext)
+                    PersonalSegmentMatcher.matchPersonalSegments(for: act, samples: samples, context: modelContext)
                     newRecordsFound = true
                 }
             }
@@ -682,6 +687,78 @@ struct RecordsView: View {
                 }
             }
         }
+    }
+
+    // MARK: - Personal Segments Section
+    private var personalSegmentsSection: some View {
+        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        return VStack(alignment: .leading, spacing: 12) {
+            Text(isRussian ? "Личные сегменты" : "Personal Segments")
+                .font(.headline)
+            
+            if personalSegments.isEmpty {
+                VStack(spacing: 8) {
+                    Image(systemName: "slider.horizontal.3")
+                        .font(.title2)
+                        .foregroundStyle(.tertiary)
+                    Text(isRussian ? "У вас пока нет личных сегментов.\nВы можете создать их на карте любой тренировки." : "You don't have any personal segments yet.\nYou can create them on any workout map.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 20)
+                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(personalSegments) { segment in
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(segment.name)
+                                    .font(.subheadline.weight(.semibold))
+                                HStack(spacing: 6) {
+                                    Image(systemName: segment.sportType.lowercased().contains("run") ? "figure.run" : "bicycle")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                    Text(String(format: isRussian ? "%.2f км" : "%.2f km", segment.distanceMeters / 1000.0))
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                            if let bestTime = bestEffortTime(for: segment) {
+                                VStack(alignment: .trailing, spacing: 2) {
+                                    Text(isRussian ? "Рекорд:" : "Record:")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                    Text(formattedDuration(bestTime))
+                                        .font(.subheadline.weight(.bold))
+                                        .foregroundStyle(.orange)
+                                }
+                            } else {
+                                Text(isRussian ? "Нет попыток" : "No attempts")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 16)
+                        
+                        if segment.id != personalSegments.last?.id {
+                            Divider().padding(.horizontal, 16)
+                        }
+                    }
+                }
+                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+            }
+        }
+    }
+
+    private func bestEffortTime(for segment: PersonalSegment) -> TimeInterval? {
+        let userEfforts = segment.efforts.filter { !$0.isMock }
+        return userEfforts.map { $0.elapsedTime }.min()
     }
 
     private func formattedDuration(_ seconds: TimeInterval) -> String {

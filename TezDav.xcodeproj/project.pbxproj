@@ -97,6 +97,43 @@
 		AI010000000000000000000004 /* AICoachTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AI010000000000000000000003 /* AICoachTests.swift */; };
 		RD010000000000000000000002 /* TrainingMetrics/RunningDynamicsEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = RD010000000000000000000001 /* TrainingMetrics/RunningDynamicsEngine.swift */; };
 		RD010000000000000000000004 /* RunningDynamicsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = RD010000000000000000000003 /* RunningDynamicsTests.swift */; };
+		TZ8000000000000000000002 /* Persistence/PersonalSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ8000000000000000000001 /* Persistence/PersonalSegment.swift */; };
+		TZ8000000000000000000004 /* TrainingMetrics/PersonalSegmentMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ8000000000000000000003 /* TrainingMetrics/PersonalSegmentMatcher.swift */; };
+		TZ8000000000000000000006 /* Dashboard/CreatePersonalSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ8000000000000000000005 /* Dashboard/CreatePersonalSegmentView.swift */; };
+		LA01000000000000000000009 /* LiveActivity/TezDavAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000009 /* LiveActivity/TezDavAttributes.swift */; };
+		LA01000000000000000000029 /* TezDavAttributes.swift in Sources (LA) */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000009 /* LiveActivity/TezDavAttributes.swift */; };
+		LA01000000000000000000039 /* TezDavLiveActivity.swift in Sources (LA) */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000019 /* TezDavLiveActivity.swift */; };
+		TZ9000000000000000000001 /* Persistence/GearItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000000 /* Persistence/GearItem.swift */; };
+		TZ9000000000000000000003 /* Persistence/WeatherSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000002 /* Persistence/WeatherSnapshot.swift */; };
+		TZ9000000000000000000005 /* Sync/WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000004 /* Sync/WeatherService.swift */; };
+		TZ9000000000000000000007 /* Dashboard/WeatherAnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000006 /* Dashboard/WeatherAnalyticsView.swift */; };
+		TZ9000000000000000000009 /* Dashboard/GearListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000008 /* Dashboard/GearListView.swift */; };
+		TZ900000000000000000000B /* TrainingMetrics/CoachingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ900000000000000000000A /* TrainingMetrics/CoachingEngine.swift */; };
+		TZ900000000000000000000D /* Dashboard/CoachingInsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ900000000000000000000C /* Dashboard/CoachingInsightsView.swift */; };
+		TZ900000000000000000000F /* CoachingEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ900000000000000000000E /* CoachingEngineTests.swift */; };
+		TZ9000000000000000000011 /* GearTrackingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000010 /* GearTrackingTests.swift */; };
+		TZ9000000000000000000013 /* WeatherServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000012 /* WeatherServiceTests.swift */; };
+		TZ1000000000000000000002 /* Shortcuts/ShortcutsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1000000000000000000001 /* Shortcuts/ShortcutsProvider.swift */; };
+		TZ1000000000000000000004 /* Sync/CoreSpotlightManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1000000000000000000003 /* Sync/CoreSpotlightManager.swift */; };
+		TZ1000000000000000000006 /* TrainingMetrics/CyclingDynamicsEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1000000000000000000005 /* TrainingMetrics/CyclingDynamicsEngine.swift */; };
+		TZ1000000000000000000008 /* TrainingMetrics/FTPTestSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1000000000000000000007 /* TrainingMetrics/FTPTestSolver.swift */; };
+		TZ100000000000000000000A /* TrainingMetrics/RouteMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1000000000000000000009 /* TrainingMetrics/RouteMatcher.swift */; };
+		TZ100000000000000000000C /* ShortcutsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ100000000000000000000B /* ShortcutsTests.swift */; };
+		TZ100000000000000000000E /* FTPTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ100000000000000000000D /* FTPTestTests.swift */; };
+		TZ1000000000000000000010 /* RouteMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ100000000000000000000F /* RouteMatcherTests.swift */; };
+		TZ1101000000000000000001 /* Gamification/AchievementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1102000000000000000001 /* Gamification/AchievementManager.swift */; };
+		TZ1101000000000000000002 /* Gamification/AchievementsShowcaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1102000000000000000002 /* Gamification/AchievementsShowcaseView.swift */; };
+		TZ1101000000000000000003 /* Gamification/ContributionsHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1102000000000000000003 /* Gamification/ContributionsHeatmapView.swift */; };
+		TZ1101000000000000000004 /* CasualAndGamificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1102000000000000000004 /* CasualAndGamificationTests.swift */; };
+		TZ1101000000000000000005 /* Dashboard/CasualDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1102000000000000000005 /* Dashboard/CasualDashboardView.swift */; };
+		TZ1101000000000000000006 /* Persistence/Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1102000000000000000006 /* Persistence/Achievement.swift */; };
+		SH1200000000000000000002 /* Dashboard/WorkoutCardShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000001 /* Dashboard/WorkoutCardShareView.swift */; };
+		SH1200000000000000000004 /* Dashboard/WeeklySummaryShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000003 /* Dashboard/WeeklySummaryShareView.swift */; };
+		SH1200000000000000000006 /* RouteBuilder/GlobalHeatmapTileOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000005 /* RouteBuilder/GlobalHeatmapTileOverlay.swift */; };
+		SH1200000000000000000008 /* RouteBuilder/HeatmapMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000007 /* RouteBuilder/HeatmapMapView.swift */; };
+		SH1200000000000000000010 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000009 /* PrivacyInfo.xcprivacy */; };
+		SH1200000000000000000012 /* AppStoreAndSharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000011 /* AppStoreAndSharingTests.swift */; };
+		TZ8000000000000000000008 /* PersonalSegmentMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ8000000000000000000007 /* PersonalSegmentMatcherTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -194,7 +231,7 @@
 		PC0200000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/CriticalPowerSolver.swift; sourceTree = "<group>"; };
 		PC0200000000000000000003 /* Dashboard/PowerCurveChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/PowerCurveChartView.swift; sourceTree = "<group>"; };
 		PC0200000000000000000004 /* Dashboard/PowerCurveFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/PowerCurveFormView.swift; sourceTree = "<group>"; };
-		PC0200000000000000000005 /* PowerCurveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavTests/PowerCurveTests.swift; sourceTree = "<group>"; };
+		PC0200000000000000000005 /* PowerCurveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerCurveTests.swift; sourceTree = "<group>"; };
 		SG0200000000000000000001 /* Persistence/Segment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/Segment.swift; sourceTree = "<group>"; };
 		SG0200000000000000000002 /* Persistence/SegmentEffort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/SegmentEffort.swift; sourceTree = "<group>"; };
 		SG0200000000000000000003 /* TrainingMetrics/SegmentMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/SegmentMatcher.swift; sourceTree = "<group>"; };
@@ -208,6 +245,42 @@
 		AI010000000000000000000003 /* AICoachTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AICoachTests.swift; sourceTree = "<group>"; };
 		RD010000000000000000000001 /* TrainingMetrics/RunningDynamicsEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/RunningDynamicsEngine.swift; sourceTree = "<group>"; };
 		RD010000000000000000000003 /* RunningDynamicsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningDynamicsTests.swift; sourceTree = "<group>"; };
+		TZ8000000000000000000001 /* Persistence/PersonalSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/PersonalSegment.swift; sourceTree = "<group>"; };
+		TZ8000000000000000000003 /* TrainingMetrics/PersonalSegmentMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/PersonalSegmentMatcher.swift; sourceTree = "<group>"; };
+		TZ8000000000000000000005 /* Dashboard/CreatePersonalSegmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/CreatePersonalSegmentView.swift; sourceTree = "<group>"; };
+		LA02000000000000000000009 /* LiveActivity/TezDavAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/TezDavAttributes.swift; sourceTree = "<group>"; };
+		LA02000000000000000000019 /* TezDavLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/TezDavLiveActivity.swift; sourceTree = SOURCE_ROOT; };
+		TZ9000000000000000000000 /* Persistence/GearItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/GearItem.swift; sourceTree = "<group>"; };
+		TZ9000000000000000000002 /* Persistence/WeatherSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/WeatherSnapshot.swift; sourceTree = "<group>"; };
+		TZ9000000000000000000004 /* Sync/WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/WeatherService.swift; sourceTree = "<group>"; };
+		TZ9000000000000000000006 /* Dashboard/WeatherAnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/WeatherAnalyticsView.swift; sourceTree = "<group>"; };
+		TZ9000000000000000000008 /* Dashboard/GearListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/GearListView.swift; sourceTree = "<group>"; };
+		TZ900000000000000000000A /* TrainingMetrics/CoachingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/CoachingEngine.swift; sourceTree = "<group>"; };
+		TZ900000000000000000000C /* Dashboard/CoachingInsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/CoachingInsightsView.swift; sourceTree = "<group>"; };
+		TZ900000000000000000000E /* CoachingEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachingEngineTests.swift; sourceTree = "<group>"; };
+		TZ9000000000000000000010 /* GearTrackingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GearTrackingTests.swift; sourceTree = "<group>"; };
+		TZ9000000000000000000012 /* WeatherServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherServiceTests.swift; sourceTree = "<group>"; };
+		TZ1000000000000000000001 /* Shortcuts/ShortcutsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shortcuts/ShortcutsProvider.swift; sourceTree = "<group>"; };
+		TZ1000000000000000000003 /* Sync/CoreSpotlightManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/CoreSpotlightManager.swift; sourceTree = "<group>"; };
+		TZ1000000000000000000005 /* TrainingMetrics/CyclingDynamicsEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/CyclingDynamicsEngine.swift; sourceTree = "<group>"; };
+		TZ1000000000000000000007 /* TrainingMetrics/FTPTestSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/FTPTestSolver.swift; sourceTree = "<group>"; };
+		TZ1000000000000000000009 /* TrainingMetrics/RouteMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/RouteMatcher.swift; sourceTree = "<group>"; };
+		TZ100000000000000000000B /* ShortcutsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutsTests.swift; sourceTree = "<group>"; };
+		TZ100000000000000000000D /* FTPTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FTPTestTests.swift; sourceTree = "<group>"; };
+		TZ100000000000000000000F /* RouteMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteMatcherTests.swift; sourceTree = "<group>"; };
+		TZ1102000000000000000001 /* Gamification/AchievementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gamification/AchievementManager.swift; sourceTree = "<group>"; };
+		TZ1102000000000000000002 /* Gamification/AchievementsShowcaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gamification/AchievementsShowcaseView.swift; sourceTree = "<group>"; };
+		TZ1102000000000000000003 /* Gamification/ContributionsHeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gamification/ContributionsHeatmapView.swift; sourceTree = "<group>"; };
+		TZ1102000000000000000004 /* CasualAndGamificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CasualAndGamificationTests.swift; sourceTree = "<group>"; };
+		TZ1102000000000000000005 /* Dashboard/CasualDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/CasualDashboardView.swift; sourceTree = "<group>"; };
+		TZ1102000000000000000006 /* Persistence/Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/Achievement.swift; sourceTree = "<group>"; };
+		SH1200000000000000000001 /* Dashboard/WorkoutCardShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/WorkoutCardShareView.swift; sourceTree = "<group>"; };
+		SH1200000000000000000003 /* Dashboard/WeeklySummaryShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/WeeklySummaryShareView.swift; sourceTree = "<group>"; };
+		SH1200000000000000000005 /* RouteBuilder/GlobalHeatmapTileOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/GlobalHeatmapTileOverlay.swift; sourceTree = "<group>"; };
+		SH1200000000000000000007 /* RouteBuilder/HeatmapMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/HeatmapMapView.swift; sourceTree = "<group>"; };
+		SH1200000000000000000009 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		SH1200000000000000000011 /* AppStoreAndSharingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStoreAndSharingTests.swift; sourceTree = "<group>"; };
+		TZ8000000000000000000007 /* PersonalSegmentMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalSegmentMatcherTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -255,6 +328,11 @@
 			children = (
 				RP010000000000000000000001 /* TrainingMetrics/RacePredictorEngine.swift */,
 				AI010000000000000000000001 /* TrainingMetrics/AICoachEngine.swift */,
+				SH1200000000000000000001 /* Dashboard/WorkoutCardShareView.swift */,
+				SH1200000000000000000003 /* Dashboard/WeeklySummaryShareView.swift */,
+				SH1200000000000000000005 /* RouteBuilder/GlobalHeatmapTileOverlay.swift */,
+				SH1200000000000000000007 /* RouteBuilder/HeatmapMapView.swift */,
+				SH1200000000000000000009 /* PrivacyInfo.xcprivacy */,
 				RD010000000000000000000001 /* TrainingMetrics/RunningDynamicsEngine.swift */,
 				RP010000000000000000000003 /* Dashboard/PacingWristbandExporter.swift */,
 				A00200000000000000000091 /* Assets.xcassets */,
@@ -295,7 +373,19 @@
 				A00200000000000000000032 /* Dashboard/RecordsView.swift */,
 				A00200000000000000000033 /* TrainingMetrics/PersonalRecordCalculator.swift */,
 				A00200000000000000000041 /* Dashboard/ProfileView.swift */,
+				TZ9000000000000000000000 /* Persistence/GearItem.swift */,
+				TZ9000000000000000000002 /* Persistence/WeatherSnapshot.swift */,
+				TZ9000000000000000000004 /* Sync/WeatherService.swift */,
+				TZ9000000000000000000006 /* Dashboard/WeatherAnalyticsView.swift */,
+				TZ9000000000000000000008 /* Dashboard/GearListView.swift */,
+				TZ900000000000000000000A /* TrainingMetrics/CoachingEngine.swift */,
+				TZ900000000000000000000C /* Dashboard/CoachingInsightsView.swift */,
 				A00200000000000000000042 /* Notifications/NotificationManager.swift */,
+				TZ1000000000000000000001 /* Shortcuts/ShortcutsProvider.swift */,
+				TZ1000000000000000000003 /* Sync/CoreSpotlightManager.swift */,
+				TZ1000000000000000000005 /* TrainingMetrics/CyclingDynamicsEngine.swift */,
+				TZ1000000000000000000007 /* TrainingMetrics/FTPTestSolver.swift */,
+				TZ1000000000000000000009 /* TrainingMetrics/RouteMatcher.swift */,
 				A00200000000000000000051 /* Persistence/AppGroupManager.swift */,
 				A00200000000000000000052 /* TrainingMetrics/HealthKitManager.swift */,
 				A00200000000000000000053 /* Sync/WatchConnectivityManager.swift */,
@@ -323,11 +413,25 @@
 				PC0200000000000000000004 /* Dashboard/PowerCurveFormView.swift */,
 				SG0200000000000000000001 /* Persistence/Segment.swift */,
 				SG0200000000000000000002 /* Persistence/SegmentEffort.swift */,
+				TZ8000000000000000000001 /* Persistence/PersonalSegment.swift */,
+
+								TZ8000000000000000000003 /* TrainingMetrics/PersonalSegmentMatcher.swift */,
+
+								TZ8000000000000000000005 /* Dashboard/CreatePersonalSegmentView.swift */,
+
+								LA02000000000000000000009 /* LiveActivity/TezDavAttributes.swift */,
+
+								LA02000000000000000000019 /* TezDavLiveActivity.swift */,
 				SG0200000000000000000003 /* TrainingMetrics/SegmentMatcher.swift */,
 				SG0200000000000000000004 /* Dashboard/SegmentListView.swift */,
 				SG0200000000000000000005 /* Dashboard/SegmentDetailView.swift */,
 				HM020000000000000000000001 /* RouteBuilder/PolylineEncoder.swift */,
 				HM020000000000000000000002 /* RouteBuilder/PersonalHeatmapView.swift */,
+				TZ1102000000000000000001 /* Gamification/AchievementManager.swift */,
+				TZ1102000000000000000002 /* Gamification/AchievementsShowcaseView.swift */,
+				TZ1102000000000000000003 /* Gamification/ContributionsHeatmapView.swift */,
+				TZ1102000000000000000005 /* Dashboard/CasualDashboardView.swift */,
+				TZ1102000000000000000006 /* Persistence/Achievement.swift */,
 			);
 			path = TezDav;
 			sourceTree = "<group>";
@@ -336,7 +440,14 @@
 			isa = PBXGroup;
 			children = (
 				RP010000000000000000000005 /* RacePredictorTests.swift */,
+				TZ100000000000000000000B /* ShortcutsTests.swift */,
+				TZ100000000000000000000D /* FTPTestTests.swift */,
+				TZ100000000000000000000F /* RouteMatcherTests.swift */,
 				AI010000000000000000000003 /* AICoachTests.swift */,
+				SH1200000000000000000011 /* AppStoreAndSharingTests.swift */,
+				TZ900000000000000000000E /* CoachingEngineTests.swift */,
+				TZ9000000000000000000010 /* GearTrackingTests.swift */,
+				TZ9000000000000000000012 /* WeatherServiceTests.swift */,
 				RD010000000000000000000003 /* RunningDynamicsTests.swift */,
 				A00200000000000000000020 /* TezDavTests.swift */,
 				A00200000000000000000021 /* TrainingLoadCalculatorTests.swift */,
@@ -346,7 +457,10 @@
 				A00200000000000000000025 /* SyncServiceTests.swift */,
 				RT0200000000000000000001 /* RouteBuilderTests.swift */,
 				SG0200000000000000000006 /* SegmentMatcherTests.swift */,
+				TZ8000000000000000000007 /* PersonalSegmentMatcherTests.swift */,
 				HM020000000000000000000003 /* PolylineEncoderTests.swift */,
+				TZ1102000000000000000004 /* CasualAndGamificationTests.swift */,
+				PC0200000000000000000005 /* PowerCurveTests.swift */,
 			);
 			path = TezDavTests;
 			sourceTree = "<group>";
@@ -477,6 +591,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A00100000000000000000091 /* Assets.xcassets in Resources */,
+				SH1200000000000000000010 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -485,6 +600,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A00100000000000000000091 /* Assets.xcassets in Resources */,
+				SH1200000000000000000010 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,6 +620,10 @@
 			files = (
 				RP010000000000000000000002 /* TrainingMetrics/RacePredictorEngine.swift in Sources */,
 				AI010000000000000000000002 /* TrainingMetrics/AICoachEngine.swift in Sources */,
+				SH1200000000000000000002 /* Dashboard/WorkoutCardShareView.swift in Sources */,
+				SH1200000000000000000004 /* Dashboard/WeeklySummaryShareView.swift in Sources */,
+				SH1200000000000000000006 /* RouteBuilder/GlobalHeatmapTileOverlay.swift in Sources */,
+				SH1200000000000000000008 /* RouteBuilder/HeatmapMapView.swift in Sources */,
 				RD010000000000000000000002 /* TrainingMetrics/RunningDynamicsEngine.swift in Sources */,
 				RP010000000000000000000004 /* Dashboard/PacingWristbandExporter.swift in Sources */,
 				A00100000000000000000001 /* TezDavApp.swift in Sources */,
@@ -531,7 +651,19 @@
 				A00100000000000000000032 /* Dashboard/RecordsView.swift in Sources */,
 				A00100000000000000000033 /* TrainingMetrics/PersonalRecordCalculator.swift in Sources */,
 				A00100000000000000000041 /* Dashboard/ProfileView.swift in Sources */,
+				TZ9000000000000000000001 /* Persistence/GearItem.swift in Sources */,
+				TZ9000000000000000000003 /* Persistence/WeatherSnapshot.swift in Sources */,
+				TZ9000000000000000000005 /* Sync/WeatherService.swift in Sources */,
+				TZ9000000000000000000007 /* Dashboard/WeatherAnalyticsView.swift in Sources */,
+				TZ9000000000000000000009 /* Dashboard/GearListView.swift in Sources */,
+				TZ900000000000000000000B /* TrainingMetrics/CoachingEngine.swift in Sources */,
+				TZ900000000000000000000D /* Dashboard/CoachingInsightsView.swift in Sources */,
 				A00100000000000000000042 /* Notifications/NotificationManager.swift in Sources */,
+				TZ1000000000000000000002 /* Shortcuts/ShortcutsProvider.swift in Sources */,
+				TZ1000000000000000000004 /* Sync/CoreSpotlightManager.swift in Sources */,
+				TZ1000000000000000000006 /* TrainingMetrics/CyclingDynamicsEngine.swift in Sources */,
+				TZ1000000000000000000008 /* TrainingMetrics/FTPTestSolver.swift in Sources */,
+				TZ100000000000000000000A /* TrainingMetrics/RouteMatcher.swift in Sources */,
 				A00100000000000000000051 /* Persistence/AppGroupManager.swift in Sources */,
 				A00100000000000000000071 /* Persistence/IntervalSegment.swift in Sources */,
 				A00100000000000000000072 /* Persistence/TrainingWeek.swift in Sources */,
@@ -562,11 +694,23 @@
 				PC0100000000000000000004 /* Dashboard/PowerCurveFormView.swift in Sources */,
 				SG0100000000000000000001 /* Persistence/Segment.swift in Sources */,
 				SG0100000000000000000002 /* Persistence/SegmentEffort.swift in Sources */,
+				TZ8000000000000000000002 /* Persistence/PersonalSegment.swift in Sources */,
+
+								TZ8000000000000000000004 /* TrainingMetrics/PersonalSegmentMatcher.swift in Sources */,
+
+								TZ8000000000000000000006 /* Dashboard/CreatePersonalSegmentView.swift in Sources */,
+
+								LA01000000000000000000009 /* LiveActivity/TezDavAttributes.swift in Sources */,
 				SG0100000000000000000003 /* TrainingMetrics/SegmentMatcher.swift in Sources */,
 				SG0100000000000000000004 /* Dashboard/SegmentListView.swift in Sources */,
 				SG0100000000000000000005 /* Dashboard/SegmentDetailView.swift in Sources */,
 				HM010000000000000000000001 /* RouteBuilder/PolylineEncoder.swift in Sources */,
 				HM010000000000000000000002 /* RouteBuilder/PersonalHeatmapView.swift in Sources */,
+				TZ1101000000000000000001 /* Gamification/AchievementManager.swift in Sources */,
+				TZ1101000000000000000002 /* Gamification/AchievementsShowcaseView.swift in Sources */,
+				TZ1101000000000000000003 /* Gamification/ContributionsHeatmapView.swift in Sources */,
+				TZ1101000000000000000005 /* Dashboard/CasualDashboardView.swift in Sources */,
+				TZ1101000000000000000006 /* Persistence/Achievement.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -575,7 +719,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				RP010000000000000000000006 /* RacePredictorTests.swift in Sources */,
+				TZ100000000000000000000C /* ShortcutsTests.swift in Sources */,
+				TZ100000000000000000000E /* FTPTestTests.swift in Sources */,
+				TZ1000000000000000000010 /* RouteMatcherTests.swift in Sources */,
 				AI010000000000000000000004 /* AICoachTests.swift in Sources */,
+				SH1200000000000000000012 /* AppStoreAndSharingTests.swift in Sources */,
+				TZ900000000000000000000F /* CoachingEngineTests.swift in Sources */,
+				TZ9000000000000000000011 /* GearTrackingTests.swift in Sources */,
+				TZ9000000000000000000013 /* WeatherServiceTests.swift in Sources */,
 				RD010000000000000000000004 /* RunningDynamicsTests.swift in Sources */,
 				A00100000000000000000020 /* TezDavTests.swift in Sources */,
 				A00100000000000000000021 /* TrainingLoadCalculatorTests.swift in Sources */,
@@ -586,7 +737,9 @@
 				RT0100000000000000000001 /* RouteBuilderTests.swift in Sources */,
 				PC0100000000000000000005 /* PowerCurveTests.swift in Sources */,
 				SG0100000000000000000006 /* SegmentMatcherTests.swift in Sources */,
+				TZ8000000000000000000008 /* PersonalSegmentMatcherTests.swift in Sources */,
 				HM010000000000000000000003 /* PolylineEncoderTests.swift in Sources */,
+				TZ1101000000000000000004 /* CasualAndGamificationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -597,6 +750,9 @@
 				LA01000000000000000000011 /* WorkoutActivityAttributes.swift in Sources (LA) */,
 				LA01000000000000000000012 /* TezDavLiveActivityBundle.swift in Sources */,
 				LA01000000000000000000013 /* WorkoutLiveActivity.swift in Sources */,
+				LA01000000000000000000029 /* TezDavAttributes.swift in Sources (LA) */,
+
+								LA01000000000000000000039 /* TezDavLiveActivity.swift in Sources (LA) */,
 				LA01000000000000000000014 /* LockScreenView.swift in Sources */,
 				LA01000000000000000000015 /* DynamicIslandViews.swift in Sources */,
 				LA01000000000000000000016 /* LiveActivityHelpers.swift in Sources */,
@@ -683,6 +839,8 @@
 		A01200000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
+				LLVM_LTO = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -761,6 +919,8 @@
 		A01200000000000000000004 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
+				LLVM_LTO = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CODE_SIGN_STYLE = Automatic;

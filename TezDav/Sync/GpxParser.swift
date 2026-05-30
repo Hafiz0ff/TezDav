@@ -222,6 +222,9 @@ final class GpxParser: NSObject, XMLParserDelegate {
         
         let activityName = trackName.isEmpty ? fileName : trackName
         
+        let startLat = sortedPoints.first?.lat
+        let startLon = sortedPoints.first?.lon
+        
         let activity = Activity(
             stravaId: uniqueId,
             sportType: sport,
@@ -240,7 +243,9 @@ final class GpxParser: NSObject, XMLParserDelegate {
             trainingLoad: loadVal,
             importedAt: .now,
             streamsImported: true,
-            source: "imported"
+            source: "imported",
+            startLatitude: startLat,
+            startLongitude: startLon
         )
         
         let peaks = PowerCurveCalculator.calculatePeaks(from: samples)
@@ -255,8 +260,37 @@ final class GpxParser: NSObject, XMLParserDelegate {
         activity.peakPower20m = peaks[1200]
         activity.peakPower60m = peaks[3600]
         
+        if sport == "Walk" || sport == "Hike" || sport == "Run" {
+            let cad = avgCad ?? (sport == "Run" ? 85.0 : 50.0)
+            let steps = Int(cad * 2.0 * (movingTime / 60.0))
+            activity.stepsCount = steps
+            activity.activeMinutes = Int(movingTime / 60.0)
+            
+            let elevations = sortedPoints.compactMap { $0.elevation }
+            activity.maxAltitude = elevations.max()
+            
+            var descent = 0.0
+            for i in 1..<sortedPoints.count {
+                if let prevEle = sortedPoints[i-1].elevation, let currEle = sortedPoints[i].elevation {
+                    let diff = prevEle - currEle
+                    if diff > 0 {
+                        descent += diff
+                    }
+                }
+            }
+            activity.totalElevationLoss = descent
+        } else if sport == "Swim" {
+            let strokes = Int(totalDist * 0.4)
+            activity.swimStrokeCount = strokes
+            activity.swimSWOLF = 40
+            activity.pace100m = avgSpeed > 0 ? (100.0 / avgSpeed) : 0.0
+            activity.activeMinutes = Int(movingTime / 60.0)
+        }
+
         if sport == "Run" {
             RunningDynamicsEngine.enrich(activity: activity, samples: samples)
+        } else if sport == "Ride" {
+            CyclingDynamicsEngine.enrich(activity: activity, samples: samples)
         }
         
         return (activity, samples)
@@ -277,6 +311,15 @@ final class GpxParser: NSObject, XMLParserDelegate {
         let type = rawType.lowercased()
         if type.contains("bike") || type.contains("ride") || type.contains("cycl") {
             return "Ride"
+        }
+        if type.contains("walk") {
+            return "Walk"
+        }
+        if type.contains("hike") {
+            return "Hike"
+        }
+        if type.contains("swim") {
+            return "Swim"
         }
         return "Run"
     }

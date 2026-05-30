@@ -1,6 +1,7 @@
 import SwiftData
 import SwiftUI
 import UserNotifications
+import CoreSpotlight
 
 struct ActivityIdWrapper: Identifiable {
     let id: Int64
@@ -44,10 +45,12 @@ struct AppRootView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var selectedTab = 0
+    @State private var sidebarSelection: Int? = 0
     @State private var activityIdWrapper: ActivityIdWrapper? = nil
     
     @AppStorage("onboardingCompleted") private var onboardingCompleted = false
     @State private var importedFileURLs: [URL]? = nil
+    @State private var isSystemFileImporterPresented = false
 
     private let config = StravaConfig.fromBundle()
     private let tokenStore = KeychainTokenStore()
@@ -55,63 +58,148 @@ struct AppRootView: View {
     var body: some View {
         Group {
             if onboardingCompleted {
-                TabView(selection: $selectedTab) {
-                    DashboardView()
-                        .tabItem {
-                            Label("Dashboard", systemImage: "chart.bar.fill")
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    NavigationSplitView {
+                        List(selection: $sidebarSelection) {
+                            NavigationLink(value: 0) {
+                                Label("Dashboard", systemImage: "chart.bar.fill")
+                            }
+                            NavigationLink(value: 1) {
+                                Label("Form", systemImage: "waveform.path.ecg")
+                            }
+                            NavigationLink(value: 2) {
+                                Label("Routes", systemImage: "map.fill")
+                            }
+                            NavigationLink(value: 3) {
+                                Label("Records", systemImage: "trophy.fill")
+                            }
+                            NavigationLink(value: 4) {
+                                Label("Profile", systemImage: "person.crop.circle.fill")
+                            }
                         }
-                        .tag(0)
-
-                    FormView()
-                        .tabItem {
-                            Label("Form", systemImage: "waveform.path.ecg")
-                        }
-                        .tag(1)
-
-                    RouteListView()
-                        .tabItem {
-                            Label("Routes", systemImage: "map.fill")
-                        }
-                        .tag(2)
-
-                    RecordsView()
-                        .tabItem {
-                            Label("Records", systemImage: "trophy.fill")
-                        }
-                        .tag(3)
-                        
-                    ProfileView()
-                        .tabItem {
-                            Label("Profile", systemImage: "person.crop.circle.fill")
-                        }
-                        .tag(4)
-                }
-                .sheet(item: $activityIdWrapper) { wrapper in
-                    if let targetAct = allActivities.first(where: { $0.stravaId == wrapper.id }) {
-                        NavigationStack {
-                            ActivityDetailView(activity: targetAct)
-                                .toolbar {
-                                    ToolbarItem(placement: .navigationBarLeading) {
-                                        Button("Закрыть") {
-                                            activityIdWrapper = nil
-                                        }
-                                    }
-                                }
+                        .navigationTitle("TezDav")
+                        .listStyle(.sidebar)
+                    } detail: {
+                        switch sidebarSelection ?? 0 {
+                        case 0: DashboardView()
+                        case 1: FormView()
+                        case 2: RouteListView()
+                        case 3: RecordsView()
+                        case 4: ProfileView()
+                        default: DashboardView()
                         }
                     }
-                }
-                .sheet(item: Binding(
-                    get: { importedFileURLs.map { FileIdWrapper(urls: $0) } },
-                    set: { wrapper in importedFileURLs = wrapper?.urls }
-                )) { wrapper in
-                    FileImportView(fileURLs: wrapper.urls)
-                }
-                .onOpenURL { url in
-                    if url.scheme == "tezdav" {
-                        handleDeepLink(url)
-                    } else if url.isFileURL {
-                        // Direct file import from Files or Share Sheet!
-                        self.importedFileURLs = [url]
+                    .sheet(item: $activityIdWrapper) { wrapper in
+                        if let targetAct = allActivities.first(where: { $0.stravaId == wrapper.id }) {
+                            NavigationStack {
+                                ActivityDetailView(activity: targetAct)
+                                    .toolbar {
+                                        ToolbarItem(placement: .navigationBarLeading) {
+                                            Button("Закрыть") {
+                                                activityIdWrapper = nil
+                                            }
+                                        }
+                                    }
+                            }
+                        }
+                    }
+                    .sheet(item: Binding(
+                        get: { importedFileURLs.map { FileIdWrapper(urls: $0) } },
+                        set: { wrapper in importedFileURLs = wrapper?.urls }
+                    )) { wrapper in
+                        FileImportView(fileURLs: wrapper.urls)
+                    }
+                    .fileImporter(
+                        isPresented: $isSystemFileImporterPresented,
+                        allowedContentTypes: [.init(filenameExtension: "gpx")!, .init(filenameExtension: "fit")!],
+                        allowsMultipleSelection: true
+                    ) { result in
+                        if case .success(let urls) = result {
+                            self.importedFileURLs = urls
+                        }
+                    }
+                    .onOpenURL { url in
+                        if url.scheme == "tezdav" {
+                            if url.host == "import" {
+                                isSystemFileImporterPresented = true
+                            } else {
+                                handleDeepLink(url)
+                            }
+                        } else if url.isFileURL {
+                            self.importedFileURLs = [url]
+                        }
+                    }
+                } else {
+                    TabView(selection: $selectedTab) {
+                        DashboardView()
+                            .tabItem {
+                                Label("Dashboard", systemImage: "chart.bar.fill")
+                            }
+                            .tag(0)
+
+                        FormView()
+                            .tabItem {
+                                Label("Form", systemImage: "waveform.path.ecg")
+                            }
+                            .tag(1)
+
+                        RouteListView()
+                            .tabItem {
+                                Label("Routes", systemImage: "map.fill")
+                            }
+                            .tag(2)
+
+                        RecordsView()
+                            .tabItem {
+                                Label("Records", systemImage: "trophy.fill")
+                            }
+                            .tag(3)
+                            
+                        ProfileView()
+                            .tabItem {
+                                Label("Profile", systemImage: "person.crop.circle.fill")
+                            }
+                            .tag(4)
+                    }
+                    .sheet(item: $activityIdWrapper) { wrapper in
+                        if let targetAct = allActivities.first(where: { $0.stravaId == wrapper.id }) {
+                            NavigationStack {
+                                ActivityDetailView(activity: targetAct)
+                                    .toolbar {
+                                        ToolbarItem(placement: .navigationBarLeading) {
+                                            Button("Закрыть") {
+                                                activityIdWrapper = nil
+                                            }
+                                        }
+                                    }
+                            }
+                        }
+                    }
+                    .sheet(item: Binding(
+                        get: { importedFileURLs.map { FileIdWrapper(urls: $0) } },
+                        set: { wrapper in importedFileURLs = wrapper?.urls }
+                    )) { wrapper in
+                        FileImportView(fileURLs: wrapper.urls)
+                    }
+                    .fileImporter(
+                        isPresented: $isSystemFileImporterPresented,
+                        allowedContentTypes: [.init(filenameExtension: "gpx")!, .init(filenameExtension: "fit")!],
+                        allowsMultipleSelection: true
+                    ) { result in
+                        if case .success(let urls) = result {
+                            self.importedFileURLs = urls
+                        }
+                    }
+                    .onOpenURL { url in
+                        if url.scheme == "tezdav" {
+                            if url.host == "import" {
+                                isSystemFileImporterPresented = true
+                            } else {
+                                handleDeepLink(url)
+                            }
+                        } else if url.isFileURL {
+                            self.importedFileURLs = [url]
+                        }
                     }
                 }
             } else {
@@ -128,10 +216,19 @@ struct AppRootView: View {
                         if url.scheme == "tezdav" {
                             handleDeepLink(url)
                         } else if url.isFileURL {
-                            // Direct file import from Files or Share Sheet!
                             self.importedFileURLs = [url]
                         }
                     }
+            }
+        }
+        .onContinueUserActivity(CSSearchableItemActionType) { userActivity in
+            if let uniqueIdentifier = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String {
+                let parts = uniqueIdentifier.split(separator: "-")
+                if parts.count == 2, parts[0] == "activity", let activityId = Int64(parts[1]) {
+                    self.activityIdWrapper = ActivityIdWrapper(id: activityId)
+                    self.selectedTab = 0
+                    self.sidebarSelection = 0
+                }
             }
         }
         .onAppear {

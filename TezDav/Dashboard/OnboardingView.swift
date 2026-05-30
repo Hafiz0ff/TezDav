@@ -14,6 +14,8 @@ struct OnboardingView: View {
     @State private var maxHRString: String = "0"
     @State private var mainSport: String = "Run"
     @State private var weeklyGoalKm: String = "40"
+    @State private var appMode: AppMode = .pro
+    @State private var targetWeeklyActiveMinutes: String = "150"
     
     private let config = StravaConfig.fromBundle()
     
@@ -196,45 +198,76 @@ struct OnboardingView: View {
                         Text("Бег").tag("Run")
                         Text("Велосипед").tag("Ride")
                         Text("Триатлон").tag("Triathlon")
+                        Text("Ходьба").tag("Walk")
+                        Text("Плавание").tag("Swim")
                     }
                     .pickerStyle(.segmented)
                 }
                 
-                // Birth Date
-                DatePicker("Дата рождения", selection: $birthDate, displayedComponents: .date)
-                    .font(.subheadline.weight(.semibold))
-                
-                // Max Heart Rate
+                // App Mode selection
                 VStack(alignment: .leading, spacing: 6) {
-                    let age = Calendar.current.dateComponents([.year], from: birthDate, to: .now).year ?? 30
-                    let autoHR = 220 - age
+                    Text("Режим работы")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
                     
-                    HStack {
-                        Text("Максимальный пульс (BPM)")
-                            .font(.subheadline.weight(.semibold))
-                        Spacer()
-                        Text("Авто: \(autoHR)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                    Picker("Режим", selection: $appMode) {
+                        Text("Любитель (Casual)").tag(AppMode.casual)
+                        Text("Спортсмен (Pro)").tag(AppMode.pro)
                     }
-                    
-                    TextField("Оставьте 0 для авто-расчета", text: $maxHRString)
-                        .keyboardType(.numberPad)
-                        .padding()
-                        .background(.thinMaterial)
-                        .cornerRadius(8)
+                    .pickerStyle(.segmented)
                 }
                 
-                // Weekly running distance
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Целевой недельный объём бега (км)")
+                let showProFields = appMode == .pro && mainSport != "Walk" && mainSport != "Swim"
+                
+                if showProFields {
+                    // Birth Date
+                    DatePicker("Дата рождения", selection: $birthDate, displayedComponents: .date)
                         .font(.subheadline.weight(.semibold))
                     
-                    TextField("Например, 40", text: $weeklyGoalKm)
-                        .keyboardType(.numberPad)
-                        .padding()
-                        .background(.thinMaterial)
-                        .cornerRadius(8)
+                    // Max Heart Rate
+                    VStack(alignment: .leading, spacing: 6) {
+                        let age = Calendar.current.dateComponents([.year], from: birthDate, to: .now).year ?? 30
+                        let autoHR = 220 - age
+                        
+                        HStack {
+                            Text("Максимальный пульс (BPM)")
+                                .font(.subheadline.weight(.semibold))
+                            Spacer()
+                            Text("Авто: \(autoHR)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                        TextField("Оставьте 0 для авто-расчета", text: $maxHRString)
+                            .keyboardType(.numberPad)
+                            .padding()
+                            .background(.thinMaterial)
+                            .cornerRadius(8)
+                    }
+                    
+                    // Weekly running distance
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Целевой недельный объём бега (км)")
+                            .font(.subheadline.weight(.semibold))
+                        
+                        TextField("Например, 40", text: $weeklyGoalKm)
+                            .keyboardType(.numberPad)
+                            .padding()
+                            .background(.thinMaterial)
+                            .cornerRadius(8)
+                    }
+                } else {
+                    // Casual / Walk / Swim fields:
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Цель активных минут в неделю")
+                            .font(.subheadline.weight(.semibold))
+                        
+                        TextField("Например, 150", text: $targetWeeklyActiveMinutes)
+                            .keyboardType(.numberPad)
+                            .padding()
+                            .background(.thinMaterial)
+                            .cornerRadius(8)
+                    }
                 }
             }
             .padding()
@@ -273,18 +306,31 @@ struct OnboardingView: View {
         let settings = UserSettings.getOrCreate(in: modelContext)
         
         settings.mainSport = mainSport
-        settings.birthDate = birthDate
+        settings.appMode = appMode
         
-        let hrInput = Double(maxHRString) ?? 0.0
-        if hrInput > 0 {
-            settings.maxHeartRate = hrInput
+        let showProFields = appMode == .pro && mainSport != "Walk" && mainSport != "Swim"
+        
+        if showProFields {
+            settings.birthDate = birthDate
+            let hrInput = Double(maxHRString) ?? 0.0
+            if hrInput > 0 {
+                settings.maxHeartRate = hrInput
+            } else {
+                let age = Calendar.current.dateComponents([.year], from: birthDate, to: .now).year ?? 30
+                settings.maxHeartRate = Double(220 - age)
+            }
+            if let km = Double(weeklyGoalKm) {
+                settings.targetWeeklyDistanceMeters = km * 1000.0
+            }
         } else {
-            let age = Calendar.current.dateComponents([.year], from: birthDate, to: .now).year ?? 30
-            settings.maxHeartRate = Double(220 - age)
-        }
-        
-        if let km = Double(weeklyGoalKm) {
-            settings.targetWeeklyDistanceMeters = km * 1000.0
+            settings.maxHeartRate = 190.0
+            settings.targetWeeklyActiveMinutes = Double(targetWeeklyActiveMinutes) ?? 150.0
+            // If they chose Walk or Swim, automatically force appMode = .casual
+            if mainSport == "Walk" || mainSport == "Swim" {
+                settings.appMode = .casual
+            } else {
+                settings.appMode = .casual
+            }
         }
         
         try? modelContext.save()

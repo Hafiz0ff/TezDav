@@ -15,6 +15,7 @@ final class SegmentEffort {
     var isMock: Bool                   // Флаг виртуального соперника
     
     var segment: Segment?
+    var personalSegment: PersonalSegment?
     
     init(
         id: UUID = UUID(),

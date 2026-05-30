@@ -76,7 +76,42 @@
 * Интерактивные Swift Charts графики с тултипом и сменными табами для детального анализа каждого метра тренировки.
 * Корректный пересчет длины шага в футы для имперской системы.
 
+#### 10. Умный локальный ИИ-тренер (Daily AI Coach)
+* Детерминированный локальный движок рекомендаций на основе индивидуальных показателей готовности к тренировкам (Readiness Score), текущего баланса тренировочной нагрузки (TSB), каденса и износа экипировки.
+* Персонализированные подсказки по тренировкам, восстановлению и технике бега, распределенные по приоритетам (Безопасность > Восстановление > Экипировка > Прогресс > Техника).
+* Удобное ведение архива советов с возможностью просмотреть рекомендации за последние 30 дней.
+
+#### 11. Учёт износа экипировки (Gear Tracking)
+* Полноценное отслеживание пробега беговых кроссовок и компонентов велосипеда.
+* Автоматический импорт и маппинг `gear_id` из синхронизированных тренировок Strava.
+* Интуитивно понятные индикаторы износа, стилизованные под уровень заряда батареи (зеленый/желтый/красный), отображаемые непосредственно в профиле спортсмена.
+* Автоматические локальные пуш-уведомления при остатке ресурса снаряжения менее 50 км.
+
+#### 12. Аналитика влияния погоды (Weather Correlation)
+* Автоматическое обогащение каждой импортированной или записанной тренировки метеоданными от Open-Meteo на момент её старта.
+* Интерактивные графики Swift Charts (зависимость скорости/темпа от температуры и влажности) для выявления оптимальных климатических условий.
+* Расчет идеального температурного диапазона для ваших рекордов на основе исторической статистики.
+* Надежная оффлайн-работа с генератором реалистичной сезонной погоды в случае отсутствия связи с сервером.
+
+#### 13. Геймификация, личные достижения и Casual-режим
+* Легкий режим приложения (Casual Mode) для прогулок и поддержания активности (без пульсометров и ваттметров).
+* Подсчет шагов, калорий, времени активности и автоматический расчет индекса готовности.
+* Накопительная система ачивок и наград (например, серии активности Streak, 100 дней тренировок, рекордные дистанции).
+* Интерактивная плиточная сетка вклада (Activity Contribution Heatmap) в стиле GitHub.
+
+#### 14. Workout Share Cards & Еженедельная сводка
+* Создание стильных карточек тренировок (Workout Share Cards) в двух форматах: квадрат (1:1) и Stories (9:16).
+* Интерактивная отрисовка трека маршрута и наложение ключевых метрик с выбором одной из тем (Тёмная, Светлая, Градиент).
+* Генерация панорамных карточек еженедельных итогов с суммарными метриками и мини-теплокартой активности.
+* Интеграция с системным Share Sheet для быстрой публикации или сохранения в галерею.
+
+#### 15. Личная география тренировок (Personal Geography)
+* Автоматическая кластеризация уникальных городов и районов, которые вы посетили во время активности.
+* Подсчет исследованной площади на основе виртуальной сетки с шагом 1x1 км.
+* Поиск географических экстремумов тренировок (самая северная, южная, восточная и западная точки).
+
 ---
+
 
 ### 🛠 Стек технологий и Архитектура
 
@@ -106,6 +141,8 @@ graph TD
     UI --> RBuilder[Interactive Route Builder / Редактор маршрутов]
     UI --> Heatmap[Personal Heatmap / Персональная теплокарта]
     UI --> Recs[Race Predictor Pro / Прогноз результатов]
+    UI --> Gear[Gear Tracker / Учёт экипировки]
+    UI --> CoachingView[AI Coach Insights / Ежедневный ИИ-тренер]
     
     %% Analytics Engine
     Engines[Sports Science Engines / Физиологические расчеты]
@@ -115,6 +152,8 @@ graph TD
     Engines --> RP[Riegel Race Predictor v2 / Алгоритм прогнозирования]
     Engines --> RD[Running Dynamics Engine / Анализ бега]
     Engines --> Read[HRV & Readiness Score / Индекс готовности]
+    Engines --> Coaching[Coaching & Rules Engine / Движок рекомендаций]
+    Engines --> Weather[Weather Correlation / Метео-анализ]
     
     %% Extensions
     Ext[System Integrations / Системные расширения]
@@ -123,10 +162,13 @@ graph TD
     Ext --> HK[HealthKit Dual Sync]
     Ext --> WC[WatchConnectivity Sync]
     Ext --> Widget[iOS Widgets & Apple Watch App]
+    Ext --> OpenMeteo[Open-Meteo API Sync / Синхронизация погоды]
     
     %% Storage
     DB[(SwiftData Local DB / База данных)]
     App --> DB
+    DB --> GearDB[(GearItem DB)]
+    DB --> WeatherDB[(WeatherSnapshot DB)]
 ```
 
 ---
@@ -174,12 +216,46 @@ graph TD
       <img src="docs/screenshots/segment_detail_leaderboard.png" alt="Лидерборд сегмента" width="100%">
     </td>
   </tr>
+  <tr>
+    <td width="50%">
+      <p align="center"><b>Учёт износа экипировки (Gear wear tracking)</b></p>
+      <img src="docs/screenshots/gear_tracking.png" alt="Учёт износа экипировки" width="100%">
+    </td>
+    <td width="50%">
+      <p align="center"><b>Аналитика влияния погоды (Weather Correlation)</b></p>
+      <img src="docs/screenshots/weather_analytics.png" alt="Аналитика влияния погоды" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <p align="center"><b>Персональная тепловая карта (Personal Heatmap)</b></p>
+      <img src="docs/screenshots/personal_heatmap.png" alt="Тепловая карта тренировок" width="100%">
+    </td>
+    <td width="50%">
+      <p align="center"><b>Ежедневные подсказки ИИ-тренера (Daily AI Coach)</b></p>
+      <img src="docs/screenshots/ai_coach.png" alt="Ежедневные подсказки ИИ-тренера" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <p align="center"><b>Легкий Casual-режим и достижения</b></p>
+      <img src="docs/screenshots/casual_dashboard.png" alt="Casual-режим и достижения" width="100%">
+    </td>
+    <td width="50%">
+      <p align="center"><b>Красивый шаринг тренировки (Workout Card)</b></p>
+      <img src="docs/screenshots/workout_card_share.png" alt="Шаринг тренировки" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <p align="center"><b>Сводная карточка за неделю (Weekly Summary)</b></p>
+      <img src="docs/screenshots/weekly_summary_share.png" alt="Еженедельный отчет" width="100%">
+    </td>
+    <td width="50%">
+    </td>
+  </tr>
 </table>
 
-<p align="center">
-  <b>Персональная тепловая карта тренировок (Personal Heatmap)</b><br>
-  <img src="docs/screenshots/personal_heatmap.png" alt="Тепловая карта тренировок" width="60%">
-</p>
 
 ---
 
@@ -200,3 +276,10 @@ graph TD
 * **Segments & Leaderboards**: Local offline snapping of activities (GPX/FIT) with predefined segments using the Haversine formula (25m proximity, 15% distance tolerance). Tracks Personal Records (PRs), shows interactive segment maps, Swift Charts elevation profiles, and lists local leaderboards populated with simulated bots.
 * **Personal Heatmap**: High-fidelity overlay showing all historical GPS tracks on a single interactive map. Features filtering by sport type, map styles (Standard, Satellite, Hybrid), adjustable line thickness, line opacity (glowing effect), and color scheme presets (Orange, Neon Green, Ice Blue, Multisport). Implements automatic path downsampling and encoding/caching in SwiftData for instant offline loads. Supports exporting high-resolution heatmap images (MKMapSnapshotter + CoreGraphics) via standard Share Sheets.
 * **Running Dynamics**: Professional running biomechanics telemetry tracking cadence, vertical oscillation, ground contact time (GCT), L/R balance, and stride length. Visualizes efficiency zones using standard Garmin colors (purple, green, orange, red) and features interactive Swift Charts with tooltips for telemetry analytics over session distance.
+* **Local AI Coach & Daily Insights**: On-device recommendation engine parsing Readiness Score, weekly training stress balance (TSB), cadence zones, and gear lifespan. Generates prioritized, highly-tailored coaching recommendations (Safety > Recovery > Gear > Progress > Technique) and maintains a 30-day coaching history archive.
+* **Gear Wear & Equipment Lifespan Tracking**: In-depth tracker for running shoes and cycling equipment. Features automatic Strava `gear_id` activity mapping, sport-specific default items, dynamic battery-style colored wear indicators (green/yellow/red) in the user Profile, and instant system alerts when remaining equipment lifespan falls below 50 km.
+* **Weather Correlation & Environmental Analytics**: Instant background fetching of historical weather snapshots (temperature, relative humidity, wind speed, WMO codes) at workout start coordinates via Open-Meteo API. Renders Swift Charts scatter plots correlating Speed vs Temperature/Humidity to determine the athlete's optimal training environments, backed by a robust offline mock simulator fallback.
+* **Casual Mode, Achievements & Gamification**: Lightweight app mode tailored for daily walking and light activity. Tracks daily steps, active minutes, and calories, coupled with a GitHub-style Activity Contribution Heatmap. Rewards performance with a personal Achievements Showcase featuring streak awards and distance milestones.
+* **Workout Card Sharing & Weekly Summary Cards**: Generates high-fidelity visual cards for social media sharing. Supports 1:1 Square and 9:16 Stories formats, customizable styling themes (Dark, Light, Gradient), high-resolution route track map rendering, and weekly activity recap cards with multi-run visual clusters.
+* **Personal Geography & Exploring Stats**: In-depth geographical analysis automatically clustering visited cities and neighborhoods. Computes total explored land area on a 1x1 km virtual grid and identifies spatial extrema (northernmost, southernmost, easternmost, and westernmost GPS coordinates of your workouts).
+

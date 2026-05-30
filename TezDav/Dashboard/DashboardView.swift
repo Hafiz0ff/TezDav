@@ -1,7 +1,15 @@
 import SwiftData
 import SwiftUI
 import WidgetKit
+import AppIntents
 import UniformTypeIdentifiers
+import Charts
+
+struct DashboardReadinessPoint: Identifiable {
+    let id = UUID()
+    let date: Date
+    let score: Double
+}
 
 struct DashboardView: View {
     @Query(sort: \Activity.startDate, order: .reverse) private var activities: [Activity]
@@ -10,14 +18,39 @@ struct DashboardView: View {
     @Environment(\.modelContext) private var modelContext
     
     @State private var recoveryScore: Int = 75
+    @State private var isReadinessCardExpanded = false
+    @State private var readinessDetails: HealthKitManager.ReadinessDetails? = nil
+    @State private var readiness7DayTrend: [DashboardReadinessPoint] = []
     @State private var isFileImporterPresented = false
     @State private var localImportedFileURLs: [URL]? = nil
+    @State private var selectedSport: SportFilter = .all
+    @State private var isShowingWeeklySummary = false
 
     private let config = StravaConfig.fromBundle()
     private let tokenStore = KeychainTokenStore()
 
     private var activeUserSettings: UserSettings {
         userSettings.first ?? UserSettings()
+    }
+
+    private var filteredActivities: [Activity] {
+        activities.filter { activity in
+            switch selectedSport {
+            case .all:
+                return true
+            case .run:
+                return activity.sportType.lowercased().contains("run")
+            case .ride:
+                return activity.sportType.lowercased().contains("ride") || activity.sportType.lowercased().contains("cycl")
+            case .walk:
+                return activity.sportType.lowercased().contains("walk") || activity.sportType.lowercased().contains("hike")
+            case .swim:
+                return activity.sportType.lowercased().contains("swim")
+            case .other:
+                let type = activity.sportType.lowercased()
+                return !type.contains("run") && !type.contains("ride") && !type.contains("cycl") && !type.contains("walk") && !type.contains("hike") && !type.contains("swim")
+            }
+        }
     }
 
     var body: some View {
@@ -28,115 +61,85 @@ struct DashboardView: View {
                 emptyStateView
             } else {
                 let summary = DashboardViewModel.summary(from: activities)
+                let isMetric = activeUserSettings.isMetric
+                let divisor = isMetric ? 1000.0 : 1609.344
+                let unit = isMetric ? " km" : " mi"
+                let distanceStr = (summary.weeklyDistanceMeters / divisor).formatted(.number.precision(.fractionLength(1))) + unit
                 
-                List {
+                let daysLeft: Int? = {
                     if let raceDate = activeUserSettings.raceDate {
-                        let daysLeft = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: .now), to: Calendar.current.startOfDay(for: raceDate)).day ?? 0
-                        if daysLeft >= 0 {
-                            Section {
-                                HStack(spacing: 12) {
-                                    Image(systemName: "flag.checkered")
-                                        .font(.title2)
-                                        .foregroundStyle(.blue.gradient)
-                                    
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        let isMetric = activeUserSettings.isMetric
-                                        let divisor = isMetric ? 1000.0 : 1609.344
-                                        let unitLabel = isMetric ? "км" : "миль"
-                                        let raceDistStr = activeUserSettings.raceDistanceMeters != nil ? String(format: " (%.1f %@", activeUserSettings.raceDistanceMeters! / divisor, unitLabel) + ")" : ""
-                                        Text("До целевого старта\(raceDistStr): \(daysLeft) \(daysLeft == 1 ? "день" : (daysLeft < 5 ? "дня" : "дней"))!")
-                                            .font(.headline)
-                                        
-                                        let tsbValue = summary.tsb
-                                        Text(String(format: "Текущая форма (TSB): %.0f — %@", tsbValue, tsbTaperMessage(tsbValue)))
-                                            .font(.subheadline)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
-                                .padding(.vertical, 4)
-                            }
-                        }
+                        let diff = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: .now), to: Calendar.current.startOfDay(for: raceDate)).day ?? 0
+                        return diff >= 0 ? diff : nil
                     }
-
-                    // Recovery Score Card
-                    Section {
-                        HStack(spacing: 16) {
-                            ZStack {
-                                Circle()
-                                    .stroke(.tertiary.opacity(0.3), lineWidth: 5)
-                                    .frame(width: 52, height: 52)
-                                
-                                Circle()
-                                    .trim(from: 0, to: CGFloat(Double(recoveryScore) / 100.0))
-                                    .stroke(recoveryColor(recoveryScore).gradient, style: StrokeStyle(lineWidth: 5, lineCap: .round))
-                                    .frame(width: 52, height: 52)
-                                    .rotationEffect(.degrees(-90))
-                                
-                                Text("\(recoveryScore)%")
-                                    .font(.system(size: 14, weight: .bold))
-                            }
+                    return nil
+                }()
+                let raceDistStr: String = {
+                    if let dist = activeUserSettings.raceDistanceMeters {
+                        let unitLabel = isMetric ? "км" : "миль"
+                        return String(format: " (%.1f %@", dist / divisor, unitLabel) + ")"
+                    }
+                    return ""
+                }()
+                let targetStartMessage: String = {
+                    guard let days = daysLeft else { return "" }
+                    let suffix = days == 1 ? "день" : (days < 5 ? "дня" : "дней")
+                    return "До целевого старта\(raceDistStr): \(days) \(suffix)!"
+                }()
+                
+                if activeUserSettings.appMode == .casual {
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            SportFilterChipsView(selectedSport: $selectedSport)
+                                .padding(.top, 10)
                             
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Готовность к нагрузке: \(recoveryScore)%")
-                                    .font(.headline)
-                                Text(recoveryAdvice(recoveryScore))
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        .padding(.vertical, 4)
-                    }
-
-                    Section {
-                        HStack(spacing: 12) {
-                            MetricTile(title: "CTL", value: summary.ctl.formatted(.number.precision(.fractionLength(1))))
-                            MetricTile(title: "ATL", value: summary.atl.formatted(.number.precision(.fractionLength(1))))
-                            MetricTile(title: "TSB", value: summary.tsb.formatted(.number.precision(.fractionLength(1))))
-                        }
-                        .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
-                    }
-
-                    Section("This Week") {
-                        let isMetric = activeUserSettings.isMetric
-                        let divisor = isMetric ? 1000.0 : 1609.344
-                        let unit = isMetric ? " km" : " mi"
-                        LabeledContent("Distance", value: (summary.weeklyDistanceMeters / divisor).formatted(.number.precision(.fractionLength(1))) + unit)
-                        LabeledContent("Time", value: durationString(summary.weeklyDuration))
-                    }
-
-                    Section("Latest Activities") {
-                        if summary.latestActivities.isEmpty {
-                            Text("No local activities yet")
-                                .foregroundStyle(.secondary)
-                        } else {
-                            ForEach(summary.latestActivities) { activity in
-                                NavigationLink(destination: ActivityDetailView(activity: activity)) {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(activity.name)
-                                            .font(.headline)
-                                        let isMetric = activeUserSettings.isMetric
-                                        let divisor = isMetric ? 1000.0 : 1609.344
-                                        let unit = isMetric ? " km" : " mi"
-                                        Text("\(activity.sportType) · \((activity.distanceMeters / divisor).formatted(.number.precision(.fractionLength(1))))\(unit) · \(durationString(activity.movingTime))")
-                                            .font(.subheadline)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
-                                .simultaneousGesture(TapGesture().onEnded {
-                                    HapticManager.trigger(.light)
-                                })
-                            }
+                            CasualDashboardView(activities: filteredActivities, settings: activeUserSettings)
+                            
+                            CasualSyncCard(phase: progress.phase)
+                                .padding(.horizontal)
+                                .padding(.bottom, 20)
                         }
                     }
-
-                    Section("Sync") {
-                        Text(syncText(progress.phase))
-                            .foregroundStyle(.secondary)
+                    .refreshable {
+                        HapticManager.trigger(.light)
+                        triggerSync()
                     }
-                }
-                .refreshable {
-                    HapticManager.trigger(.light)
-                    triggerSync()
+                } else {
+                    List {
+                        Section {
+                            SportFilterChipsView(selectedSport: $selectedSport)
+                                .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+                        }
+                        
+                        DashboardTargetStartSection(
+                            targetStartMessage: targetStartMessage,
+                            tsbValue: summary.tsb,
+                            taperMessage: tsbTaperMessage(summary.tsb)
+                        )
+
+                        DashboardReadinessSection(
+                            isReadinessCardExpanded: $isReadinessCardExpanded,
+                            recoveryScore: recoveryScore,
+                            readinessDetails: readinessDetails,
+                            readiness7DayTrend: readiness7DayTrend
+                        )
+
+                        Section {
+                            DailyRecommendationCardView(activities: activities, settings: activeUserSettings, context: modelContext)
+                        }
+
+                        DashboardMetricsSection(ctl: summary.ctl, atl: summary.atl, tsb: summary.tsb)
+
+                        DashboardThisWeekSection(distanceStr: distanceStr, weeklyDuration: summary.weeklyDuration)
+
+                        let filteredLatest = filteredActivities.prefix(5)
+                        LatestActivitiesSection(activities: Array(filteredLatest), isMetric: activeUserSettings.isMetric)
+
+                        DashboardSyncSection(phase: progress.phase)
+                    }
+                    .refreshable {
+                        HapticManager.trigger(.light)
+                        triggerSync()
+                    }
                 }
             }
         }
@@ -181,9 +184,30 @@ struct DashboardView: View {
                 print("Files selection failed: \(error.localizedDescription)")
             }
         }
+        .sheet(isPresented: $isShowingWeeklySummary) {
+            WeeklySummaryShareView()
+        }
         .task {
             triggerSync()
             saveTelemetrySnapshot()
+            
+            // Donate Siri Shortcut for morning readiness form advice
+            Task {
+                try? await GetFormIntent().donate()
+            }
+            
+            // Auto present weekly summary on Sundays
+            let calendar = Calendar.current
+            let components = calendar.dateComponents([.weekday, .year, .weekOfYear], from: Date())
+            if components.weekday == 1 { // Sunday
+                let year = components.year ?? 0
+                let week = components.weekOfYear ?? 0
+                let key = "weekly_report_presented_\(year)_\(week)"
+                if !UserDefaults.standard.bool(forKey: key) {
+                    isShowingWeeklySummary = true
+                    UserDefaults.standard.set(true, forKey: key)
+                }
+            }
         }
     }
 
@@ -332,19 +356,32 @@ struct DashboardView: View {
         Task {
             let summary = DashboardViewModel.summary(from: activities)
             let hrv = await HealthKitManager.shared.fetchHRVSDNN()
-            let sleep = await HealthKitManager.shared.fetchSleepDurationLastNight()
+            let sleep = await HealthKitManager.shared.fetchSleepDetailsLastNight()
             let restingHR = await HealthKitManager.shared.fetchRestingHR()
-            let recovery = HealthKitManager.shared.calculateRecoveryScore(
+            
+            let daysSinceHard = calculateDaysSinceLastHardWorkout(activities: activities)
+            let details = HealthKitManager.shared.calculateDetailedReadiness(
                 hrvToday: hrv.today,
                 hrvBaseline: hrv.baseline30Day,
-                sleepHours: sleep,
-                restingHR: restingHR,
-                tsb: summary.tsb
+                sleepTotalHours: sleep.total,
+                sleepDeepHours: sleep.deep,
+                tsb: summary.tsb,
+                daysSinceLastHardWorkout: daysSinceHard
+            )
+            
+            let hardWorkoutDates = Set(activities.filter { $0.trainingLoad > 100 || $0.trimp > 100 }.map { Calendar.current.startOfDay(for: $0.startDate) })
+            let trend = await HealthKitManager.shared.fetchReadinessHistory(
+                daysCount: 7,
+                ctlList: getCtlMap(),
+                atlList: getAtlMap(),
+                hardWorkoutDates: hardWorkoutDates
             )
             
             await MainActor.run {
-                self.recoveryScore = recovery
-                NotificationManager.shared.scheduleMorningReadinessReport(readinessScore: recovery)
+                self.readinessDetails = details
+                self.recoveryScore = details.score
+                self.readiness7DayTrend = trend.map { DashboardReadinessPoint(date: $0.date, score: Double($0.readinessScore)) }
+                NotificationManager.shared.scheduleMorningReadinessReport(readinessScore: details.score)
             }
             
             let lastAct = activities.first
@@ -356,7 +393,7 @@ struct DashboardView: View {
                 weeklyDuration: summary.weeklyDuration,
                 weeklyGoalMeters: activeUserSettings.targetWeeklyDistanceMeters,
                 weeklyCyclingGoalHours: activeUserSettings.weeklyCyclingGoalHours,
-                recoveryScore: recovery,
+                recoveryScore: details.score,
                 lastActivityName: lastAct?.name,
                 lastActivityDate: lastAct?.startDate,
                 lastActivityDistance: lastAct?.distanceMeters
@@ -369,6 +406,38 @@ struct DashboardView: View {
             // Reload Widgets
             WidgetCenter.shared.reloadAllTimelines()
         }
+    }
+
+    private func calculateDaysSinceLastHardWorkout(activities: [Activity]) -> Int {
+        let hardActivity = activities.first { $0.trainingLoad > 100 || $0.trimp > 100 }
+        guard let hardActivity else { return 30 }
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: Date())
+        let startOfWorkout = calendar.startOfDay(for: hardActivity.startDate)
+        let components = calendar.dateComponents([.day], from: startOfWorkout, to: startOfToday)
+        return max(0, components.day ?? 30)
+    }
+
+    private func getCtlMap() -> [Date: Double] {
+        let calendar = Calendar.current
+        var map: [Date: Double] = [:]
+        let sorted = activities.sorted { $0.startDate < $1.startDate }
+        let points = TrainingLoadCalculator.performanceManagement(loads: sorted.map { ($0.startDate, $0.trainingLoad) })
+        for pt in points {
+            map[calendar.startOfDay(for: pt.date)] = pt.ctl
+        }
+        return map
+    }
+    
+    private func getAtlMap() -> [Date: Double] {
+        let calendar = Calendar.current
+        var map: [Date: Double] = [:]
+        let sorted = activities.sorted { $0.startDate < $1.startDate }
+        let points = TrainingLoadCalculator.performanceManagement(loads: sorted.map { ($0.startDate, $0.trainingLoad) })
+        for pt in points {
+            map[calendar.startOfDay(for: pt.date)] = pt.atl
+        }
+        return map
     }
 
     private func recoveryColor(_ score: Int) -> Color {
@@ -414,6 +483,33 @@ struct DashboardView: View {
             return "Imported \(imported) activities"
         case let .failed(message):
             return message
+        }
+    }
+
+    private func componentBar(title: String, score: Int, valueText: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(title)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.primary)
+                Spacer()
+                Text(valueText)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(Color.secondary.opacity(0.12))
+                        .frame(height: 6)
+                    
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(color.gradient)
+                        .frame(width: geo.size.width * CGFloat(Double(score) / 100.0), height: 6)
+                }
+            }
+            .frame(height: 6)
         }
     }
 }
@@ -462,3 +558,444 @@ private struct SkeletonRow: View {
             }
     }
 }
+
+struct ReadinessTrendChartView: View {
+    let trend: [DashboardReadinessPoint]
+    let ru: Bool
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(ru ? "Тренд готовности (7 дней)" : "Readiness Trend (7 Days)")
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.secondary)
+            
+            Chart {
+                ForEach(trend) { point in
+                    LineMark(
+                        x: .value("Date", point.date),
+                        y: .value("Readiness", point.score)
+                    )
+                    .foregroundStyle(Color.blue.gradient)
+                    .interpolationMethod(.catmullRom)
+                    
+                    AreaMark(
+                        x: .value("Date", point.date),
+                        y: .value("Readiness", point.score)
+                    )
+                    .foregroundStyle(Color.blue.opacity(0.12).gradient)
+                }
+            }
+            .frame(height: 80)
+            .chartYScale(domain: 0...100)
+            .chartXAxis {
+                AxisMarks(values: .stride(by: .day, count: 1)) { value in
+                    AxisValueLabel(format: .dateTime.weekday(.narrow))
+                }
+            }
+            .chartYAxis {
+                AxisMarks(values: [0, 50, 100]) { value in
+                    AxisValueLabel()
+                }
+            }
+        }
+    }
+}
+
+struct ReadinessDetailsExpandedView: View {
+    let details: HealthKitManager.ReadinessDetails
+    let trend: [DashboardReadinessPoint]
+    let ru: Bool
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // 1. HRV relative to baseline (35%)
+            componentBar(
+                title: ru ? "HRV (SDNN) к базовому" : "HRV to Baseline",
+                score: details.hrvScore,
+                valueText: String(format: "%.0f мс / %.0f мс", details.hrvValue, details.hrvBaseline),
+                color: .red
+            )
+            
+            // 2. Sleep deep duration (25%)
+            componentBar(
+                title: ru ? "Глубокий сон" : "Deep Sleep",
+                score: details.sleepScore,
+                valueText: String(format: ru ? "%.1f ч (Всего: %.1f ч)" : "%.1f h (Total: %.1f h)", details.deepHours, details.sleepHours),
+                color: .purple
+            )
+            
+            // 3. TSB score (25%)
+            componentBar(
+                title: ru ? "Уровень свежести (TSB)" : "Freshness (TSB)",
+                score: details.tsbScore,
+                valueText: String(format: "%+.1f", details.tsbValue),
+                color: .blue
+            )
+            
+            // 4. Rest days score (15%)
+            componentBar(
+                title: ru ? "Дни отдыха" : "Rest Days",
+                score: details.restDaysScore,
+                valueText: String(format: ru ? "%d дн после тяжелой" : "%d days since hard", details.daysSinceLastHardWorkout),
+                color: .green
+            )
+            
+            Text(details.explanation)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.top, 4)
+            
+            if !trend.isEmpty {
+                ReadinessTrendChartView(trend: trend, ru: ru)
+                    .padding(.top, 8)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func componentBar(title: String, score: Int, valueText: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(title)
+                    .font(.caption.weight(.semibold))
+                Spacer()
+                Text(valueText)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Color.gray.opacity(0.15))
+                    Capsule()
+                        .fill(color.gradient)
+                        .frame(width: geo.size.width * CGFloat(min(100, max(0, score))) / 100.0)
+                }
+            }
+            .frame(height: 6)
+        }
+    }
+}
+
+struct LatestActivitiesSection: View {
+    let activities: [Activity]
+    let isMetric: Bool
+    
+    var body: some View {
+        Section("Latest Activities") {
+            if activities.isEmpty {
+                Text("No local activities yet")
+                    .foregroundStyle(.secondary)
+            } else {
+                let divisor = isMetric ? 1000.0 : 1609.344
+                let unit = isMetric ? " km" : " mi"
+                
+                ForEach(activities, id: \.stravaId) { activity in
+                    let distStr = (activity.distanceMeters / divisor).formatted(.number.precision(.fractionLength(1)))
+                    let timeStr = durationString(activity.movingTime)
+                    let subtitleText = "\(activity.sportType) · \(distStr)\(unit) · \(timeStr)"
+                    
+                    NavigationLink(destination: ActivityDetailView(activity: activity)) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(activity.name)
+                                .font(.headline)
+                            Text(subtitleText)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        HapticManager.trigger(.light)
+                    })
+                }
+            }
+        }
+    }
+    
+    private func durationString(_ duration: TimeInterval) -> String {
+        let hours = Int(duration) / 3600
+        let minutes = (Int(duration) % 3600) / 60
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        } else {
+            return "\(minutes)m"
+        }
+    }
+}
+
+struct DashboardMetricsSection: View {
+    let ctl: Double
+    let atl: Double
+    let tsb: Double
+    
+    var body: some View {
+        Section {
+            HStack(spacing: 12) {
+                MetricTile(title: "CTL", value: ctl.formatted(.number.precision(.fractionLength(1))))
+                MetricTile(title: "ATL", value: atl.formatted(.number.precision(.fractionLength(1))))
+                MetricTile(title: "TSB", value: tsb.formatted(.number.precision(.fractionLength(1))))
+            }
+            .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
+        }
+    }
+}
+
+struct DashboardThisWeekSection: View {
+    let distanceStr: String
+    let weeklyDuration: TimeInterval
+    
+    var body: some View {
+        Section("This Week") {
+            LabeledContent("Distance", value: distanceStr)
+            LabeledContent("Time", value: durationString(weeklyDuration))
+        }
+    }
+    
+    private func durationString(_ duration: TimeInterval) -> String {
+        let hours = Int(duration) / 3600
+        let minutes = (Int(duration) % 3600) / 60
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        } else {
+            return "\(minutes)m"
+        }
+    }
+}
+
+struct DashboardSyncSection: View {
+    let phase: SyncPhase
+    
+    var body: some View {
+        Section("Sync") {
+            Text(syncText(phase))
+                .foregroundStyle(.secondary)
+        }
+    }
+    
+    private func syncText(_ phase: SyncPhase) -> String {
+        let ru = Locale.current.identifier.hasPrefix("ru")
+        switch phase {
+        case .idle:
+            return ru ? "Готов к синхронизации" : "Ready to sync"
+        case .authenticating:
+            return ru ? "Авторизация..." : "Authenticating..."
+        case .importing(let page, let imported):
+            return ru ? "Импорт: страница \(page) (\(imported) загружено)..." : "Importing: page \(page) (\(imported) loaded)..."
+        case .finished(let imported):
+            return ru ? "Синхронизация завершена. Загружено: \(imported)" : "Sync finished. Loaded: \(imported)"
+        case .failed(let err):
+            return ru ? "Ошибка: \(err)" : "Failed: \(err)"
+        }
+    }
+}
+
+struct DashboardTargetStartSection: View {
+    let targetStartMessage: String
+    let tsbValue: Double
+    let taperMessage: String
+    
+    var body: some View {
+        if !targetStartMessage.isEmpty {
+            Section {
+                HStack(spacing: 12) {
+                    Image(systemName: "flag.checkered")
+                        .font(.title2)
+                        .foregroundStyle(.blue.gradient)
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(targetStartMessage)
+                            .font(.headline)
+                        
+                        Text(String(format: "Текущая форма (TSB): %.0f — %@", tsbValue, taperMessage))
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+        }
+    }
+}
+
+struct DashboardReadinessSection: View {
+    @Binding var isReadinessCardExpanded: Bool
+    let recoveryScore: Int
+    let readinessDetails: HealthKitManager.ReadinessDetails?
+    let readiness7DayTrend: [DashboardReadinessPoint]
+    
+    var body: some View {
+        Section {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 16) {
+                    ZStack {
+                        Circle()
+                            .stroke(.tertiary.opacity(0.3), lineWidth: 5)
+                            .frame(width: 52, height: 52)
+                        
+                        Circle()
+                            .trim(from: 0, to: CGFloat(Double(recoveryScore) / 100.0))
+                            .stroke(recoveryColor(recoveryScore).gradient, style: StrokeStyle(lineWidth: 5, lineCap: .round))
+                            .frame(width: 52, height: 52)
+                            .rotationEffect(.degrees(-90))
+                        
+                        Text("\(recoveryScore)%")
+                            .font(.system(size: 14, weight: .bold))
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            let ru = Locale.current.identifier.hasPrefix("ru")
+                            Text(ru ? "Готовность к нагрузке" : "Readiness Score")
+                                .font(.headline)
+                            Spacer()
+                            Image(systemName: isReadinessCardExpanded ? "chevron.up" : "chevron.down")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                        if let details = readinessDetails {
+                            Text(details.category)
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(recoveryColor(recoveryScore))
+                        } else {
+                            let ru = Locale.current.identifier.hasPrefix("ru")
+                            Text(recoveryAdvice(recoveryScore))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    HapticManager.trigger(.light)
+                    withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
+                        isReadinessCardExpanded.toggle()
+                    }
+                }
+                
+                if isReadinessCardExpanded {
+                    Divider()
+                    
+                    if let details = readinessDetails {
+                        ReadinessDetailsExpandedView(details: details, trend: readiness7DayTrend, ru: Locale.current.identifier.hasPrefix("ru"))
+                    } else {
+                        Text(Locale.current.identifier.hasPrefix("ru") ? "Загрузка детальных данных..." : "Loading detailed metrics...")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .padding(.vertical, 4)
+        }
+    }
+    
+    private func recoveryColor(_ score: Int) -> Color {
+        if score >= 80 { return .green }
+        if score >= 50 { return .yellow }
+        return .red
+    }
+    
+    private func recoveryAdvice(_ score: Int) -> String {
+        let ru = Locale.current.identifier.hasPrefix("ru")
+        if score >= 80 {
+            return ru ? "Организм полностью восстановлен и готов к тяжелой работе." : "Fully recovered and ready for high intensity."
+        } else if score >= 50 {
+            return ru ? "Умеренная готовность. Избегайте пиковых нагрузок." : "Moderate readiness. Avoid extreme exertion."
+        } else {
+            return ru ? "Высокая утомляемость. Рекомендуется активный отдых или сон." : "High fatigue. Recovery day or sleep advised."
+        }
+    }
+}
+
+enum SportFilter: String, CaseIterable {
+    case all = "All"
+    case run = "Run"
+    case ride = "Ride"
+    case walk = "Walk"
+    case swim = "Swim"
+    case other = "Other"
+    
+    var displayName: String {
+        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        switch self {
+        case .all: return isRussian ? "Все" : "All"
+        case .run: return isRussian ? "Бег" : "Run"
+        case .ride: return isRussian ? "Вело" : "Ride"
+        case .walk: return isRussian ? "Ходьба" : "Walk"
+        case .swim: return isRussian ? "Плавание" : "Swim"
+        case .other: return isRussian ? "Другие" : "Other"
+        }
+    }
+}
+
+struct SportFilterChipsView: View {
+    @Binding var selectedSport: SportFilter
+    
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(SportFilter.allCases, id: \.self) { sport in
+                    Button {
+                        HapticManager.trigger(.light)
+                        selectedSport = sport
+                    } label: {
+                        Text(sport.displayName)
+                            .font(.subheadline.weight(.semibold))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(selectedSport == sport ? Color.blue.gradient : Color.primary.opacity(0.05).gradient)
+                            .foregroundColor(selectedSport == sport ? .white : .primary)
+                            .clipShape(Capsule())
+                    }
+                }
+            }
+            .padding(.horizontal)
+        }
+    }
+}
+
+struct CasualSyncCard: View {
+    let phase: SyncPhase
+    
+    var body: some View {
+        HStack {
+            Image(systemName: "arrow.clockwise.circle.fill")
+                .foregroundColor(.blue)
+                .font(.title2)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(Locale.current.identifier.hasPrefix("ru") ? "Синхронизация" : "Sync Status")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(syncText(phase))
+                    .font(.subheadline.bold())
+            }
+            Spacer()
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(uiColor: .secondarySystemGroupedBackground))
+                .shadow(color: Color.black.opacity(0.04), radius: 6)
+        )
+    }
+    
+    private func syncText(_ phase: SyncPhase) -> String {
+        let ru = Locale.current.identifier.hasPrefix("ru")
+        switch phase {
+        case .idle:
+            return ru ? "Обновлено" : "Synced"
+        case .authenticating:
+            return ru ? "Авторизация..." : "Authenticating..."
+        case .importing(let page, let imported):
+            return ru ? "Импорт: стр. \(page) (\(imported) загружено)" : "Importing: page \(page) (\(imported) loaded)"
+        case .finished(let imported):
+            return ru ? "Синхронизировано (\(imported))" : "Sync finished (\(imported))"
+        case .failed(let err):
+            return ru ? "Ошибка: \(err)" : "Failed: \(err)"
+        }
+    }
+}
+
+
