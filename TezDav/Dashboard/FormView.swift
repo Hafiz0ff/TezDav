@@ -21,7 +21,10 @@ struct WeeklyMetric: Identifiable, Equatable {
 struct FormView: View {
     @Query(sort: \Activity.startDate, order: .forward) private var activities: [Activity]
     @Query(sort: \TrainingWeek.startDate, order: .forward) private var plannedWeeks: [TrainingWeek]
+    @Query(sort: \PlannedWorkout.date, order: .forward) private var plannedWorkouts: [PlannedWorkout]
     @Query private var userSettings: [UserSettings]
+    @Environment(\.modelContext) private var modelContext
+    @State private var isShowingAddPlannedWorkout = false
     
     private var activeUserSettings: UserSettings {
         userSettings.first ?? UserSettings()
@@ -141,6 +144,9 @@ struct FormView: View {
                                         
                                         // 3. Weekly Load Bar Chart
                                         weeklyLoadSection(filterWeekly(weeklyLoad))
+                                        
+                                        // 4. Forecast & Planner Section
+                                        forecastPlannerSection()
                                     }
                                     .padding()
                                 }
@@ -180,6 +186,9 @@ struct FormView: View {
                     }
                     .sheet(isPresented: $isShowingPlanner) {
                         TrainingPlannerView()
+                    }
+                    .sheet(isPresented: $isShowingAddPlannedWorkout) {
+                        AddPlannedWorkoutSheet()
                     }
                     .onAppear {
                         drawTracker = 0.0
@@ -421,7 +430,9 @@ struct FormView: View {
         
         // Find if there are future planned training weeks
         let lastPlannedDate = plannedWeeks.last?.startDate.addingTimeInterval(86400 * 6) ?? .now
-        let endDay = max(endActualDay, calendar.startOfDay(for: lastPlannedDate))
+        let lastPlannedWorkoutDate = plannedWorkouts.last?.date ?? .now
+        let defaultForecastEnd = calendar.date(byAdding: .day, value: 30, to: .now) ?? .now
+        let endDay = max(endActualDay, calendar.startOfDay(for: lastPlannedDate), calendar.startOfDay(for: lastPlannedWorkoutDate), calendar.startOfDay(for: defaultForecastEnd))
         
         var currentDay = startDay
         while currentDay <= endDay {
@@ -432,16 +443,24 @@ struct FormView: View {
                 let key = dateFormatter.string(from: currentDay)
                 dayLoad = dailyLoads[key] ?? 0.0
             } else {
-                // Estimate planned daily load for future date based on plan
-                if let matchingWeek = plannedWeeks.first(where: { week in
-                    let wStart = calendar.startOfDay(for: week.startDate)
-                    let wEnd = calendar.date(byAdding: .day, value: 7, to: wStart)!
-                    return currentDay >= wStart && currentDay < wEnd
-                }) {
-                    let weeklyLoad = ((matchingWeek.targetVolumeMeters / 1000.0) * 7.0) + (matchingWeek.targetCyclingHours * 50.0)
-                    dayLoad = weeklyLoad / 7.0
+                let dayStart = calendar.startOfDay(for: currentDay)
+                let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart)!
+                let dayPlanned = plannedWorkouts.filter { $0.date >= dayStart && $0.date < dayEnd && !$0.isCompleted }
+                
+                if !dayPlanned.isEmpty {
+                    dayLoad = dayPlanned.reduce(0.0) { $0 + $1.plannedTSS }
                 } else {
-                    dayLoad = 0.0
+                    // Estimate planned daily load for future date based on plan
+                    if let matchingWeek = plannedWeeks.first(where: { week in
+                        let wStart = calendar.startOfDay(for: week.startDate)
+                        let wEnd = calendar.date(byAdding: .day, value: 7, to: wStart)!
+                        return currentDay >= wStart && currentDay < wEnd
+                    }) {
+                        let weeklyLoad = ((matchingWeek.targetVolumeMeters / 1000.0) * 7.0) + (matchingWeek.targetCyclingHours * 50.0)
+                        dayLoad = weeklyLoad / 7.0
+                    } else {
+                        dayLoad = 0.0
+                    }
                 }
             }
             
@@ -997,6 +1016,172 @@ struct FormView: View {
         df.locale = Locale(identifier: isRussian ? "ru_RU" : "en_US")
         return df.string(from: date)
     }
+
+    // MARK: - Forecast & Planning Helpers
+
+    private func forecastPlannerSection() -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text(Locale.current.identifier.hasPrefix("ru") ? "Прогноз и Планировщик" : "Forecast & Planner")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                
+                Spacer()
+                
+                Button {
+                    isShowingAddPlannedWorkout = true
+                } label: {
+                    Label {
+                        Text(Locale.current.identifier.hasPrefix("ru") ? "Запланировать" : "Plan")
+                    } icon: {
+                        Image(systemName: "plus.circle.fill")
+                    }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(.orange)
+                }
+            }
+            
+            let futureWorkouts = plannedWorkouts.filter { !$0.isCompleted && $0.date > Date() }
+            
+            if futureWorkouts.isEmpty {
+                VStack(spacing: 10) {
+                    Image(systemName: "calendar.badge.plus")
+                        .font(.system(size: 36))
+                        .foregroundStyle(.gray.opacity(0.5))
+                    Text(Locale.current.identifier.hasPrefix("ru") ? "Нет запланированных тренировок" : "No planned workouts")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.gray)
+                    Text(Locale.current.identifier.hasPrefix("ru") ? "Добавьте тренировки на будущие даты, чтобы смоделировать изменения CTL/ATL/TSB." : "Add future activities to model CTL/ATL/TSB fatigue changes.")
+                        .font(.caption)
+                        .foregroundStyle(.gray.opacity(0.7))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 16)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 20)
+                .background(Color(red: 0.08, green: 0.08, blue: 0.08))
+                .cornerRadius(12)
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(futureWorkouts) { workout in
+                            plannedWorkoutCard(for: workout)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(12)
+        .background(Color(red: 0.12, green: 0.12, blue: 0.12))
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.white.opacity(0.06), lineWidth: 1)
+        )
+    }
+
+    @ViewBuilder
+    private func plannedWorkoutCard(for workout: PlannedWorkout) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: sportIcon(for: workout.sportType))
+                    .foregroundColor(.orange)
+                    .font(.system(size: 14))
+                Spacer()
+                
+                Button(role: .destructive) {
+                    modelContext.delete(workout)
+                    try? modelContext.save()
+                } label: {
+                    Image(systemName: "trash")
+                        .font(.system(size: 12))
+                        .foregroundColor(.red.opacity(0.8))
+                }
+            }
+            
+            Text(workout.title)
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(.white)
+                .lineLimit(1)
+            
+            Text(workout.date.formatted(date: .abbreviated, time: .omitted))
+                .font(.system(size: 11))
+                .foregroundColor(.gray)
+            
+            HStack {
+                Text(formatDistance(workout.plannedDistanceMeters))
+                    .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                    .foregroundColor(.secondary)
+                Spacer()
+                Text(String(format: "%.0f TSS", workout.plannedTSS))
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.green)
+            }
+            
+            Button {
+                completePlannedWorkout(workout)
+            } label: {
+                Text(Locale.current.identifier.hasPrefix("ru") ? "Выполнить" : "Complete")
+                    .font(.system(size: 12, weight: .bold))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
+                    .background(Color.orange.gradient)
+                    .foregroundColor(.white)
+                    .cornerRadius(6)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(12)
+        .frame(width: 150)
+        .background(Color(red: 0.08, green: 0.08, blue: 0.08))
+        .cornerRadius(10)
+    }
+
+    private func sportIcon(for sport: String) -> String {
+        switch sport {
+        case "Run": return "figure.run"
+        case "Ride": return "bicycle"
+        case "Walk": return "figure.walk"
+        case "Swim": return "figure.pool.swim"
+        default: return "figure.mixed.cardio"
+        }
+    }
+
+    private func formatDistance(_ meters: Double) -> String {
+        let isMetric = activeUserSettings.isMetric
+        let divider = isMetric ? 1000.0 : 1609.344
+        let unit = isMetric ? "км" : "миль"
+        return String(format: "%.1f %@", meters / divider, unit)
+    }
+
+    private func completePlannedWorkout(_ workout: PlannedWorkout) {
+        workout.isCompleted = true
+        
+        let newActivity = Activity(
+            stravaId: Int64.random(in: 100000000...999999999),
+            sportType: workout.sportType,
+            name: workout.title,
+            startDate: workout.date,
+            distanceMeters: workout.plannedDistanceMeters,
+            movingTime: workout.plannedDurationSeconds,
+            elapsedTime: workout.plannedDurationSeconds,
+            elevationGain: 0.0,
+            averageHeartRate: nil,
+            averagePower: nil,
+            averageCadence: nil,
+            averageSpeed: workout.plannedDurationSeconds > 0 ? (workout.plannedDistanceMeters / workout.plannedDurationSeconds) : 0.0,
+            encodedPolyline: nil,
+            trimp: workout.plannedTSS,
+            trainingLoad: workout.plannedTSS,
+            startLatitude: nil,
+            startLongitude: nil
+        )
+        
+        modelContext.insert(newActivity)
+        try? modelContext.save()
+        
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+    }
 }
 
 // Custom AreaBackground helper to avoid SwiftUI area shape styling issues
@@ -1041,5 +1226,164 @@ struct ReadinessMetricCard: View {
         }
         .padding()
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+    }
+}
+
+// MARK: - AddPlannedWorkoutSheet
+
+struct AddPlannedWorkoutSheet: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
+    @Query private var userSettings: [UserSettings]
+    
+    @State private var date = Date().addingTimeInterval(86400) // tomorrow by default
+    @State private var sportType = "Run"
+    @State private var title = ""
+    @State private var plannedDurationHours = 1
+    @State private var plannedDurationMinutes = 0
+    @State private var plannedDistance: Double = 10.0
+    @State private var intensityFactor = 0.75
+    @State private var manualTSS: Double = 50.0
+    @State private var isManualTSS = false
+    
+    private var isMetric: Bool {
+        userSettings.first?.isMetric ?? true
+    }
+    
+    private var computedTSS: Double {
+        let durationSeconds = Double(plannedDurationHours * 3600 + plannedDurationMinutes * 60)
+        let tss = (durationSeconds * intensityFactor * intensityFactor * 100.0) / 3600.0
+        return tss
+    }
+    
+    private var finalTSS: Double {
+        isManualTSS ? manualTSS : computedTSS
+    }
+    
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section(Locale.current.identifier.hasPrefix("ru") ? "Детали тренировки" : "Workout Details") {
+                    TextField(Locale.current.identifier.hasPrefix("ru") ? "Название (например: Темп)" : "Title (e.g. Tempo)", text: $title)
+                    
+                    Picker(Locale.current.identifier.hasPrefix("ru") ? "Вид спорта" : "Sport", selection: $sportType) {
+                        Text(Locale.current.identifier.hasPrefix("ru") ? "Бег" : "Run").tag("Run")
+                        Text(Locale.current.identifier.hasPrefix("ru") ? "Велосипед" : "Ride").tag("Ride")
+                        Text(Locale.current.identifier.hasPrefix("ru") ? "Ходьба" : "Walk").tag("Walk")
+                        Text(Locale.current.identifier.hasPrefix("ru") ? "Плавание" : "Swim").tag("Swim")
+                    }
+                    
+                    DatePicker(Locale.current.identifier.hasPrefix("ru") ? "Дата" : "Date", selection: $date, displayedComponents: .date)
+                }
+                
+                Section(Locale.current.identifier.hasPrefix("ru") ? "Объем" : "Volume") {
+                    HStack {
+                        Text(Locale.current.identifier.hasPrefix("ru") ? "Длительность" : "Duration")
+                        Spacer()
+                        Picker("Hours", selection: $plannedDurationHours) {
+                            ForEach(0...23, id: \.self) { hr in
+                                Text("\(hr) ч").tag(hr)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        
+                        Picker("Minutes", selection: $plannedDurationMinutes) {
+                            ForEach(0...59, id: \.self) { min in
+                                Text("\(min) м").tag(min)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text(Locale.current.identifier.hasPrefix("ru") ? "Дистанция" : "Distance")
+                            Spacer()
+                            Text(String(format: "%.1f %@", plannedDistance, isMetric ? "км" : "миль"))
+                                .font(.subheadline.weight(.semibold))
+                        }
+                        Slider(value: $plannedDistance, in: 0...100, step: 0.5)
+                    }
+                }
+                
+                Section(Locale.current.identifier.hasPrefix("ru") ? "Интенсивность и Нагрузка (TSS)" : "Intensity & Load (TSS)") {
+                    Toggle(Locale.current.identifier.hasPrefix("ru") ? "Ввести TSS вручную" : "Manual TSS Entry", isOn: $isManualTSS)
+                        .tint(.orange)
+                    
+                    if !isManualTSS {
+                        Picker(Locale.current.identifier.hasPrefix("ru") ? "Интенсивность" : "Intensity Preset", selection: $intensityFactor) {
+                            Text("Восстановление (IF 0.60)").tag(0.60)
+                            Text("Аэробный темп (IF 0.75)").tag(0.75)
+                            Text("Темповая работа (IF 0.85)").tag(0.85)
+                            Text("Порог LTHR (IF 0.95)").tag(0.95)
+                            Text("Интервалы VO2Max (IF 1.05)").tag(1.05)
+                        }
+                        .pickerStyle(.menu)
+                        
+                        HStack {
+                            Text("Индекс интенсивности (IF):")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Text(String(format: "%.2f", intensityFactor))
+                                .font(.caption.weight(.bold))
+                        }
+                        
+                        HStack {
+                            Text(Locale.current.identifier.hasPrefix("ru") ? "Расчетный TSS:" : "Calculated TSS:")
+                                .font(.headline)
+                            Spacer()
+                            Text(String(format: "%.0f", computedTSS))
+                                .font(.title3.weight(.black))
+                                .foregroundColor(.green)
+                        }
+                    } else {
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Text("Нагрузка (TSS)")
+                                Spacer()
+                                Text("\(Int(manualTSS))")
+                                    .font(.headline)
+                            }
+                            Slider(value: $manualTSS, in: 10...300, step: 5)
+                        }
+                    }
+                }
+            }
+            .navigationTitle(Locale.current.identifier.hasPrefix("ru") ? "Запланировать тренировку" : "Plan Workout")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(Locale.current.identifier.hasPrefix("ru") ? "Отмена" : "Cancel") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(Locale.current.identifier.hasPrefix("ru") ? "Сохранить" : "Save") {
+                        savePlannedWorkout()
+                    }
+                    .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+        }
+    }
+    
+    private func savePlannedWorkout() {
+        let durationSeconds = Double(plannedDurationHours * 3600 + plannedDurationMinutes * 60)
+        let distanceMeters = plannedDistance * (isMetric ? 1000.0 : 1609.344)
+        
+        let workout = PlannedWorkout(
+            date: Calendar.current.startOfDay(for: date).addingTimeInterval(12 * 3600),
+            sportType: sportType,
+            title: title,
+            plannedDurationSeconds: durationSeconds,
+            plannedDistanceMeters: distanceMeters,
+            plannedTSS: finalTSS
+        )
+        
+        modelContext.insert(workout)
+        try? modelContext.save()
+        
+        dismiss()
     }
 }

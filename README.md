@@ -116,6 +116,12 @@
 * Интерактивные комментарии с возможностью добавлять ответы на тренировки друзей прямо из ленты.
 * Локальная база данных SwiftData со встроенным механизмом наполнения (seeding) реалистичными тренировками из Таджикистана при первом запуске.
 
+#### 17. Прогнозирование пика формы (TrainingPeaks Forecast)
+* Интерактивный планировщик будущих тренировок на календаре с моделированием изменений CTL/ATL/TSB на 30+ дней вперед.
+* Пунктирная отрисовка прогнозируемых линий готовности и утомления на графике PMC (Performance Management Chart).
+* Умный калькулятор планового TSS на основе индекса интенсивности (IF): от мягкого восстановления до интервалов VO2Max.
+* Бесшовное закрытие («Выполнить») запланированной активности с автосозданием реальной тренировки в базе данных.
+
 ---
 
 
@@ -177,6 +183,7 @@ graph TD
     DB --> GearDB[(GearItem DB)]
     DB --> WeatherDB[(WeatherSnapshot DB)]
     DB --> SocialDB[(FriendActivity & Comment DB)]
+    DB --> PlannedDB[(PlannedWorkout DB)]
 ```
 
 ---
@@ -291,4 +298,5 @@ graph TD
 * **Workout Card Sharing & Weekly Summary Cards**: Generates high-fidelity visual cards for social media sharing. Supports 1:1 Square and 9:16 Stories formats, customizable styling themes (Dark, Light, Gradient), high-resolution route track map rendering, and weekly activity recap cards with multi-run visual clusters.
 * **Personal Geography & Exploring Stats**: In-depth geographical analysis automatically clustering visited cities and neighborhoods. Computes total explored land area on a 1x1 km virtual grid and identifies spatial extrema (northernmost, southernmost, easternmost, and westernmost GPS coordinates of your workouts).
 * **Social Feed & Kudos**: Interactive feed of friends' workouts with MapKit route overlays, thumbs-up Kudos interactions (featuring single-tap toggle and double-tap pop-up animation with haptics), and expandable, interactive comment sections. Fully persisted using SwiftData and populated with mock Tajikistan running/cycling seed data.
+* **TrainingPeaks Forecast**: High-fidelity training scheduler and future fatigue modeler projecting CTL, ATL, and TSB values 30+ days into the future on the PMC chart. Features a smart TSS calculator based on Intensity Factor (IF) presets (Recovery to VO2Max intervals) and one-tap completions that automatically create actual history activities.
 

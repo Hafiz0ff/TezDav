@@ -138,6 +138,8 @@
 		TZ1700000000000000000004 /* Persistence/FriendComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1700000000000000000003 /* Persistence/FriendComment.swift */; };
 		TZ1700000000000000000006 /* Dashboard/SocialFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1700000000000000000005 /* Dashboard/SocialFeedView.swift */; };
 		TZ1700000000000000000008 /* SocialFeedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1700000000000000000007 /* SocialFeedTests.swift */; };
+		FC0100000000000000000002 /* Persistence/PlannedWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0100000000000000000001 /* Persistence/PlannedWorkout.swift */; };
+		FC0100000000000000000004 /* ForecastTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0100000000000000000003 /* ForecastTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -289,6 +291,8 @@
 		TZ1700000000000000000003 /* Persistence/FriendComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/FriendComment.swift; sourceTree = "<group>"; };
 		TZ1700000000000000000005 /* Dashboard/SocialFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/SocialFeedView.swift; sourceTree = "<group>"; };
 		TZ1700000000000000000007 /* SocialFeedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialFeedTests.swift; sourceTree = "<group>"; };
+		FC0100000000000000000001 /* Persistence/PlannedWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/PlannedWorkout.swift; sourceTree = "<group>"; };
+		FC0100000000000000000003 /* ForecastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 
@@ -338,6 +342,7 @@
 				RP010000000000000000000001 /* TrainingMetrics/RacePredictorEngine.swift */,
 				AI010000000000000000000001 /* TrainingMetrics/AICoachEngine.swift */,
 				TZ1700000000000000000001 /* Persistence/FriendActivity.swift */,
+				FC0100000000000000000001 /* Persistence/PlannedWorkout.swift */,
 				TZ1700000000000000000003 /* Persistence/FriendComment.swift */,
 				TZ1700000000000000000005 /* Dashboard/SocialFeedView.swift */,
 				SH1200000000000000000001 /* Dashboard/WorkoutCardShareView.swift */,
@@ -457,6 +462,7 @@
 				TZ100000000000000000000F /* RouteMatcherTests.swift */,
 				AI010000000000000000000003 /* AICoachTests.swift */,
 				TZ1700000000000000000007 /* SocialFeedTests.swift */,
+				FC0100000000000000000003 /* ForecastTests.swift */,
 				SH1200000000000000000011 /* AppStoreAndSharingTests.swift */,
 				TZ900000000000000000000E /* CoachingEngineTests.swift */,
 				TZ9000000000000000000010 /* GearTrackingTests.swift */,
@@ -634,6 +640,7 @@
 				RP010000000000000000000002 /* TrainingMetrics/RacePredictorEngine.swift in Sources */,
 				AI010000000000000000000002 /* TrainingMetrics/AICoachEngine.swift in Sources */,
 				TZ1700000000000000000002 /* Persistence/FriendActivity.swift in Sources */,
+				FC0100000000000000000002 /* Persistence/PlannedWorkout.swift in Sources */,
 				TZ1700000000000000000004 /* Persistence/FriendComment.swift in Sources */,
 				TZ1700000000000000000006 /* Dashboard/SocialFeedView.swift in Sources */,
 				SH1200000000000000000002 /* Dashboard/WorkoutCardShareView.swift in Sources */,
@@ -740,6 +747,7 @@
 				TZ1000000000000000000010 /* RouteMatcherTests.swift in Sources */,
 				AI010000000000000000000004 /* AICoachTests.swift in Sources */,
 				TZ1700000000000000000008 /* SocialFeedTests.swift in Sources */,
+				FC0100000000000000000004 /* ForecastTests.swift in Sources */,
 				SH1200000000000000000012 /* AppStoreAndSharingTests.swift in Sources */,
 				TZ900000000000000000000F /* CoachingEngineTests.swift in Sources */,
 				TZ9000000000000000000011 /* GearTrackingTests.swift in Sources */,
