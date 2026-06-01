@@ -50,6 +50,8 @@ final class UserSettings {
     
     var appModeRaw: String = "pro"
     var targetWeeklyActiveMinutes: Double = 150.0
+    
+    @Attribute(.externalStorage) var avatarData: Data? = nil
 
     var appMode: AppMode {
         get { AppMode(rawValue: appModeRaw) ?? .pro }
@@ -84,7 +86,8 @@ final class UserSettings {
         isMetric: Bool = true,
         isAutoAdaptationEnabled: Bool = false,
         appMode: AppMode = .pro,
-        targetWeeklyActiveMinutes: Double = 150.0
+        targetWeeklyActiveMinutes: Double = 150.0,
+        avatarData: Data? = nil
     ) {
         self.key = key
         self.maxHeartRate = maxHeartRate
@@ -114,6 +117,7 @@ final class UserSettings {
         self.isAutoAdaptationEnabled = isAutoAdaptationEnabled
         self.appModeRaw = appMode.rawValue
         self.targetWeeklyActiveMinutes = targetWeeklyActiveMinutes
+        self.avatarData = avatarData
     }
 
     // Dynamic Max HR Calculation: Max HR = 220 - Age (if not explicitly specified)

@@ -7,7 +7,7 @@ final class PersistenceTests: XCTestCase {
     func testActivityCanBeInsertedAndFetched() throws {
         let container = try ModelContainer(
             for: Activity.self, ActivityStreamSample.self, SyncState.self, UserSettings.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         )
         let context = ModelContext(container)
         context.insert(Activity(

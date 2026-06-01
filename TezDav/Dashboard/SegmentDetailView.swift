@@ -9,7 +9,8 @@ struct SegmentDetailView: View {
     
     let segment: Segment
     
-    @State private var mapPosition: MapCameraPosition = .automatic
+    @State private var cameraCenter: CLLocationCoordinate2D? = nil
+    @State private var cameraZoom: Float? = nil
     @State private var leaderboardTab = 0 // 0 = Все результаты, 1 = Мои попытки
     
     private var activeUserSettings: UserSettings {
@@ -74,29 +75,13 @@ struct SegmentDetailView: View {
             VStack(spacing: 20) {
                 // Section 1: Map
                 ZStack(alignment: .bottomTrailing) {
-                    Map(position: $mapPosition) {
-                        if !segment.coordinates.isEmpty {
-                            MapPolyline(coordinates: segment.coordinates)
-                                .stroke(Color.orange, lineWidth: 6)
-                        }
-                        
-                        if let start = segment.coordinates.first {
-                            Annotation("Старт", coordinate: start) {
-                                Image(systemName: "play.circle.fill")
-                                    .font(.title2)
-                                    .foregroundColor(.green)
-                                    .background(Circle().fill(Color.white))
-                            }
-                        }
-                        if let end = segment.coordinates.last, segment.coordinates.count > 1 {
-                            Annotation("Финиш", coordinate: end) {
-                                Image(systemName: "flag.circle.fill")
-                                    .font(.title2)
-                                    .foregroundColor(.red)
-                                    .background(Circle().fill(Color.white))
-                            }
-                        }
-                    }
+                    GoogleMapView(
+                        coordinates: segment.coordinates,
+                        sportType: segment.sportType,
+                        showStartEndMarkers: true,
+                        cameraCenter: $cameraCenter,
+                        cameraZoom: $cameraZoom
+                    )
                     .frame(height: 220)
                     .cornerRadius(16)
                     .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 3)

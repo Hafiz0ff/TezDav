@@ -107,6 +107,73 @@ extension Color {
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
+
+    // MARK: - Liquid Glass Tokens
+
+    /// Text on glass surfaces - bright white for maximum readability (21:1 contrast)
+    static let textOnGlass = Color.white
+
+    /// Secondary text on glass - light gray (12:1 contrast on dark)
+    static let textSecondaryReadable = Color(hex: "E5E7EB")
+
+    /// Tertiary text on glass - readable gray (7:1 contrast on dark)
+    static let textTertiaryReadable = Color(hex: "C7CBD3")
+
+    /// Thin glass border - subtle white edge for glass definition
+    static let glassBorder = Color.white.opacity(0.18)
+
+    /// Glass top inner highlight - simulates light refraction at top of glass
+    static let glassHighlight = Color.white.opacity(0.28)
+
+    /// Glass bottom inner shadow - subtle depth under glass
+    static let glassInnerShadow = Color.black.opacity(0.35)
+
+    // MARK: - App Ambient Backgrounds (under glass)
+
+    /// Ambient background gradient - very dark with barely-perceptible emerald tint.
+    /// Designed to be visible *through* glass cards while staying readable.
+    static let ambientBackgroundGradient = RadialGradient(
+        colors: [
+            Color(hex: "0A0E0C"),   // very dark with hint of emerald
+            Color(hex: "050706"),   // near-black
+            Color(hex: "020303")    // deep dark
+        ],
+        center: .topTrailing,
+        startRadius: 40,
+        endRadius: 700
+    )
+
+    /// Emerald aurora gradient - decorative glow blob behind glass (subtle)
+    static let emeraldAuroraGradient = RadialGradient(
+        colors: [
+            accentPrimary.opacity(0.18),
+            accentPrimary.opacity(0.06),
+            Color.clear
+        ],
+        center: .center,
+        startRadius: 20,
+        endRadius: 280
+    )
+
+    /// Glass tint - emerald-flavored translucent layer
+    static let glassEmeraldTint = LinearGradient(
+        colors: [
+            accentPrimary.opacity(0.22),
+            accentPrimary.opacity(0.06)
+        ],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+
+    /// Glass neutral tint - frosted white wash for non-accent surfaces
+    static let glassNeutralTint = LinearGradient(
+        colors: [
+            Color.white.opacity(0.14),
+            Color.white.opacity(0.04)
+        ],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
 }
 
 // MARK: - Hex Color Initializer

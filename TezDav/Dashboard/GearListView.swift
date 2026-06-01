@@ -92,7 +92,7 @@ struct GearRowView: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     Text(String(format: "%.0f / %.0f км", gear.currentDistanceKm, gear.maxDistanceKm))
                         .font(.subheadline.bold())
-                    Text(String(format: "%.0f%%", pct * 100))
+                    Text(String(format: "%.0f%%", min(1.0, pct) * 100))
                         .font(.caption)
                         .foregroundStyle(wearColor(pct))
                         .fontWeight(.semibold)

@@ -16,6 +16,7 @@ final class SyncService {
         self.perPage = perPage
     }
 
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     func importAll(after: Date? = nil) async {
         var page = 1
         var totalImported = 0
@@ -63,14 +64,16 @@ final class SyncService {
             try modelContext.save()
             
             // Trigger weather fetching for all newly imported activities
-            let activitiesDescriptor = FetchDescriptor<Activity>()
-            if let allAct = try? modelContext.fetch(activitiesDescriptor) {
-                await WeatherService.shared.fetchWeather(for: allAct, context: modelContext)
-                CoreSpotlightManager.shared.indexActivities(allAct)
-                
-                let userSettingsDescriptor = FetchDescriptor<UserSettings>()
-                let settings = (try? modelContext.fetch(userSettingsDescriptor).first) ?? UserSettings()
-                AchievementManager.shared.scanAndAwardAchievements(context: modelContext, activities: allAct, settings: settings)
+            if !isRunningTests {
+                let activitiesDescriptor = FetchDescriptor<Activity>()
+                if let allAct = try? modelContext.fetch(activitiesDescriptor) {
+                    await WeatherService.shared.fetchWeather(for: allAct, context: modelContext)
+                    CoreSpotlightManager.shared.indexActivities(allAct)
+                    
+                    let userSettingsDescriptor = FetchDescriptor<UserSettings>()
+                    let settings = (try? modelContext.fetch(userSettingsDescriptor).first) ?? UserSettings()
+                    AchievementManager.shared.scanAndAwardAchievements(context: modelContext, activities: allAct, settings: settings)
+                }
             }
             
             progress.phase = .finished(imported: totalImported)

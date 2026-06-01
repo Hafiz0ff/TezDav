@@ -7,16 +7,42 @@ final class CoreSpotlightManager {
     
     private init() {}
     
+    struct IndexableActivity {
+        let name: String
+        let distanceMeters: Double
+        let movingTime: Double
+        let startDate: Date
+        let sportType: String
+        let best5kTime: Double?
+        let best10kTime: Double?
+        let peakPower20m: Double?
+        let stravaId: Int64
+    }
+    
     /// Indexes a collection of activities in Spotlight.
     /// Runs asynchronously on a background queue.
     func indexActivities(_ activities: [Activity]) {
         guard CSSearchableIndex.isIndexingAvailable() else { return }
         
+        let indexables = activities.map { activity in
+            IndexableActivity(
+                name: activity.name,
+                distanceMeters: activity.distanceMeters,
+                movingTime: activity.movingTime,
+                startDate: activity.startDate,
+                sportType: activity.sportType,
+                best5kTime: activity.best5kTime,
+                best10kTime: activity.best10kTime,
+                peakPower20m: activity.peakPower20m,
+                stravaId: activity.stravaId
+            )
+        }
+        
         DispatchQueue.global(qos: .background).async {
             var items: [CSSearchableItem] = []
             let isRu = Locale.current.identifier.hasPrefix("ru")
             
-            for activity in activities {
+            for activity in indexables {
                 let attributeSet = CSSearchableItemAttributeSet(itemContentType: "public.item")
                 
                 attributeSet.title = activity.name

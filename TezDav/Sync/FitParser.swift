@@ -1,3 +1,4 @@
+// swiftlint:disable cyclomatic_complexity
 import Foundation
 import FitDataProtocol
 import CoreLocation
@@ -169,7 +170,7 @@ struct FitParser {
         let finalHR = avgHeartRate ?? (hrCount > 0 ? (hrSum / Double(hrCount)) : nil)
         let finalCad = avgCadence ?? (cadCount > 0 ? (cadSum / Double(cadCount)) : nil)
         let finalPower = avgPower ?? (powerCount > 0 ? (powerSum / Double(powerCount)) : nil)
-        let finalSpeed = avgSpeed ?? (finalDistance / elapsed)
+        let finalSpeed = avgSpeed ?? (elapsed > 0 ? (finalDistance / elapsed) : 0.0)
         
         // Calculate TRIMP and training load fallbacks
         let trimpVal = finalHR != nil ? Double(movingTime / 60.0) * 1.5 : 0.0

@@ -1,0 +1,1902 @@
+[
+  {
+    "id": 100000000,
+    "name": "Synthetic Run 0",
+    "sport_type": "Run",
+    "start_date": "2026-05-30T08:00:00Z",
+    "distance": 5000.0,
+    "moving_time": 1666,
+    "elapsed_time": 1726,
+    "total_elevation_gain": 50.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000001,
+    "name": "Synthetic Ride 1",
+    "sport_type": "Ride",
+    "start_date": "2026-05-29T08:00:00Z",
+    "distance": 25000.0,
+    "moving_time": 3125,
+    "elapsed_time": 3185,
+    "total_elevation_gain": 60.0,
+    "average_heartrate": 145.0,
+    "average_watts": 200.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000002,
+    "name": "Synthetic Run 2",
+    "sport_type": "Run",
+    "start_date": "2026-05-28T08:00:00Z",
+    "distance": 8000.0,
+    "moving_time": 2666,
+    "elapsed_time": 2726,
+    "total_elevation_gain": 70.0,
+    "average_heartrate": 150.0,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000003,
+    "name": "Synthetic Ride 3",
+    "sport_type": "Ride",
+    "start_date": "2026-05-27T08:00:00Z",
+    "distance": 35000.0,
+    "moving_time": 4375,
+    "elapsed_time": 4435,
+    "total_elevation_gain": 80.0,
+    "average_heartrate": 155.0,
+    "average_watts": 240.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000004,
+    "name": "Synthetic Run 4",
+    "sport_type": "Run",
+    "start_date": "2026-05-26T08:00:00Z",
+    "distance": 11000.0,
+    "moving_time": 3666,
+    "elapsed_time": 3726,
+    "total_elevation_gain": 90.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000005,
+    "name": "Synthetic Ride 5",
+    "sport_type": "Ride",
+    "start_date": "2026-05-25T08:00:00Z",
+    "distance": 20000.0,
+    "moving_time": 2500,
+    "elapsed_time": 2560,
+    "total_elevation_gain": 100.0,
+    "average_heartrate": 140.0,
+    "average_watts": 180.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000006,
+    "name": "Synthetic Run 6",
+    "sport_type": "Run",
+    "start_date": "2026-05-24T08:00:00Z",
+    "distance": 6500.0,
+    "moving_time": 2166,
+    "elapsed_time": 2226,
+    "total_elevation_gain": 110.0,
+    "average_heartrate": 145.0,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000007,
+    "name": "Synthetic Ride 7",
+    "sport_type": "Ride",
+    "start_date": "2026-05-23T08:00:00Z",
+    "distance": 30000.0,
+    "moving_time": 3750,
+    "elapsed_time": 3810,
+    "total_elevation_gain": 120.0,
+    "average_heartrate": 150.0,
+    "average_watts": 220.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000008,
+    "name": "Synthetic Run 8",
+    "sport_type": "Run",
+    "start_date": "2026-05-22T08:00:00Z",
+    "distance": 9500.0,
+    "moving_time": 3166,
+    "elapsed_time": 3226,
+    "total_elevation_gain": 130.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000009,
+    "name": "Synthetic Ride 9",
+    "sport_type": "Ride",
+    "start_date": "2026-05-21T08:00:00Z",
+    "distance": 40000.0,
+    "moving_time": 5000,
+    "elapsed_time": 5060,
+    "total_elevation_gain": 140.0,
+    "average_heartrate": 160.0,
+    "average_watts": 260.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000010,
+    "name": "Synthetic Run 10",
+    "sport_type": "Run",
+    "start_date": "2026-05-20T08:00:00Z",
+    "distance": 5000.0,
+    "moving_time": 1666,
+    "elapsed_time": 1726,
+    "total_elevation_gain": 50.0,
+    "average_heartrate": 140.0,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000011,
+    "name": "Synthetic Ride 11",
+    "sport_type": "Ride",
+    "start_date": "2026-05-19T08:00:00Z",
+    "distance": 25000.0,
+    "moving_time": 3125,
+    "elapsed_time": 3185,
+    "total_elevation_gain": 60.0,
+    "average_heartrate": 145.0,
+    "average_watts": 200.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000012,
+    "name": "Synthetic Run 12",
+    "sport_type": "Run",
+    "start_date": "2026-05-18T08:00:00Z",
+    "distance": 8000.0,
+    "moving_time": 2666,
+    "elapsed_time": 2726,
+    "total_elevation_gain": 70.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000013,
+    "name": "Synthetic Ride 13",
+    "sport_type": "Ride",
+    "start_date": "2026-05-17T08:00:00Z",
+    "distance": 35000.0,
+    "moving_time": 4375,
+    "elapsed_time": 4435,
+    "total_elevation_gain": 80.0,
+    "average_heartrate": 155.0,
+    "average_watts": 240.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000014,
+    "name": "Synthetic Run 14",
+    "sport_type": "Run",
+    "start_date": "2026-05-16T08:00:00Z",
+    "distance": 11000.0,
+    "moving_time": 3666,
+    "elapsed_time": 3726,
+    "total_elevation_gain": 90.0,
+    "average_heartrate": 160.0,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000015,
+    "name": "Synthetic Ride 15",
+    "sport_type": "Ride",
+    "start_date": "2026-05-15T08:00:00Z",
+    "distance": 20000.0,
+    "moving_time": 2500,
+    "elapsed_time": 2560,
+    "total_elevation_gain": 100.0,
+    "average_heartrate": 140.0,
+    "average_watts": 180.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000016,
+    "name": "Synthetic Run 16",
+    "sport_type": "Run",
+    "start_date": "2026-05-14T08:00:00Z",
+    "distance": 6500.0,
+    "moving_time": 2166,
+    "elapsed_time": 2226,
+    "total_elevation_gain": 110.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000017,
+    "name": "Synthetic Ride 17",
+    "sport_type": "Ride",
+    "start_date": "2026-05-13T08:00:00Z",
+    "distance": 30000.0,
+    "moving_time": 3750,
+    "elapsed_time": 3810,
+    "total_elevation_gain": 120.0,
+    "average_heartrate": 150.0,
+    "average_watts": 220.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000018,
+    "name": "Synthetic Run 18",
+    "sport_type": "Run",
+    "start_date": "2026-05-12T08:00:00Z",
+    "distance": 9500.0,
+    "moving_time": 3166,
+    "elapsed_time": 3226,
+    "total_elevation_gain": 130.0,
+    "average_heartrate": 155.0,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000019,
+    "name": "Synthetic Ride 19",
+    "sport_type": "Ride",
+    "start_date": "2026-05-11T08:00:00Z",
+    "distance": 40000.0,
+    "moving_time": 5000,
+    "elapsed_time": 5060,
+    "total_elevation_gain": 140.0,
+    "average_heartrate": 160.0,
+    "average_watts": 260.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000020,
+    "name": "Synthetic Run 20",
+    "sport_type": "Run",
+    "start_date": "2026-05-10T08:00:00Z",
+    "distance": 5000.0,
+    "moving_time": 1666,
+    "elapsed_time": 1726,
+    "total_elevation_gain": 50.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000021,
+    "name": "Synthetic Ride 21",
+    "sport_type": "Ride",
+    "start_date": "2026-05-09T08:00:00Z",
+    "distance": 25000.0,
+    "moving_time": 3125,
+    "elapsed_time": 3185,
+    "total_elevation_gain": 60.0,
+    "average_heartrate": 145.0,
+    "average_watts": 200.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000022,
+    "name": "Synthetic Run 22",
+    "sport_type": "Run",
+    "start_date": "2026-05-08T08:00:00Z",
+    "distance": 8000.0,
+    "moving_time": 2666,
+    "elapsed_time": 2726,
+    "total_elevation_gain": 70.0,
+    "average_heartrate": 150.0,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000023,
+    "name": "Synthetic Ride 23",
+    "sport_type": "Ride",
+    "start_date": "2026-05-07T08:00:00Z",
+    "distance": 35000.0,
+    "moving_time": 4375,
+    "elapsed_time": 4435,
+    "total_elevation_gain": 80.0,
+    "average_heartrate": 155.0,
+    "average_watts": 240.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000024,
+    "name": "Synthetic Run 24",
+    "sport_type": "Run",
+    "start_date": "2026-05-06T08:00:00Z",
+    "distance": 11000.0,
+    "moving_time": 3666,
+    "elapsed_time": 3726,
+    "total_elevation_gain": 90.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000025,
+    "name": "Synthetic Ride 25",
+    "sport_type": "Ride",
+    "start_date": "2026-05-05T08:00:00Z",
+    "distance": 20000.0,
+    "moving_time": 2500,
+    "elapsed_time": 2560,
+    "total_elevation_gain": 100.0,
+    "average_heartrate": 140.0,
+    "average_watts": 180.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000026,
+    "name": "Synthetic Run 26",
+    "sport_type": "Run",
+    "start_date": "2026-05-04T08:00:00Z",
+    "distance": 6500.0,
+    "moving_time": 2166,
+    "elapsed_time": 2226,
+    "total_elevation_gain": 110.0,
+    "average_heartrate": 145.0,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000027,
+    "name": "Synthetic Ride 27",
+    "sport_type": "Ride",
+    "start_date": "2026-05-03T08:00:00Z",
+    "distance": 30000.0,
+    "moving_time": 3750,
+    "elapsed_time": 3810,
+    "total_elevation_gain": 120.0,
+    "average_heartrate": 150.0,
+    "average_watts": 220.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000028,
+    "name": "Synthetic Run 28",
+    "sport_type": "Run",
+    "start_date": "2026-05-02T08:00:00Z",
+    "distance": 9500.0,
+    "moving_time": 3166,
+    "elapsed_time": 3226,
+    "total_elevation_gain": 130.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000029,
+    "name": "Synthetic Ride 29",
+    "sport_type": "Ride",
+    "start_date": "2026-05-01T08:00:00Z",
+    "distance": 40000.0,
+    "moving_time": 5000,
+    "elapsed_time": 5060,
+    "total_elevation_gain": 140.0,
+    "average_heartrate": 160.0,
+    "average_watts": 260.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000030,
+    "name": "Synthetic Run 30",
+    "sport_type": "Run",
+    "start_date": "2026-04-30T08:00:00Z",
+    "distance": 5000.0,
+    "moving_time": 1666,
+    "elapsed_time": 1726,
+    "total_elevation_gain": 50.0,
+    "average_heartrate": 140.0,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000031,
+    "name": "Synthetic Ride 31",
+    "sport_type": "Ride",
+    "start_date": "2026-04-29T08:00:00Z",
+    "distance": 25000.0,
+    "moving_time": 3125,
+    "elapsed_time": 3185,
+    "total_elevation_gain": 60.0,
+    "average_heartrate": 145.0,
+    "average_watts": 200.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000032,
+    "name": "Synthetic Run 32",
+    "sport_type": "Run",
+    "start_date": "2026-04-28T08:00:00Z",
+    "distance": 8000.0,
+    "moving_time": 2666,
+    "elapsed_time": 2726,
+    "total_elevation_gain": 70.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000033,
+    "name": "Synthetic Ride 33",
+    "sport_type": "Ride",
+    "start_date": "2026-04-27T08:00:00Z",
+    "distance": 35000.0,
+    "moving_time": 4375,
+    "elapsed_time": 4435,
+    "total_elevation_gain": 80.0,
+    "average_heartrate": 155.0,
+    "average_watts": 240.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000034,
+    "name": "Synthetic Run 34",
+    "sport_type": "Run",
+    "start_date": "2026-04-26T08:00:00Z",
+    "distance": 11000.0,
+    "moving_time": 3666,
+    "elapsed_time": 3726,
+    "total_elevation_gain": 90.0,
+    "average_heartrate": 160.0,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000035,
+    "name": "Synthetic Ride 35",
+    "sport_type": "Ride",
+    "start_date": "2026-04-25T08:00:00Z",
+    "distance": 20000.0,
+    "moving_time": 2500,
+    "elapsed_time": 2560,
+    "total_elevation_gain": 100.0,
+    "average_heartrate": 140.0,
+    "average_watts": 180.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000036,
+    "name": "Synthetic Run 36",
+    "sport_type": "Run",
+    "start_date": "2026-04-24T08:00:00Z",
+    "distance": 6500.0,
+    "moving_time": 2166,
+    "elapsed_time": 2226,
+    "total_elevation_gain": 110.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000037,
+    "name": "Synthetic Ride 37",
+    "sport_type": "Ride",
+    "start_date": "2026-04-23T08:00:00Z",
+    "distance": 30000.0,
+    "moving_time": 3750,
+    "elapsed_time": 3810,
+    "total_elevation_gain": 120.0,
+    "average_heartrate": 150.0,
+    "average_watts": 220.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000038,
+    "name": "Synthetic Run 38",
+    "sport_type": "Run",
+    "start_date": "2026-04-22T08:00:00Z",
+    "distance": 9500.0,
+    "moving_time": 3166,
+    "elapsed_time": 3226,
+    "total_elevation_gain": 130.0,
+    "average_heartrate": 155.0,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000039,
+    "name": "Synthetic Ride 39",
+    "sport_type": "Ride",
+    "start_date": "2026-04-21T08:00:00Z",
+    "distance": 40000.0,
+    "moving_time": 5000,
+    "elapsed_time": 5060,
+    "total_elevation_gain": 140.0,
+    "average_heartrate": 160.0,
+    "average_watts": 260.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000040,
+    "name": "Synthetic Run 40",
+    "sport_type": "Run",
+    "start_date": "2026-04-20T08:00:00Z",
+    "distance": 5000.0,
+    "moving_time": 1666,
+    "elapsed_time": 1726,
+    "total_elevation_gain": 50.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000041,
+    "name": "Synthetic Ride 41",
+    "sport_type": "Ride",
+    "start_date": "2026-04-19T08:00:00Z",
+    "distance": 25000.0,
+    "moving_time": 3125,
+    "elapsed_time": 3185,
+    "total_elevation_gain": 60.0,
+    "average_heartrate": 145.0,
+    "average_watts": 200.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000042,
+    "name": "Synthetic Run 42",
+    "sport_type": "Run",
+    "start_date": "2026-04-18T08:00:00Z",
+    "distance": 8000.0,
+    "moving_time": 2666,
+    "elapsed_time": 2726,
+    "total_elevation_gain": 70.0,
+    "average_heartrate": 150.0,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000043,
+    "name": "Synthetic Ride 43",
+    "sport_type": "Ride",
+    "start_date": "2026-04-17T08:00:00Z",
+    "distance": 35000.0,
+    "moving_time": 4375,
+    "elapsed_time": 4435,
+    "total_elevation_gain": 80.0,
+    "average_heartrate": 155.0,
+    "average_watts": 240.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000044,
+    "name": "Synthetic Run 44",
+    "sport_type": "Run",
+    "start_date": "2026-04-16T08:00:00Z",
+    "distance": 11000.0,
+    "moving_time": 3666,
+    "elapsed_time": 3726,
+    "total_elevation_gain": 90.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000045,
+    "name": "Synthetic Ride 45",
+    "sport_type": "Ride",
+    "start_date": "2026-04-15T08:00:00Z",
+    "distance": 20000.0,
+    "moving_time": 2500,
+    "elapsed_time": 2560,
+    "total_elevation_gain": 100.0,
+    "average_heartrate": 140.0,
+    "average_watts": 180.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000046,
+    "name": "Synthetic Run 46",
+    "sport_type": "Run",
+    "start_date": "2026-04-14T08:00:00Z",
+    "distance": 6500.0,
+    "moving_time": 2166,
+    "elapsed_time": 2226,
+    "total_elevation_gain": 110.0,
+    "average_heartrate": 145.0,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000047,
+    "name": "Synthetic Ride 47",
+    "sport_type": "Ride",
+    "start_date": "2026-04-13T08:00:00Z",
+    "distance": 30000.0,
+    "moving_time": 3750,
+    "elapsed_time": 3810,
+    "total_elevation_gain": 120.0,
+    "average_heartrate": 150.0,
+    "average_watts": 220.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000048,
+    "name": "Synthetic Run 48",
+    "sport_type": "Run",
+    "start_date": "2026-04-12T08:00:00Z",
+    "distance": 9500.0,
+    "moving_time": 3166,
+    "elapsed_time": 3226,
+    "total_elevation_gain": 130.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000049,
+    "name": "Synthetic Ride 49",
+    "sport_type": "Ride",
+    "start_date": "2026-04-11T08:00:00Z",
+    "distance": 40000.0,
+    "moving_time": 5000,
+    "elapsed_time": 5060,
+    "total_elevation_gain": 140.0,
+    "average_heartrate": 160.0,
+    "average_watts": 260.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000050,
+    "name": "Synthetic Run 50",
+    "sport_type": "Run",
+    "start_date": "2026-04-10T08:00:00Z",
+    "distance": 5000.0,
+    "moving_time": 1666,
+    "elapsed_time": 1726,
+    "total_elevation_gain": 50.0,
+    "average_heartrate": 140.0,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000051,
+    "name": "Synthetic Ride 51",
+    "sport_type": "Ride",
+    "start_date": "2026-04-09T08:00:00Z",
+    "distance": 25000.0,
+    "moving_time": 3125,
+    "elapsed_time": 3185,
+    "total_elevation_gain": 60.0,
+    "average_heartrate": 145.0,
+    "average_watts": 200.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000052,
+    "name": "Synthetic Run 52",
+    "sport_type": "Run",
+    "start_date": "2026-04-08T08:00:00Z",
+    "distance": 8000.0,
+    "moving_time": 2666,
+    "elapsed_time": 2726,
+    "total_elevation_gain": 70.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000053,
+    "name": "Synthetic Ride 53",
+    "sport_type": "Ride",
+    "start_date": "2026-04-07T08:00:00Z",
+    "distance": 35000.0,
+    "moving_time": 4375,
+    "elapsed_time": 4435,
+    "total_elevation_gain": 80.0,
+    "average_heartrate": 155.0,
+    "average_watts": 240.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000054,
+    "name": "Synthetic Run 54",
+    "sport_type": "Run",
+    "start_date": "2026-04-06T08:00:00Z",
+    "distance": 11000.0,
+    "moving_time": 3666,
+    "elapsed_time": 3726,
+    "total_elevation_gain": 90.0,
+    "average_heartrate": 160.0,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000055,
+    "name": "Synthetic Ride 55",
+    "sport_type": "Ride",
+    "start_date": "2026-04-05T08:00:00Z",
+    "distance": 20000.0,
+    "moving_time": 2500,
+    "elapsed_time": 2560,
+    "total_elevation_gain": 100.0,
+    "average_heartrate": 140.0,
+    "average_watts": 180.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000056,
+    "name": "Synthetic Run 56",
+    "sport_type": "Run",
+    "start_date": "2026-04-04T08:00:00Z",
+    "distance": 6500.0,
+    "moving_time": 2166,
+    "elapsed_time": 2226,
+    "total_elevation_gain": 110.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000057,
+    "name": "Synthetic Ride 57",
+    "sport_type": "Ride",
+    "start_date": "2026-04-03T08:00:00Z",
+    "distance": 30000.0,
+    "moving_time": 3750,
+    "elapsed_time": 3810,
+    "total_elevation_gain": 120.0,
+    "average_heartrate": 150.0,
+    "average_watts": 220.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000058,
+    "name": "Synthetic Run 58",
+    "sport_type": "Run",
+    "start_date": "2026-04-02T08:00:00Z",
+    "distance": 9500.0,
+    "moving_time": 3166,
+    "elapsed_time": 3226,
+    "total_elevation_gain": 130.0,
+    "average_heartrate": 155.0,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000059,
+    "name": "Synthetic Ride 59",
+    "sport_type": "Ride",
+    "start_date": "2026-04-01T08:00:00Z",
+    "distance": 40000.0,
+    "moving_time": 5000,
+    "elapsed_time": 5060,
+    "total_elevation_gain": 140.0,
+    "average_heartrate": 160.0,
+    "average_watts": 260.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000060,
+    "name": "Synthetic Run 60",
+    "sport_type": "Run",
+    "start_date": "2026-03-31T08:00:00Z",
+    "distance": 5000.0,
+    "moving_time": 1666,
+    "elapsed_time": 1726,
+    "total_elevation_gain": 50.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000061,
+    "name": "Synthetic Ride 61",
+    "sport_type": "Ride",
+    "start_date": "2026-03-30T08:00:00Z",
+    "distance": 25000.0,
+    "moving_time": 3125,
+    "elapsed_time": 3185,
+    "total_elevation_gain": 60.0,
+    "average_heartrate": 145.0,
+    "average_watts": 200.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000062,
+    "name": "Synthetic Run 62",
+    "sport_type": "Run",
+    "start_date": "2026-03-29T08:00:00Z",
+    "distance": 8000.0,
+    "moving_time": 2666,
+    "elapsed_time": 2726,
+    "total_elevation_gain": 70.0,
+    "average_heartrate": 150.0,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000063,
+    "name": "Synthetic Ride 63",
+    "sport_type": "Ride",
+    "start_date": "2026-03-28T08:00:00Z",
+    "distance": 35000.0,
+    "moving_time": 4375,
+    "elapsed_time": 4435,
+    "total_elevation_gain": 80.0,
+    "average_heartrate": 155.0,
+    "average_watts": 240.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000064,
+    "name": "Synthetic Run 64",
+    "sport_type": "Run",
+    "start_date": "2026-03-27T08:00:00Z",
+    "distance": 11000.0,
+    "moving_time": 3666,
+    "elapsed_time": 3726,
+    "total_elevation_gain": 90.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000065,
+    "name": "Synthetic Ride 65",
+    "sport_type": "Ride",
+    "start_date": "2026-03-26T08:00:00Z",
+    "distance": 20000.0,
+    "moving_time": 2500,
+    "elapsed_time": 2560,
+    "total_elevation_gain": 100.0,
+    "average_heartrate": 140.0,
+    "average_watts": 180.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000066,
+    "name": "Synthetic Run 66",
+    "sport_type": "Run",
+    "start_date": "2026-03-25T08:00:00Z",
+    "distance": 6500.0,
+    "moving_time": 2166,
+    "elapsed_time": 2226,
+    "total_elevation_gain": 110.0,
+    "average_heartrate": 145.0,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000067,
+    "name": "Synthetic Ride 67",
+    "sport_type": "Ride",
+    "start_date": "2026-03-24T08:00:00Z",
+    "distance": 30000.0,
+    "moving_time": 3750,
+    "elapsed_time": 3810,
+    "total_elevation_gain": 120.0,
+    "average_heartrate": 150.0,
+    "average_watts": 220.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000068,
+    "name": "Synthetic Run 68",
+    "sport_type": "Run",
+    "start_date": "2026-03-23T08:00:00Z",
+    "distance": 9500.0,
+    "moving_time": 3166,
+    "elapsed_time": 3226,
+    "total_elevation_gain": 130.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000069,
+    "name": "Synthetic Ride 69",
+    "sport_type": "Ride",
+    "start_date": "2026-03-22T08:00:00Z",
+    "distance": 40000.0,
+    "moving_time": 5000,
+    "elapsed_time": 5060,
+    "total_elevation_gain": 140.0,
+    "average_heartrate": 160.0,
+    "average_watts": 260.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000070,
+    "name": "Synthetic Run 70",
+    "sport_type": "Run",
+    "start_date": "2026-03-21T08:00:00Z",
+    "distance": 5000.0,
+    "moving_time": 1666,
+    "elapsed_time": 1726,
+    "total_elevation_gain": 50.0,
+    "average_heartrate": 140.0,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000071,
+    "name": "Synthetic Ride 71",
+    "sport_type": "Ride",
+    "start_date": "2026-03-20T08:00:00Z",
+    "distance": 25000.0,
+    "moving_time": 3125,
+    "elapsed_time": 3185,
+    "total_elevation_gain": 60.0,
+    "average_heartrate": 145.0,
+    "average_watts": 200.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000072,
+    "name": "Synthetic Run 72",
+    "sport_type": "Run",
+    "start_date": "2026-03-19T08:00:00Z",
+    "distance": 8000.0,
+    "moving_time": 2666,
+    "elapsed_time": 2726,
+    "total_elevation_gain": 70.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000073,
+    "name": "Synthetic Ride 73",
+    "sport_type": "Ride",
+    "start_date": "2026-03-18T08:00:00Z",
+    "distance": 35000.0,
+    "moving_time": 4375,
+    "elapsed_time": 4435,
+    "total_elevation_gain": 80.0,
+    "average_heartrate": 155.0,
+    "average_watts": 240.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000074,
+    "name": "Synthetic Run 74",
+    "sport_type": "Run",
+    "start_date": "2026-03-17T08:00:00Z",
+    "distance": 11000.0,
+    "moving_time": 3666,
+    "elapsed_time": 3726,
+    "total_elevation_gain": 90.0,
+    "average_heartrate": 160.0,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000075,
+    "name": "Synthetic Ride 75",
+    "sport_type": "Ride",
+    "start_date": "2026-03-16T08:00:00Z",
+    "distance": 20000.0,
+    "moving_time": 2500,
+    "elapsed_time": 2560,
+    "total_elevation_gain": 100.0,
+    "average_heartrate": 140.0,
+    "average_watts": 180.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000076,
+    "name": "Synthetic Run 76",
+    "sport_type": "Run",
+    "start_date": "2026-03-15T08:00:00Z",
+    "distance": 6500.0,
+    "moving_time": 2166,
+    "elapsed_time": 2226,
+    "total_elevation_gain": 110.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000077,
+    "name": "Synthetic Ride 77",
+    "sport_type": "Ride",
+    "start_date": "2026-03-14T08:00:00Z",
+    "distance": 30000.0,
+    "moving_time": 3750,
+    "elapsed_time": 3810,
+    "total_elevation_gain": 120.0,
+    "average_heartrate": 150.0,
+    "average_watts": 220.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000078,
+    "name": "Synthetic Run 78",
+    "sport_type": "Run",
+    "start_date": "2026-03-13T08:00:00Z",
+    "distance": 9500.0,
+    "moving_time": 3166,
+    "elapsed_time": 3226,
+    "total_elevation_gain": 130.0,
+    "average_heartrate": 155.0,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000079,
+    "name": "Synthetic Ride 79",
+    "sport_type": "Ride",
+    "start_date": "2026-03-12T08:00:00Z",
+    "distance": 40000.0,
+    "moving_time": 5000,
+    "elapsed_time": 5060,
+    "total_elevation_gain": 140.0,
+    "average_heartrate": 160.0,
+    "average_watts": 260.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000080,
+    "name": "Synthetic Run 80",
+    "sport_type": "Run",
+    "start_date": "2026-03-11T08:00:00Z",
+    "distance": 5000.0,
+    "moving_time": 1666,
+    "elapsed_time": 1726,
+    "total_elevation_gain": 50.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000081,
+    "name": "Synthetic Ride 81",
+    "sport_type": "Ride",
+    "start_date": "2026-03-10T08:00:00Z",
+    "distance": 25000.0,
+    "moving_time": 3125,
+    "elapsed_time": 3185,
+    "total_elevation_gain": 60.0,
+    "average_heartrate": 145.0,
+    "average_watts": 200.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000082,
+    "name": "Synthetic Run 82",
+    "sport_type": "Run",
+    "start_date": "2026-03-09T08:00:00Z",
+    "distance": 8000.0,
+    "moving_time": 2666,
+    "elapsed_time": 2726,
+    "total_elevation_gain": 70.0,
+    "average_heartrate": 150.0,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000083,
+    "name": "Synthetic Ride 83",
+    "sport_type": "Ride",
+    "start_date": "2026-03-08T08:00:00Z",
+    "distance": 35000.0,
+    "moving_time": 4375,
+    "elapsed_time": 4435,
+    "total_elevation_gain": 80.0,
+    "average_heartrate": 155.0,
+    "average_watts": 240.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000084,
+    "name": "Synthetic Run 84",
+    "sport_type": "Run",
+    "start_date": "2026-03-07T08:00:00Z",
+    "distance": 11000.0,
+    "moving_time": 3666,
+    "elapsed_time": 3726,
+    "total_elevation_gain": 90.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000085,
+    "name": "Synthetic Ride 85",
+    "sport_type": "Ride",
+    "start_date": "2026-03-06T08:00:00Z",
+    "distance": 20000.0,
+    "moving_time": 2500,
+    "elapsed_time": 2560,
+    "total_elevation_gain": 100.0,
+    "average_heartrate": 140.0,
+    "average_watts": 180.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000086,
+    "name": "Synthetic Run 86",
+    "sport_type": "Run",
+    "start_date": "2026-03-05T08:00:00Z",
+    "distance": 6500.0,
+    "moving_time": 2166,
+    "elapsed_time": 2226,
+    "total_elevation_gain": 110.0,
+    "average_heartrate": 145.0,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000087,
+    "name": "Synthetic Ride 87",
+    "sport_type": "Ride",
+    "start_date": "2026-03-04T08:00:00Z",
+    "distance": 30000.0,
+    "moving_time": 3750,
+    "elapsed_time": 3810,
+    "total_elevation_gain": 120.0,
+    "average_heartrate": 150.0,
+    "average_watts": 220.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000088,
+    "name": "Synthetic Run 88",
+    "sport_type": "Run",
+    "start_date": "2026-03-03T08:00:00Z",
+    "distance": 9500.0,
+    "moving_time": 3166,
+    "elapsed_time": 3226,
+    "total_elevation_gain": 130.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000089,
+    "name": "Synthetic Ride 89",
+    "sport_type": "Ride",
+    "start_date": "2026-03-02T08:00:00Z",
+    "distance": 40000.0,
+    "moving_time": 5000,
+    "elapsed_time": 5060,
+    "total_elevation_gain": 140.0,
+    "average_heartrate": 160.0,
+    "average_watts": 260.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000090,
+    "name": "Synthetic Run 90",
+    "sport_type": "Run",
+    "start_date": "2026-03-01T08:00:00Z",
+    "distance": 5000.0,
+    "moving_time": 1666,
+    "elapsed_time": 1726,
+    "total_elevation_gain": 50.0,
+    "average_heartrate": 140.0,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000091,
+    "name": "Synthetic Ride 91",
+    "sport_type": "Ride",
+    "start_date": "2026-02-28T08:00:00Z",
+    "distance": 25000.0,
+    "moving_time": 3125,
+    "elapsed_time": 3185,
+    "total_elevation_gain": 60.0,
+    "average_heartrate": 145.0,
+    "average_watts": 200.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000092,
+    "name": "Synthetic Run 92",
+    "sport_type": "Run",
+    "start_date": "2026-02-27T08:00:00Z",
+    "distance": 8000.0,
+    "moving_time": 2666,
+    "elapsed_time": 2726,
+    "total_elevation_gain": 70.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000093,
+    "name": "Synthetic Ride 93",
+    "sport_type": "Ride",
+    "start_date": "2026-02-26T08:00:00Z",
+    "distance": 35000.0,
+    "moving_time": 4375,
+    "elapsed_time": 4435,
+    "total_elevation_gain": 80.0,
+    "average_heartrate": 155.0,
+    "average_watts": 240.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000094,
+    "name": "Synthetic Run 94",
+    "sport_type": "Run",
+    "start_date": "2026-02-25T08:00:00Z",
+    "distance": 11000.0,
+    "moving_time": 3666,
+    "elapsed_time": 3726,
+    "total_elevation_gain": 90.0,
+    "average_heartrate": 160.0,
+    "average_watts": null,
+    "average_cadence": 175.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000095,
+    "name": "Synthetic Ride 95",
+    "sport_type": "Ride",
+    "start_date": "2026-02-24T08:00:00Z",
+    "distance": 20000.0,
+    "moving_time": 2500,
+    "elapsed_time": 2560,
+    "total_elevation_gain": 100.0,
+    "average_heartrate": 140.0,
+    "average_watts": 180.0,
+    "average_cadence": 95.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000096,
+    "name": "Synthetic Run 96",
+    "sport_type": "Run",
+    "start_date": "2026-02-23T08:00:00Z",
+    "distance": 6500.0,
+    "moving_time": 2166,
+    "elapsed_time": 2226,
+    "total_elevation_gain": 110.0,
+    "average_heartrate": null,
+    "average_watts": null,
+    "average_cadence": 170.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  },
+  {
+    "id": 100000097,
+    "name": "Synthetic Ride 97",
+    "sport_type": "Ride",
+    "start_date": "2026-02-22T08:00:00Z",
+    "distance": 30000.0,
+    "moving_time": 3750,
+    "elapsed_time": 3810,
+    "total_elevation_gain": 120.0,
+    "average_heartrate": 150.0,
+    "average_watts": 220.0,
+    "average_cadence": 90.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g1"
+  },
+  {
+    "id": 100000098,
+    "name": "Synthetic Run 98",
+    "sport_type": "Run",
+    "start_date": "2026-02-21T08:00:00Z",
+    "distance": 9500.0,
+    "moving_time": 3166,
+    "elapsed_time": 3226,
+    "total_elevation_gain": 130.0,
+    "average_heartrate": 155.0,
+    "average_watts": null,
+    "average_cadence": 180.0,
+    "average_speed": 3.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": "g2"
+  },
+  {
+    "id": 100000099,
+    "name": "Synthetic Ride 99",
+    "sport_type": "Ride",
+    "start_date": "2026-02-20T08:00:00Z",
+    "distance": 40000.0,
+    "moving_time": 5000,
+    "elapsed_time": 5060,
+    "total_elevation_gain": 140.0,
+    "average_heartrate": 160.0,
+    "average_watts": 260.0,
+    "average_cadence": 85.0,
+    "average_speed": 8.0,
+    "start_latlng": [
+      45.0,
+      74.0
+    ],
+    "gear_id": null
+  }
+]

@@ -12,7 +12,12 @@ actor WeatherService {
     func fetchWeather(for activities: [Activity], context: ModelContext) async {
         // Retrieve activities that lack weather data but have start coordinates
         let pending = await MainActor.run {
-            activities.filter { $0.weatherSnapshot == nil && $0.startLatitude != nil && $0.startLongitude != nil }
+            activities.filter {
+                $0.weatherSnapshot == nil &&
+                $0.startLatitude != nil &&
+                $0.startLongitude != nil &&
+                !(abs($0.startLatitude!) < 0.000001 && abs($0.startLongitude!) < 0.000001)
+            }
         }
         
         guard !pending.isEmpty else { return }
@@ -70,8 +75,12 @@ actor WeatherService {
         guard let url = URL(string: urlString) else { return nil }
         
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let response = try JSONDecoder().decode(OpenMeteoResponse.self, from: data)
+            let (data, response) = try await URLSession.shared.data(from: url)
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 429 {
+                print("Open-Meteo returned 429 Too Many Requests, falling back to mock weather generator.")
+                return generateMockWeather(latitude: latitude, longitude: longitude, date: date)
+            }
+            let decodedResponse = try JSONDecoder().decode(OpenMeteoResponse.self, from: data)
             
             // Determine starting hour in GMT
             let calendar = Calendar.current
@@ -79,7 +88,7 @@ actor WeatherService {
             gmtCalendar.timeZone = TimeZone(secondsFromGMT: 0) ?? .current
             let hourOfDay = gmtCalendar.component(.hour, from: date)
             
-            guard let hourly = response.hourly,
+            guard let hourly = decodedResponse.hourly,
                   hourOfDay < hourly.temperature_2m.count,
                   hourOfDay < hourly.relative_humidity_2m.count,
                   hourOfDay < hourly.wind_speed_10m.count,

@@ -25,53 +25,91 @@ struct RouteListView: View {
     
     @State private var selectedTabMode = 0 // 0 for Routes, 1 for Segments, 2 for Heatmap
     
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                Picker("Режим", selection: $selectedTabMode) {
-                    Text("Маршруты").tag(0)
-                    Text("Сегменты").tag(1)
-                    Text("Теплокарта").tag(2)
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color(.systemGroupedBackground))
-                
-                if selectedTabMode == 0 {
-                    routesListSection
-                } else if selectedTabMode == 1 {
-                    SegmentListView()
-                } else {
-                    PersonalHeatmapView()
-                }
-            }
-            .navigationTitle(selectedTabMode == 0 ? "Маршруты" : (selectedTabMode == 1 ? "Сегменты" : "Тепловая карта"))
-            .toolbar {
-                if selectedTabMode == 0 {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        HStack(spacing: 12) {
-                            Menu {
-                                Picker("Сортировка", selection: $sortBy) {
-                                    Label("По дате", systemImage: "calendar").tag(SortOption.date)
-                                    Label("По дистанции", systemImage: "arrow.triangle.pull").tag(SortOption.distance)
-                                }
-                            } label: {
-                                Image(systemName: "arrow.up.and.down.text.horizontal")
-                            }
-                            
-                            Button(action: {
-                                showBuilder = true
-                            }) {
-                                Image(systemName: "plus")
-                            }
-                        }
+    @ViewBuilder
+    private var tabSelectorView: some View {
+        HStack(spacing: 6) {
+            ForEach([0, 1, 2], id: \.self) { mode in
+                Button {
+                    HapticManager.trigger(.light)
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.72)) {
+                        selectedTabMode = mode
                     }
+                } label: {
+                    Text(mode == 0 ? "Маршруты" : (mode == 1 ? "Сегменты" : "Теплокарта"))
+                        .font(.system(size: 11, weight: .bold))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .background(selectedTabMode == mode ? Color.accentPrimary.opacity(0.12) : Color.white.opacity(0.04))
+                        .foregroundColor(selectedTabMode == mode ? Color.accentPrimary : Color.textSecondaryReadable)
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule()
+                                .strokeBorder(selectedTabMode == mode ? Color.accentPrimary.opacity(0.4) : Color.white.opacity(0.08), lineWidth: 1)
+                        )
                 }
             }
-            .sheet(isPresented: $showBuilder) {
-                RouteBuilderView()
+            
+            if selectedTabMode == 0 {
+                Spacer()
+                
+                Menu {
+                    Picker("Сортировка", selection: $sortBy) {
+                        Label("По дате", systemImage: "calendar").tag(SortOption.date)
+                        Label("По дистанции", systemImage: "arrow.triangle.pull").tag(SortOption.distance)
+                    }
+                } label: {
+                    Image(systemName: "arrow.up.and.down.text.horizontal")
+                        .font(.system(size: 11, weight: .bold))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .background(Color.white.opacity(0.04))
+                        .foregroundColor(Color.textSecondaryReadable)
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule()
+                                .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+                        )
+                }
+                
+                Button(action: {
+                    HapticManager.trigger(.light)
+                    showBuilder = true
+                }) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 11, weight: .bold))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .background(Color.white.opacity(0.04))
+                        .foregroundColor(Color.textSecondaryReadable)
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule()
+                                .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+                        )
+                }
             }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+    }
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            tabSelectorView
+            
+            if selectedTabMode == 0 {
+                routesListSection
+            } else if selectedTabMode == 1 {
+                SegmentListView()
+            } else {
+                PersonalHeatmapView()
+            }
+        }
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .sheet(isPresented: $showBuilder) {
+            RouteBuilderView()
         }
     }
     
@@ -89,10 +127,11 @@ struct RouteListView: View {
                     Text("Нет маршрутов")
                         .font(.title3)
                         .bold()
+                        .foregroundStyle(Color.textPrimary)
                     
                     Text("Спланируйте свою следующую тренировку. Нарисуйте маршрут на карте, посмотрите перепады высот и отправьте на часы.")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(Color.textSecondaryReadable)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
                     
@@ -104,26 +143,33 @@ struct RouteListView: View {
                             .foregroundColor(.white)
                             .padding(.horizontal, 24)
                             .padding(.vertical, 12)
-                            .background(Color.orange)
+                            .background(Color.orange.gradient)
                             .cornerRadius(12)
                     }
                 }
                 .padding()
                 Spacer()
             } else {
-                List {
-                    ForEach(sortedRoutes) { route in
-                        NavigationLink(destination: RouteDetailView(route: route)) {
-                            RouteRowView(route: route)
+                ScrollView(showsIndicators: false) {
+                    LazyVStack(spacing: 12) {
+                        ForEach(sortedRoutes) { route in
+                            NavigationLink(destination: RouteDetailView(route: route)) {
+                                RouteRowView(route: route)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            .contextMenu {
+                                Button(role: .destructive) {
+                                    modelContext.delete(route)
+                                    try? modelContext.save()
+                                } label: {
+                                    Label("Удалить", systemImage: "trash")
+                                }
+                            }
                         }
-                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
                     }
-                    .onDelete(perform: deleteRoutes)
+                    .padding(.horizontal, 14)
+                    .padding(.bottom, 120)
                 }
-                .listStyle(.plain)
-                .background(Color(.systemGroupedBackground))
             }
         }
     }
@@ -156,7 +202,7 @@ struct RouteRowView: View {
                     Text(route.name)
                         .font(.headline)
                         .bold()
-                        .foregroundColor(.primary)
+                        .foregroundColor(.textPrimary)
                         .lineLimit(1)
                     
                     Spacer()
@@ -174,18 +220,17 @@ struct RouteRowView: View {
                 HStack(spacing: 16) {
                     Label(formatDistance(route.totalDistanceMeters), systemImage: "arrow.triangle.pull")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondaryReadable)
                     
                     Label(formatElevation(route.totalElevationGain), systemImage: "arrow.up.forward.circle")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondaryReadable)
                 }
             }
             .padding()
         }
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
+        .liquidGlassCard(cornerRadius: 16)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
     
     private func formatDistance(_ meters: Double) -> String {

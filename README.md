@@ -1,302 +1,277 @@
 # TezDav 🏃‍♂️🚴‍♀️
 
 <p align="center">
-  <img src="docs/screenshots/app_icon.png" alt="TezDav Logo" width="128" height="128">
+  <img src="docs/screenshots/app_icon.png" alt="TezDav Logo" width="120" height="120" style="border-radius: 24px;">
 </p>
 
 <p align="center">
-  <a href="https://developer.apple.com/swift/"><img src="https://img.shields.io/badge/Swift-5.10-orange.svg?style=flat-square" alt="Swift"></a>
-  <a href="https://developer.apple.com/ios/"><img src="https://img.shields.io/badge/iOS-17.0%2B-blue.svg?style=flat-square" alt="iOS"></a>
-  <a href="https://developer.apple.com/watchos/"><img src="https://img.shields.io/badge/watchOS-10.0%2B-lightblue.svg?style=flat-square" alt="watchOS"></a>
-  <a href="https://developer.apple.com/xcode/swiftdata/"><img src="https://img.shields.io/badge/SwiftData-Database-purple.svg?style=flat-square" alt="SwiftData"></a>
-  <a href="https://developer.apple.com/widgets/"><img src="https://img.shields.io/badge/WidgetKit-Live_Activities-black.svg?style=flat-square" alt="WidgetKit"></a>
+  <a href="https://developer.apple.com/swift/"><img src="https://img.shields.io/badge/Swift-6.0-orange.svg?style=flat-square&logo=swift" alt="Swift"></a>
+  <a href="https://developer.apple.com/ios/"><img src="https://img.shields.io/badge/iOS-17.0%2B-blue.svg?style=flat-square&logo=apple" alt="iOS"></a>
+  <a href="https://developer.apple.com/watchos/"><img src="https://img.shields.io/badge/watchOS-10.0%2B-lightblue.svg?style=flat-square&logo=apple" alt="watchOS"></a>
+  <a href="https://developer.apple.com/xcode/swiftdata/"><img src="https://img.shields.io/badge/SwiftData-✦-purple.svg?style=flat-square" alt="SwiftData"></a>
+  <a href="https://developers.google.com/maps/documentation/ios-sdk"><img src="https://img.shields.io/badge/Google_Maps-SDK-4285F4.svg?style=flat-square&logo=googlemaps" alt="Google Maps"></a>
+  <a href="https://developer.apple.com/widgets/"><img src="https://img.shields.io/badge/Live_Activities-Dynamic_Island-black.svg?style=flat-square" alt="Live Activities"></a>
+</p>
+
+<p align="center">
+  <strong>TezDav</strong> — продвинутая платформа тренировочной аналитики для мультиспортсменов.<br>
+  Весь профессиональный анализ, который сервисы прячут за подпиской — бесплатно, конфиденциально, офлайн.
 </p>
 
 ---
 
-## 🇷🇺 Русский раздел (Russian Version)
+## 🇷🇺 Русский раздел
 
-**TezDav** — это высокотехнологичное мобильное приложение для любителей циклического спорта (бег, велоспорт, триатлон), разработанное для экосистемы Apple (iPhone и Apple Watch). Оно объединяет продвинутую аналитику тренировок, интеллектуальное планирование, построение маршрутов и интерактивное отслеживание нагрузок в реальном времени.
+### 🎨 Liquid Glass дизайн-система
+
+TezDav использует современную дизайн-систему в духе iOS 26 / macOS Tahoe:
+
+- **Floating glass карточки** — полупрозрачные слои с frosted material и эффектом глубины
+- **Изумрудный акцент** (`#10B981`) — фирменный цвет TezDav, отличающий его от Strava
+- **Floating Tab Bar** — плавающая капсула с glass-эффектом вместо стандартного tab bar
+- **Гибридная реализация**: iOS 26+ — нативный `glassEffect()`; iOS 17–25 — quality fallback
+
+Технические детали дизайна: [DESIGN_SPEC.md](DESIGN_SPEC.md)
+
+---
+
+### 📸 Скриншоты интерфейса
+
+<table>
+  <tr>
+    <td align="center">
+      <b>Dashboard — PMC & Готовность</b><br>
+      <img src="docs/screenshots/dashboard.png" alt="Dashboard" width="100%">
+    </td>
+    <td align="center">
+      <b>Форма — CTL/ATL/TSB Performance Management</b><br>
+      <img src="docs/screenshots/form_fitness.png" alt="Form/PMC" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <b>Рекорды & Кривая мощности</b><br>
+      <img src="docs/screenshots/records.png" alt="Records" width="100%">
+    </td>
+    <td align="center">
+      <b>Карта маршрутов</b><br>
+      <img src="docs/screenshots/map_routes.png" alt="Map/Routes" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <b>Беговая динамика</b><br>
+      <img src="docs/screenshots/running_dynamics.png" alt="Running Dynamics" width="100%">
+    </td>
+    <td align="center">
+      <b>Аналитика тренировки & кривая мощности</b><br>
+      <img src="docs/screenshots/activity_detail_power_curve.png" alt="Activity Detail" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <b>Аналитика погоды</b><br>
+      <img src="docs/screenshots/weather_analytics.png" alt="Weather Analytics" width="100%">
+    </td>
+    <td align="center">
+      <b>Персональная тепловая карта</b><br>
+      <img src="docs/screenshots/personal_heatmap.png" alt="Personal Heatmap" width="100%">
+    </td>
+  </tr>
+</table>
 
 ---
 
 ### 🌟 Ключевые возможности
 
-#### 1. Интерактивный эфир тренировки (Live Activities & Dynamic Island)
-Отображение ключевых параметров физической активности на экране блокировки и в Dynamic Island во время тренировок:
-* Живой таймер, дистанция, текущий темп или скорость, а также частота пульса с цветовым кодированием зон интенсивности.
-* Адаптивная цветовая гамма, соответствующая выбранному виду спорта (зелёный цвет для бега, синий для велоспорта).
-* Поддержка плавной анимации обновления числовых значений.
+#### 🏃 Тренировочная аналитика
+- **PMC / Performance Management Chart** — CTL (фитнес), ATL (усталость), TSB (форма) в реальном времени с прогнозом на 30+ дней
+- **Кривая мощности & Critical Power** — Mean Maximal Power (MMP), регрессия CP + W', 6 зон Коггана
+- **Беговая динамика** — каденс, вертикальные колебания, GCT, баланс ног, длина шага (зоны Garmin)
+- **Индекс готовности (Readiness Score)** — HRV + сон + TSB в единую метрику
+- **Прогнозирование результатов** — алгоритм Riegel v2 с поправками на температуру и рельеф
 
-#### 2. Интерактивный редактор маршрутов (Route Builder)
-Продвинутый инструмент для планирования тренировочных трасс:
-* Автоматическая привязка к дорожной сети с помощью системных запросов направлений.
-* Расчет перепада высот и построение графика рельефа местности в реальном времени.
-* Прогнозирование времени прохождения маршрута на основе персонального темпа и функциональных порогов спортсмена.
-* Возможность экспортирования в универсальный формат GPX и мгновенной отправки на Apple Watch.
+#### 🗺 Карты и маршруты
+- **Google Maps SDK** — интерактивная карта с кастомными оверлеями треков активностей
+- **Интерактивный редактор маршрутов** — клик-для-создания с привязкой к дорогам (MKDirections), профилем высот, экспортом GPX
+- **Персональная тепловая карта** — все треки на одной карте с фильтрацией по спорту, цветовыми схемами и экспортом в HD
+- **Live Segments** — ведение в реальном времени по личным сегментам с отображением дельты времени
 
-#### 3. Анализ кривой мощности и критической силы (Power Curve & Critical Power)
-Глубокая велосипедная аналитика профессионального уровня:
-* Расчет максимальной средней мощности (MMP) для скользящих временных окон от 1 секунды до 1 часа.
-* Вычисление индивидуального значения критической мощности (Critical Power, CP) и анаэробного энергетического резерва (W') с помощью математической регрессии.
-* Автоматическое построение 6 зон мощности Коггана для точечного дозирования интенсивности нагрузок.
-* Сравнение текущей сессии с глобальной историей рекордов.
+#### 💪 Планирование и прогнозирование
+- **TrainingPeaks Forecast** — моделирование CTL/ATL/TSB в будущее, умный TSS-калькулятор по IF-пресетам
+- **Структурированный планировщик** — автогенерация макроцикла (базовый, развивающий, восстановительный)
+- **ИИ-тренер (on-device)** — персонализированные рекомендации на основе Readiness, TSB, каденса, износа экипировки
 
-#### 4. Интеграция со службой Apple Здоровье (HealthKit)
-Полноценное взаимодействие с системными данными:
-* Двусторонняя синхронизация: чтение тренировок из часов и сторонних приложений, запись сессий в HealthKit.
-* Анализ сна и утренней вариабельности ритма сердца (HRV) для ежедневного расчета индекса готовности организма к нагрузке (Readiness Score).
+#### 🏅 Социальное и геймификация
+- **Социальная лента & Kudos** — треки друзей на MapKit, двойной тап с анимацией, комментарии
+- **Достижения & Casual-режим** — GitHub-стиль Activity Heatmap, стрики, награды, счётчик шагов
+- **Workout Share Cards** — генератор карточек для соцсетей (1:1 и 9:16 Stories, темы оформления)
+- **Личная география** — посещённые города, площадь исследованной территории (сетка 1×1 км)
 
-#### 5. Интеллектуальный тренировочный планировщик (Training Planner)
-Генератор индивидуальных макроциклов подготовки:
-* Оценка текущей базовой нагрузки и автоматическое распределение тренировочных недель по типам (базовая, развивающая, восстановительная, подводящая).
-* Ежедневные методические рекомендации по проведению интервальных и длительных занятий.
-
-#### 6. Динамическое переключение систем измерения (Метрическая и Имперская)
-* Динамическое переформатирование всех величин в приложении (километры/метры/кг $\leftrightarrow$ мили/футы/фунты).
-* Автоматический пересчет удельной мощности в Вт/фунт при имперских настройках и перестроение интервальной таблицы сплитов с шагом ровно в 1 милю (вместо 1 км).
-* Интерактивное преобразование значений текстовых полей ввода на лету без потери точности хранения данных.
-
-#### 7. Сегменты и лидерборды (Segments & Leaderboards)
-* Автономное сопоставление (snapping) GPS-координат тренировки (GPX/FIT) с эталонными сегментами по формуле Haversine с погрешностью до 25 метров и верификацией пройденного расстояния (допуск 15% для исключения ложных срезок).
-* Автоматический расчет личных рекордов (PR) и занятых мест.
-* Виртуальные соперники (боты) с реалистичным распределением результатов для поддержания духа соревнований.
-* Интерактивный детальный просмотр сегмента: наложение трека на карту золотым цветом, график высот с помощью Swift Charts и полные таблицы лидерборда.
-
-#### 8. Персональная тепловая карта (Personal Heatmap)
-* Интерактивная визуализация всех пройденных маршрутов на одной карте (MapKit).
-* Фильтрация треков по видам спорта (Бег, Велоспорт, Все) и поддержка трех типов карт (схема, спутник, гибрид).
-* Индивидуальная настройка визуального стиля: толщина линий, выбор цветовой схемы (Оранжевая, Неоновый зеленый, Синий лед, Мультиспорт с кодированием по типу активности) и слайдер прозрачности (свечения).
-* Автоматическая оптимизация (даунсэмплинг) точек и кэширование полилайнов в базе данных SwiftData для мгновенной загрузки.
-* Экспорт тепловой карты в высоком разрешении (MKMapSnapshotter + CoreGraphics) для публикации в соцсетях.
-
-#### 9. Беговая динамика (Running Dynamics)
-* Полноценный анализ беговой биомеханики профессионального уровня: каденс (cadence), вертикальные колебания (vertical oscillation), время контакта с землей (ground contact time, GCT), баланс левой/правой ноги (left/right balance) и длина шага (stride length).
-* Оценка эффективности по зонам (Optimal, Good, Fair, Poor) с цветовым кодированием Garmin (фиолетовый, зеленый, оранжевый, красный).
-* Интерактивные Swift Charts графики с тултипом и сменными табами для детального анализа каждого метра тренировки.
-* Корректный пересчет длины шага в футы для имперской системы.
-
-#### 10. Умный локальный ИИ-тренер (Daily AI Coach)
-* Детерминированный локальный движок рекомендаций на основе индивидуальных показателей готовности к тренировкам (Readiness Score), текущего баланса тренировочной нагрузки (TSB), каденса и износа экипировки.
-* Персонализированные подсказки по тренировкам, восстановлению и технике бега, распределенные по приоритетам (Безопасность > Восстановление > Экипировка > Прогресс > Техника).
-* Удобное ведение архива советов с возможностью просмотреть рекомендации за последние 30 дней.
-
-#### 11. Учёт износа экипировки (Gear Tracking)
-* Полноценное отслеживание пробега беговых кроссовок и компонентов велосипеда.
-* Автоматический импорт и маппинг `gear_id` из синхронизированных тренировок Strava.
-* Интуитивно понятные индикаторы износа, стилизованные под уровень заряда батареи (зеленый/желтый/красный), отображаемые непосредственно в профиле спортсмена.
-* Автоматические локальные пуш-уведомления при остатке ресурса снаряжения менее 50 км.
-
-#### 12. Аналитика влияния погоды (Weather Correlation)
-* Автоматическое обогащение каждой импортированной или записанной тренировки метеоданными от Open-Meteo на момент её старта.
-* Интерактивные графики Swift Charts (зависимость скорости/темпа от температуры и влажности) для выявления оптимальных климатических условий.
-* Расчет идеального температурного диапазона для ваших рекордов на основе исторической статистики.
-* Надежная оффлайн-работа с генератором реалистичной сезонной погоды в случае отсутствия связи с сервером.
-
-#### 13. Геймификация, личные достижения и Casual-режим
-* Легкий режим приложения (Casual Mode) для прогулок и поддержания активности (без пульсометров и ваттметров).
-* Подсчет шагов, калорий, времени активности и автоматический расчет индекса готовности.
-* Накопительная система ачивок и наград (например, серии активности Streak, 100 дней тренировок, рекордные дистанции).
-* Интерактивная плиточная сетка вклада (Activity Contribution Heatmap) в стиле GitHub.
-
-#### 14. Workout Share Cards & Еженедельная сводка
-* Создание стильных карточек тренировок (Workout Share Cards) в двух форматах: квадрат (1:1) и Stories (9:16).
-* Интерактивная отрисовка трека маршрута и наложение ключевых метрик с выбором одной из тем (Тёмная, Светлая, Градиент).
-* Генерация панорамных карточек еженедельных итогов с суммарными метриками и мини-теплокартой активности.
-* Интеграция с системным Share Sheet для быстрой публикации или сохранения в галерею.
-
-#### 15. Личная география тренировок (Personal Geography)
-* Автоматическая кластеризация уникальных городов и районов, которые вы посетили во время активности.
-* Подсчет исследованной площади на основе виртуальной сетки с шагом 1x1 км.
-* Поиск географических экстремумов тренировок (самая северная, южная, восточная и западная точки).
-
-#### 16. Социальная лента и Kudos (Social Feed & Kudos)
-* Интерактивная лента спортивной активности ваших друзей с отображением мини-карт MapKit и оранжевых треков маршрутов.
-* Система оценки тренировок («Kudos») с тактильным откликом (Haptics) и оранжевым свечением, активируемая как кнопкой, так и двойным тапом по карточке с анимированным всплывающим значком.
-* Интерактивные комментарии с возможностью добавлять ответы на тренировки друзей прямо из ленты.
-* Локальная база данных SwiftData со встроенным механизмом наполнения (seeding) реалистичными тренировками из Таджикистана при первом запуске.
-
-#### 17. Прогнозирование пика формы (TrainingPeaks Forecast)
-* Интерактивный планировщик будущих тренировок на календаре с моделированием изменений CTL/ATL/TSB на 30+ дней вперед.
-* Пунктирная отрисовка прогнозируемых линий готовности и утомления на графике PMC (Performance Management Chart).
-* Умный калькулятор планового TSS на основе индекса интенсивности (IF): от мягкого восстановления до интервалов VO2Max.
-* Бесшовное закрытие («Выполнить») запланированной активности с автосозданием реальной тренировки в базе данных.
+#### ⚙️ Системные интеграции
+- **Live Activities & Dynamic Island** — живые метрики на экране блокировки с пульсом и темпом
+- **HealthKit** — двусторонняя синхронизация: чтение HRV/сна, запись тренировок
+- **Apple Watch App** — нативное приложение с передачей маршрутов через WatchConnectivity
+- **Strava OAuth** — автоматический импорт тренировок, GPX/FIT парсер
+- **Учёт экипировки** — пробег обуви и велосипеда, индикаторы износа, уведомления
+- **Погодная аналитика** — Open-Meteo API, корреляция скорости с температурой и влажностью
+- **iCloud / CloudKit** — синхронизация данных между устройствами
+- **Сегменты & Лидерборды** — Haversine-matching GPX/FIT с PR-трекером и виртуальными соперниками
 
 ---
 
+### 🛠 Стек технологий
 
-### 🛠 Стек технологий и Архитектура
-
-Приложение спроектировано в рамках современной декларативной архитектуры с разделением ответственности и использованием передовых системных инструментов Apple:
-
-* **Пользовательский интерфейс**: SwiftUI с поддержкой динамических шрифтов, тактильного отклика (Haptics) и плавной анимации переходов.
-* **База данных**: SwiftData (локальное хранилище данных и настроек на основе CoreData с транзакционной целостностью).
-* **Визуализация данных**: Swift Charts (построение интерактивных графиков высоты, кривой мощности, пульсовых зон и беговой динамики).
-* **Геолокация**: MapKit & CoreLocation (рисование треков, отображение карт, расчет расстояний и геокодирование).
-* **Фоновые вычисления**: Accelerate framework (векторизованный метод наименьших квадратов для регрессии Critical Power).
-* **Синхронизация с часами**: WatchConnectivity (быстрая передача маршрутов и двусторонняя трансляция спортивных показателей).
+| Слой | Технологии |
+|------|-----------|
+| **UI** | SwiftUI, Swift Charts, MapKit, Google Maps iOS SDK |
+| **База данных** | SwiftData (CloudKit + Local) |
+| **Системные расширения** | WidgetKit, ActivityKit (Live Activities), WatchConnectivity |
+| **Здоровье** | HealthKit (HRV, сон, шаги, калории) |
+| **Геолокация** | CoreLocation, MapKit, MKDirections |
+| **Вычисления** | Accelerate (CP regression), Foundation |
+| **Сеть** | Strava OAuth 2.0, Open-Meteo API, URLSession |
+| **Хранение** | Keychain (токены), AppGroup (Live Activities), CoreSpotlight |
+| **Тестирование** | XCTest, Swift Testing, Snapshot Testing |
 
 ---
 
-### 🧠 Архитектура и ментальная карта проекта (Project Mind Map)
+### 🧠 Архитектура проекта
 
 ```mermaid
 graph TD
     App[TezDav App]
-    
-    %% UI Components
-    UI[SwiftUI Views / Интерфейс]
+
+    UI[SwiftUI Views]
     App --> UI
-    UI --> Dash[Dashboard & Profile / Дашборд и Профиль]
-    UI --> Detail[Activity Details / Анализ тренировки и сплиты]
-    UI --> Planner[AI Training Planner / ИИ-планировщик]
-    UI --> RBuilder[Interactive Route Builder / Редактор маршрутов]
-    UI --> Heatmap[Personal Heatmap / Персональная теплокарта]
-    UI --> Recs[Race Predictor Pro / Прогноз результатов]
-    UI --> Gear[Gear Tracker / Учёт экипировки]
-    UI --> CoachingView[AI Coach Insights / Ежедневный ИИ-тренер]
-    UI --> SocialFeed[Social Feed & Kudos / Социальная лента]
-    
-    %% Analytics Engine
-    Engines[Sports Science Engines / Физиологические расчеты]
+    UI --> Dash[Dashboard & PMC]
+    UI --> Detail[Activity Detail & Power Curve]
+    UI --> Form[Form/Fitness PMC]
+    UI --> Routes[Google Maps & Route Builder]
+    UI --> Heatmap[Personal Heatmap]
+    UI --> Social[Social Feed & Kudos]
+    UI --> Coach[AI Coach & Training Planner]
+    UI --> Records[Records & Segments]
+    UI --> Profile[Profile & Settings]
+
+    Engines[Analytics Engines]
     App --> Engines
-    Engines --> TRIMP[TRIMP & TSS Load / Расчет тренировочного стресса]
-    Engines --> CP[Critical Power & W' Solver / Порог мощности]
-    Engines --> RP[Riegel Race Predictor v2 / Алгоритм прогнозирования]
-    Engines --> RD[Running Dynamics Engine / Анализ бега]
-    Engines --> Read[HRV & Readiness Score / Индекс готовности]
-    Engines --> Coaching[Coaching & Rules Engine / Движок рекомендаций]
-    Engines --> Weather[Weather Correlation / Метео-анализ]
-    
-    %% Extensions
-    Ext[System Integrations / Системные расширения]
+    Engines --> TRIMP[TRIMP & TSS Calculator]
+    Engines --> CP[Critical Power & W' Solver]
+    Engines --> RP[Riegel Race Predictor v2]
+    Engines --> RD[Running Dynamics Engine]
+    Engines --> Read[HRV & Readiness Score]
+    Engines --> AICoach[AI Coach Rules Engine]
+    Engines --> Weather[Weather Correlation]
+
+    Ext[System Integrations]
     App --> Ext
     Ext --> LA[Live Activities & Dynamic Island]
     Ext --> HK[HealthKit Dual Sync]
-    Ext --> WC[WatchConnectivity Sync]
-    Ext --> Widget[iOS Widgets & Apple Watch App]
-    Ext --> OpenMeteo[Open-Meteo API Sync / Синхронизация погоды]
-    
-    %% Storage
-    DB[(SwiftData Local DB / База данных)]
+    Ext --> WC[WatchConnectivity]
+    Ext --> Widget[iOS Widget & Watch App]
+    Ext --> GMaps[Google Maps SDK]
+    Ext --> Strava[Strava OAuth & Sync]
+
+    DB[(SwiftData Local + iCloud)]
     App --> DB
-    DB --> GearDB[(GearItem DB)]
-    DB --> WeatherDB[(WeatherSnapshot DB)]
-    DB --> SocialDB[(FriendActivity & Comment DB)]
-    DB --> PlannedDB[(PlannedWorkout DB)]
 ```
 
 ---
 
-### 📸 Иллюстрации интерфейса
+### 🚀 Установка и запуск
 
-<table>
-  <tr>
-    <td width="50%">
-      <p align="center"><b>Панель настроек и переключение единиц</b></p>
-      <img src="docs/screenshots/settings_metric_toggle.png" alt="Настройки системы измерения" width="100%">
-    </td>
-    <td width="50%">
-      <p align="center"><b>Анализ активности (Имперские единицы)</b></p>
-      <img src="docs/screenshots/imperial_activity_details.png" alt="Экран тренировки в милях" width="100%">
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <p align="center"><b>Индекс готовности к нагрузкам (HRV & Sleep)</b></p>
-      <img src="docs/screenshots/readiness_score_trend.png" alt="Индекс готовности к нагрузкам" width="100%">
-    </td>
-    <td width="50%">
-      <p align="center"><b>Беговая динамика (Running Dynamics)</b></p>
-      <img src="docs/screenshots/running_dynamics.png" alt="Беговая динамика" width="100%">
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <p align="center"><b>Индивидуальная кривая мощности</b></p>
-      <img src="docs/screenshots/power_curve_form_tab.png" alt="Кривая мощности" width="100%">
-    </td>
-    <td width="50%">
-      <p align="center"><b>Зоны мощности Коггана на основе CP</b></p>
-      <img src="docs/screenshots/critical_power_zones.png" alt="Зоны мощности" width="100%">
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <p align="center"><b>Сопоставление рекордов мощности с историей</b></p>
-      <img src="docs/screenshots/activity_detail_power_curve.png" alt="Детальная кривая тренировки" width="100%">
-    </td>
-    <td width="50%">
-      <p align="center"><b>Детали тренировочного сегмента и лидерборд</b></p>
-      <img src="docs/screenshots/segment_detail_leaderboard.png" alt="Лидерборд сегмента" width="100%">
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <p align="center"><b>Учёт износа экипировки (Gear wear tracking)</b></p>
-      <img src="docs/screenshots/gear_tracking.png" alt="Учёт износа экипировки" width="100%">
-    </td>
-    <td width="50%">
-      <p align="center"><b>Аналитика влияния погоды (Weather Correlation)</b></p>
-      <img src="docs/screenshots/weather_analytics.png" alt="Аналитика влияния погоды" width="100%">
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <p align="center"><b>Персональная тепловая карта (Personal Heatmap)</b></p>
-      <img src="docs/screenshots/personal_heatmap.png" alt="Тепловая карта тренировок" width="100%">
-    </td>
-    <td width="50%">
-      <p align="center"><b>Ежедневные подсказки ИИ-тренера (Daily AI Coach)</b></p>
-      <img src="docs/screenshots/ai_coach.png" alt="Ежедневные подсказки ИИ-тренера" width="100%">
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <p align="center"><b>Легкий Casual-режим и достижения</b></p>
-      <img src="docs/screenshots/casual_dashboard.png" alt="Casual-режим и достижения" width="100%">
-    </td>
-    <td width="50%">
-      <p align="center"><b>Красивый шаринг тренировки (Workout Card)</b></p>
-      <img src="docs/screenshots/workout_card_share.png" alt="Шаринг тренировки" width="100%">
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <p align="center"><b>Сводная карточка за неделю (Weekly Summary)</b></p>
-      <img src="docs/screenshots/weekly_summary_share.png" alt="Еженедельный отчет" width="100%">
-    </td>
-    <td width="50%">
-    </td>
-  </tr>
-</table>
+#### Требования
+- Xcode 16.0+
+- iOS 17.0+ (симулятор или устройство)
+- Google Maps iOS SDK API Key
 
+#### Конфигурация
+1. Клонируй репозиторий:
+   ```bash
+   git clone https://github.com/Hafiz0ff/TezDav.git
+   cd TezDav
+   ```
+
+2. Открой проект:
+   ```bash
+   open TezDav.xcodeproj
+   ```
+
+3. В `TezDav/TezDavApp.swift` замени API-ключ Google Maps:
+   ```swift
+   GMSServices.provideAPIKey("YOUR_GOOGLE_MAPS_API_KEY")
+   ```
+
+4. В Xcode выбери схему **TezDav** и запусти на симуляторе или устройстве.
+
+> **Демо-режим**: При первом запуске на симуляторе без данных, приложение автоматически заполняется реалистичными тренировочными данными из Душанбе, Таджикистан.
+
+---
+
+### 📁 Структура проекта
+
+```
+TezDav/
+├── AppRootView.swift          # Root view с навигацией и deep links
+├── TezDavApp.swift            # App entry point + SwiftData container
+├── Components/                # Переиспользуемые UI компоненты
+│   ├── CustomTabBar.swift     # Floating glass tab bar
+│   ├── ActivityCardView.swift # Карточка активности
+│   └── GoogleMapView.swift    # Google Maps UIViewRepresentable
+├── Dashboard/                 # Основные экраны приложения
+│   ├── DashboardView.swift    # Главный экран (PMC, готовность, активности)
+│   ├── FormView.swift         # PMC chart, Power Curve, Running Dynamics
+│   ├── RecordsView.swift      # Рекорды, сегменты, лидерборды
+│   ├── ProfileView.swift      # Настройки, пульсовые зоны, экипировка
+│   ├── SocialFeedView.swift   # Лента друзей с Kudos
+│   ├── ActivityDetailView.swift # Детальный анализ тренировки
+│   └── DemoDataSeeder.swift   # Генератор демо-данных
+├── RouteBuilder/              # Карта и построитель маршрутов
+│   ├── RouteBuilderView.swift
+│   ├── PersonalHeatmapView.swift
+│   └── HeatmapMapView.swift
+├── TrainingMetrics/           # Спортивно-научные движки
+│   ├── TrainingLoadCalculator.swift  # TRIMP, CTL, ATL, TSB
+│   ├── AICoachEngine.swift           # ИИ-тренер
+│   ├── RacePredictorEngine.swift     # Prognoz Riegel v2
+│   ├── RunningDynamicsEngine.swift   # Биомеханика бега
+│   └── SegmentMatcher.swift          # Haversine segment matching
+├── LiveActivity/              # Dynamic Island & Lock Screen
+├── DesignSystem/              # Цвета, стили, LiquidGlass
+└── Persistence/               # SwiftData models
+```
 
 ---
 
 ## 🇬🇧 English Section
 
-**TezDav** is a high-performance training analytics and navigation mobile application tailored for multi-sport athletes (running, cycling, triathlon) in the Apple ecosystem (iPhone and Apple Watch). It aggregates historical metrics, automates cycle planning, builds custom routes, and presents training workloads dynamically.
-
----
+**TezDav** is a high-performance training analytics and navigation app for multi-sport athletes (running, cycling, triathlon) built for the Apple ecosystem (iPhone + Apple Watch). All the professional analytics that paid services hide behind paywalls — free, private, and offline.
 
 ### 🌟 Key Features
 
-* **Live Activities & Dynamic Island**: Real-time tracking displaying timer, distance, current speed/pace, and heart rate with zone color-coding.
-* **Interactive Route Builder**: Tap-to-create routes with automatic road-snapping (MKDirections API), elevation profiles (Open-Elevation API integration), estimated duration modeling, and watch synchronization.
-* **Power Curve & Critical Power Solver**: Professional cycling analytics featuring Mean Maximal Power (MMP) windows, hyperbolic regression calculations for Critical Power (CP) and anaerobic capacity (W'), and Coggan's power zones.
-* **Apple Health (HealthKit) Integration**: Dual synchronization reading activities, sleep analyses, and Heart Rate Variability (HRV) metrics to evaluate daily Readiness Scores.
-* **Structured Training Planner**: Dynamic training schedule generator adapting blocks into recovery, developmental, and tapering cycles based on historical workloads.
-* **Unified Imperial/Metric Engine**: Global system conversion instantly formatting inputs, charts, and values. Automatically splits running/cycling intervals into 1-mile laps with pace and elevation gains formatted dynamically (mi, ft, lbs, mph, W/lbs).
-* **Segments & Leaderboards**: Local offline snapping of activities (GPX/FIT) with predefined segments using the Haversine formula (25m proximity, 15% distance tolerance). Tracks Personal Records (PRs), shows interactive segment maps, Swift Charts elevation profiles, and lists local leaderboards populated with simulated bots.
-* **Personal Heatmap**: High-fidelity overlay showing all historical GPS tracks on a single interactive map. Features filtering by sport type, map styles (Standard, Satellite, Hybrid), adjustable line thickness, line opacity (glowing effect), and color scheme presets (Orange, Neon Green, Ice Blue, Multisport). Implements automatic path downsampling and encoding/caching in SwiftData for instant offline loads. Supports exporting high-resolution heatmap images (MKMapSnapshotter + CoreGraphics) via standard Share Sheets.
-* **Running Dynamics**: Professional running biomechanics telemetry tracking cadence, vertical oscillation, ground contact time (GCT), L/R balance, and stride length. Visualizes efficiency zones using standard Garmin colors (purple, green, orange, red) and features interactive Swift Charts with tooltips for telemetry analytics over session distance.
-* **Local AI Coach & Daily Insights**: On-device recommendation engine parsing Readiness Score, weekly training stress balance (TSB), cadence zones, and gear lifespan. Generates prioritized, highly-tailored coaching recommendations (Safety > Recovery > Gear > Progress > Technique) and maintains a 30-day coaching history archive.
-* **Gear Wear & Equipment Lifespan Tracking**: In-depth tracker for running shoes and cycling equipment. Features automatic Strava `gear_id` activity mapping, sport-specific default items, dynamic battery-style colored wear indicators (green/yellow/red) in the user Profile, and instant system alerts when remaining equipment lifespan falls below 50 km.
-* **Weather Correlation & Environmental Analytics**: Instant background fetching of historical weather snapshots (temperature, relative humidity, wind speed, WMO codes) at workout start coordinates via Open-Meteo API. Renders Swift Charts scatter plots correlating Speed vs Temperature/Humidity to determine the athlete's optimal training environments, backed by a robust offline mock simulator fallback.
-* **Casual Mode, Achievements & Gamification**: Lightweight app mode tailored for daily walking and light activity. Tracks daily steps, active minutes, and calories, coupled with a GitHub-style Activity Contribution Heatmap. Rewards performance with a personal Achievements Showcase featuring streak awards and distance milestones.
-* **Workout Card Sharing & Weekly Summary Cards**: Generates high-fidelity visual cards for social media sharing. Supports 1:1 Square and 9:16 Stories formats, customizable styling themes (Dark, Light, Gradient), high-resolution route track map rendering, and weekly activity recap cards with multi-run visual clusters.
-* **Personal Geography & Exploring Stats**: In-depth geographical analysis automatically clustering visited cities and neighborhoods. Computes total explored land area on a 1x1 km virtual grid and identifies spatial extrema (northernmost, southernmost, easternmost, and westernmost GPS coordinates of your workouts).
-* **Social Feed & Kudos**: Interactive feed of friends' workouts with MapKit route overlays, thumbs-up Kudos interactions (featuring single-tap toggle and double-tap pop-up animation with haptics), and expandable, interactive comment sections. Fully persisted using SwiftData and populated with mock Tajikistan running/cycling seed data.
-* **TrainingPeaks Forecast**: High-fidelity training scheduler and future fatigue modeler projecting CTL, ATL, and TSB values 30+ days into the future on the PMC chart. Features a smart TSS calculator based on Intensity Factor (IF) presets (Recovery to VO2Max intervals) and one-tap completions that automatically create actual history activities.
+- **PMC / Performance Management Chart** — Real-time CTL, ATL, TSB with 30-day forecast
+- **Power Curve & Critical Power Solver** — MMP windows, hyperbolic CP + W' regression, Coggan zones
+- **Google Maps Integration** — Interactive map with custom track overlays and route builder
+- **Live Activities & Dynamic Island** — Real-time pace, HR, distance on Lock Screen
+- **Running Dynamics** — Cadence, GCT, vertical oscillation, L/R balance (Garmin color zones)
+- **AI Coach (on-device)** — Readiness + TSB + cadence + gear-based daily coaching
+- **TrainingPeaks Forecast** — Future CTL/ATL/TSB modeling, smart TSS calculator
+- **Personal Heatmap** — All GPS tracks on one map with export to HD image
+- **Segments & Leaderboards** — Haversine matching, PR tracking, virtual competitors
+- **Social Feed & Kudos** — Friends' workouts with MapKit overlays, double-tap kudos
+- **Strava OAuth Sync** — Automatic activity import with GPX/FIT parser
+- **HealthKit** — HRV, sleep, steps bidirectional sync
+- **Apple Watch App** — Native watchOS app with WatchConnectivity route sync
+- **Gear Wear Tracking** — Shoe/bike lifespan tracking with battery-style indicators
+- **Weather Correlation** — Open-Meteo API, speed vs temperature/humidity charts
 
+### Tech Stack
+
+SwiftUI · SwiftData · Swift Charts · Google Maps iOS SDK · HealthKit · WidgetKit · ActivityKit · CoreLocation · MapKit · WatchConnectivity · Strava OAuth 2.0 · Open-Meteo API · CloudKit
+
+### Requirements
+
+- Xcode 16.0+
+- iOS 17.0+ / watchOS 10.0+
+- Google Maps iOS SDK API Key

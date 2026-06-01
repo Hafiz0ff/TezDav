@@ -316,20 +316,4 @@ extension View {
     }
 }
 
-// MARK: - Map Preview Gradient Background
-
-struct MapPreviewBackground: View {
-    var body: some View {
-        Color.mapPreviewGradient
-            .overlay(
-                Rectangle()
-                    .fill(
-                        LinearGradient(
-                            colors: [Color.black.opacity(0.3), Color.clear],
-                            startPoint: .bottom,
-                            endPoint: .top
-                        )
-                    )
-            )
-    }
-}
+// Note: MapPreviewBackground is now defined in ActivityCardView.swift.

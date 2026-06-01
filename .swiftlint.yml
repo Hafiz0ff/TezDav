@@ -1,0 +1,45 @@
+# SwiftLint Configuration file for TezDav
+
+opt_in_rules:
+  - force_unwrap
+  - force_cast
+  - implicitly_unwrapped_optional
+
+disabled_rules:
+  - trailing_whitespace
+  - type_name
+  - identifier_name
+  - line_length
+  - type_body_length
+  - large_tuple
+  - shorthand_operator
+
+# Rule Configurations
+force_unwrap:
+  severity: error
+
+force_cast:
+  severity: error
+
+implicitly_unwrapped_optional:
+  severity: warning
+
+cyclomatic_complexity:
+  warning: 8
+  error: 10
+
+function_body_length:
+  warning: 60
+
+file_length:
+  warning: 500
+
+todo:
+  severity: warning
+
+# Path Exclusions
+excluded:
+  - Carthage
+  - Pods
+  - TezDavTests
+  - TezDavUITests

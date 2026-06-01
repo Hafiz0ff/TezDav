@@ -157,7 +157,8 @@ final class TrainingLoadCalculatorTests: XCTestCase {
     
     @MainActor
     func testTrainingPlanCyclicGeneration() {
-        let container = try! ModelContainer(for: TrainingWeek.self)
+        let config = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
+        let container = try! ModelContainer(for: TrainingWeek.self, configurations: config)
         let context = container.mainContext
         
         let raceDate = Date().addingTimeInterval(86400 * 7 * 10)

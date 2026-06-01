@@ -15,49 +15,36 @@ struct RouteDetailView: View {
     @State private var showWatchSuccessAlert = false
     @State private var watchAlertMessage = ""
     
-    @State private var mapPosition: MapCameraPosition = .automatic
+    @State private var googleCameraCenter: CLLocationCoordinate2D? = nil
+    @State private var googleCameraZoom: Float? = nil
     
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
                 // Section 1: Route Map Preview
                 ZStack(alignment: .bottomTrailing) {
-                    Map(position: $mapPosition) {
-                        if !route.routeCoordinates.isEmpty {
-                            MapPolyline(coordinates: route.routeCoordinates)
-                                .stroke(route.sportType == "Run" ? Color.green : Color.orange, lineWidth: 5)
-                        }
-                        
-                        // Start and End annotations
-                        if let start = route.routeCoordinates.first {
-                            Annotation("Старт", coordinate: start) {
-                                Image(systemName: "play.circle.fill")
-                                    .font(.title2)
-                                    .foregroundColor(.green)
-                                    .background(Circle().fill(Color.white))
-                            }
-                        }
-                        if let end = route.routeCoordinates.last, route.routeCoordinates.count > 1 {
-                            Annotation("Финиш", coordinate: end) {
-                                Image(systemName: "flag.circle.fill")
-                                    .font(.title2)
-                                    .foregroundColor(.red)
-                                    .background(Circle().fill(Color.white))
-                            }
-                        }
-                    }
+                    GoogleMapView(
+                        coordinates: route.routeCoordinates,
+                        sportType: route.sportType,
+                        showStartEndMarkers: true,
+                        cameraCenter: $googleCameraCenter,
+                        cameraZoom: $googleCameraZoom
+                    )
                     .frame(height: 250)
                     .cornerRadius(16)
                     .shadow(radius: 4)
                     
                     // Sport badge
                     Text(route.sportType == "Run" ? "🏃‍♂️ Бег" : "🚴‍♀️ Вело")
-                        .font(.caption)
-                        .bold()
+                        .font(.caption.weight(.bold))
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(8)
+                        .background(route.sportType == "Run" ? Color.green.opacity(0.12) : Color.orange.opacity(0.12))
+                        .foregroundColor(route.sportType == "Run" ? .green : .orange)
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule().strokeBorder(route.sportType == "Run" ? Color.green.opacity(0.3) : Color.orange.opacity(0.3), lineWidth: 1)
+                        )
                         .padding()
                 }
                 .padding(.horizontal)
@@ -142,9 +129,7 @@ struct RouteDetailView: View {
                         }
                     }
                     .padding()
-                    .background(Color(.systemBackground))
-                    .cornerRadius(16)
-                    .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+                    .liquidGlassCard(cornerRadius: 16)
                     .padding(.horizontal)
                 }
                 
@@ -156,23 +141,27 @@ struct RouteDetailView: View {
                             preview: SharePreview(route.name, image: Image(systemName: "map.fill"))
                         ) {
                             Label("Экспортировать GPX", systemImage: "square.and.arrow.up")
+                                .font(.subheadline.bold())
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
-                                .background(Color.blue)
+                                .background(Color.blue.gradient)
                                 .foregroundColor(.white)
                                 .cornerRadius(12)
-                                .bold()
                         }
                     }
                     
                     Button(action: sendToWatch) {
                         Label("Отправить на Watch", systemImage: "applewatch")
+                            .font(.subheadline.bold())
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
-                            .background(Color(.systemGray5))
-                            .foregroundColor(.primary)
+                            .background(Color.white.opacity(0.04))
+                            .foregroundColor(.textPrimary)
                             .cornerRadius(12)
-                            .bold()
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+                            )
                     }
                     
                     HStack(spacing: 12) {
@@ -180,24 +169,32 @@ struct RouteDetailView: View {
                             isEditing = true
                         }) {
                             Label("Изменить", systemImage: "pencil")
+                                .font(.subheadline.bold())
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
-                                .background(Color(.systemGray6))
-                                .foregroundColor(.primary)
+                                .background(Color.white.opacity(0.04))
+                                .foregroundColor(.textPrimary)
                                 .cornerRadius(10)
-                                .bold()
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+                                )
                         }
                         
                         Button(action: {
                             showDeleteConfirmation = true
                         }) {
                             Label("Удалить", systemImage: "trash")
+                                .font(.subheadline.bold())
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
-                                .background(Color.red.opacity(0.1))
+                                .background(Color.red.opacity(0.12))
                                 .foregroundColor(.red)
                                 .cornerRadius(10)
-                                .bold()
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .strokeBorder(Color.red.opacity(0.3), lineWidth: 1)
+                                )
                         }
                     }
                 }
@@ -207,6 +204,8 @@ struct RouteDetailView: View {
         }
         .navigationTitle(route.name)
         .navigationBarTitleDisplayMode(.inline)
+        .scrollContentBackground(.hidden)
+        .background(AmbientBackgroundView())
         .onAppear {
             setupMapRegion()
         }
@@ -249,20 +248,28 @@ struct RouteDetailView: View {
             maxLon = max(maxLon, coord.longitude)
         }
         
-        let center = CLLocationCoordinate2D(
+        googleCameraCenter = CLLocationCoordinate2D(
             latitude: (minLat + maxLat) / 2.0,
             longitude: (minLon + maxLon) / 2.0
         )
         
-        let latDelta = max(0.005, (maxLat - minLat) * 1.35)
-        let lonDelta = max(0.005, (maxLon - minLon) * 1.35)
+        let latDelta = maxLat - minLat
+        let lonDelta = maxLon - minLon
+        let maxDelta = max(latDelta, lonDelta)
         
-        mapPosition = .region(
-            MKCoordinateRegion(
-                center: center,
-                span: MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
-            )
-        )
+        let zoom: Float
+        if maxDelta > 0.5 {
+            zoom = 10.0
+        } else if maxDelta > 0.15 {
+            zoom = 12.0
+        } else if maxDelta > 0.05 {
+            zoom = 13.0
+        } else if maxDelta > 0.015 {
+            zoom = 14.5
+        } else {
+            zoom = 15.5
+        }
+        googleCameraZoom = zoom
     }
     
     private var minElevation: Double {
@@ -363,16 +370,15 @@ struct StatCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.caption2)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.textSecondaryReadable)
                     .bold()
                 Text(value)
                     .font(.system(.subheadline, design: .rounded, weight: .bold))
+                    .foregroundColor(.textPrimary)
             }
             Spacer()
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(14)
-        .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
+        .liquidGlassCard(cornerRadius: 14)
     }
 }

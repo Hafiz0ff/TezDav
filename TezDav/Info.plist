@@ -4,6 +4,14 @@
 <dict>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<key>NSHealthShareUsageDescription</key>
+	<string>TezDav требуется доступ к HealthKit для анализа вашего сна, HRV, пульса покоя и ежедневной активности, чтобы рассчитать готовность к тренировкам.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>TezDav требуется разрешение на запись тренировок в HealthKit для синхронизации ваших активностей.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>UILaunchScreen</key>
+	<dict/>
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

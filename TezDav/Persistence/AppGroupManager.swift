@@ -15,7 +15,7 @@ struct DashboardSnapshot: Codable {
 }
 
 struct AppGroupManager {
-    static let sharedSuite = "group.com.tezdav.shared"
+    static let sharedSuite = "group.com.hafizov.tezdav"
     
     static func saveSnapshot(_ snapshot: DashboardSnapshot) {
         if let data = try? JSONEncoder().encode(snapshot) {

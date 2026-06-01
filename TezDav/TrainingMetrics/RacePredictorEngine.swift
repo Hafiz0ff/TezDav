@@ -58,7 +58,7 @@ struct RacePredictorEngine {
         guard baseDistance > 0, targetDistance > 0, baseTime > 0 else { return 0 }
         
         let d = calculateExponent(ctl: ctl)
-        let effectiveTargetDistance = calculateEffectiveDistance(distance: targetDistance, elevationGain: elevationGain)
+        let effectiveTargetDistance = max(0.1, calculateEffectiveDistance(distance: targetDistance, elevationGain: elevationGain))
         
         // Calculate standard Riegel time with effective distance
         let riegelTime = baseTime * pow(effectiveTargetDistance / baseDistance, d)

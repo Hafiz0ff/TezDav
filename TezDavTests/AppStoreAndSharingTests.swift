@@ -11,7 +11,7 @@ final class AppStoreAndSharingTests: XCTestCase {
     
     override func setUpWithError() throws {
         let schema = Schema([Activity.self, UserSettings.self])
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let config = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         container = try ModelContainer(for: schema, configurations: config)
         context = ModelContext(container)
     }

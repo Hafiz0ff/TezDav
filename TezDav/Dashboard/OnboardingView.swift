@@ -93,6 +93,14 @@ struct OnboardingView: View {
                     .foregroundStyle(LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing))
             }
             .padding(.vertical)
+            .onLongPressGesture(minimumDuration: 2.0) {
+                HapticManager.success()
+                DemoDataSeeder.seedAllDemoData(modelContext: modelContext)
+                isConnected = true
+                withAnimation(.spring()) {
+                    currentStep = 3
+                }
+            }
             
             Text("Всё, что спортивные сервисы прячут за платной подпиской, теперь доступно бесплатно и конфиденциально прямо на вашем iPhone.")
                 .font(.subheadline)

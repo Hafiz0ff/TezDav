@@ -1,6 +1,7 @@
 import SwiftData
 import SwiftUI
 import CoreLocation
+import PhotosUI
 
 struct ProfileView: View {
     @Query(sort: \Activity.startDate, order: .reverse) private var activities: [Activity]
@@ -11,6 +12,7 @@ struct ProfileView: View {
     @Environment(\.modelContext) private var modelContext
     
     @StateObject private var progress = SyncProgress()
+    @State private var selectedPhotoItem: PhotosPickerItem? = nil
     
     // UI Form states
     @State private var maxHeartRate: String = ""
@@ -59,13 +61,7 @@ struct ProfileView: View {
     private let tokenStore = KeychainTokenStore()
     
     var activeSettings: UserSettings {
-        if let first = settingsList.first {
-            return first
-        }
-        let newSettings = UserSettings()
-        modelContext.insert(newSettings)
-        try? modelContext.save()
-        return newSettings
+        settingsList.first ?? UserSettings()
     }
     
     var hasCyclingHistory: Bool {
@@ -81,14 +77,39 @@ struct ProfileView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            Form {
+        Form {
                 // Section 1: Personal Profile Info
-                Section("Личные данные") {
+                Section {
                     HStack(spacing: 16) {
-                        Image(systemName: "person.crop.circle.fill")
-                            .font(.system(size: 56))
-                            .foregroundStyle(.blue.gradient)
+                        PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                            ZStack(alignment: .bottomTrailing) {
+                                if let data = activeSettings.avatarData, let uiImage = UIImage(data: data) {
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 60, height: 60)
+                                        .clipShape(Circle())
+                                } else {
+                                    Image(systemName: "person.crop.circle.fill")
+                                        .font(.system(size: 60))
+                                        .foregroundStyle(.blue.gradient)
+                                }
+                                
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.system(size: 18))
+                                    .foregroundStyle(Color.accentPrimary)
+                                    .background(Color.black.clipShape(Circle()))
+                                    .offset(x: 2, y: 2)
+                            }
+                        }
+                        .onChange(of: selectedPhotoItem) { _, newValue in
+                            Task {
+                                if let data = try? await newValue?.loadTransferable(type: Data.self) {
+                                    activeSettings.avatarData = data
+                                    try? modelContext.save()
+                                }
+                            }
+                        }
                         
                         VStack(alignment: .leading, spacing: 4) {
                             Text(activeSettings.stravaAccountName ?? "Атлет TezDav")
@@ -258,33 +279,53 @@ struct ProfileView: View {
                 } header: {
                     Text("Пульсовые зоны")
                 } footer: {
-                    if isHeartRateZonesAutomatic {
-                        let effMax = maxHRDouble > 0 ? maxHRDouble : estimatedMaxHR
-                        Text(String(format: "Авто-зоны: Z1 (<%.0f), Z2 (%.0f-%.0f), Z3 (%.0f-%.0f), Z4 (%.0f-%.0f), Z5 (>%.0f).", effMax * 0.65, effMax * 0.65, effMax * 0.75, effMax * 0.75, effMax * 0.85, effMax * 0.85, effMax * 0.92, effMax * 0.92))
-                    } else {
-                        Text("Зона 5 будет рассчитана как пульс выше границы Зоны 4.")
-                    }
+                    autoHRZonesFooterView()
                 }
                 
                 // Section 3: Running Thresholds
                 Section("Беговые пороги") {
                     HStack {
-                        Text("Темп порога LTHR")
+                        Text("Темп LTHR")
                         Spacer()
-                        
-                        Picker("Мин", selection: $lthrPaceMinutes) {
-                            ForEach(2..<12) { min in
-                                Text("\(min) мин").tag(min)
+                        HStack(spacing: 4) {
+                            Menu {
+                                Picker("Минуты", selection: $lthrPaceMinutes) {
+                                    ForEach(2..<12) { min in
+                                        Text("\(min) мин").tag(min)
+                                    }
+                                }
+                            } label: {
+                                Text("\(lthrPaceMinutes)")
+                                    .font(.system(size: 15, weight: .bold))
+                                    .foregroundColor(.accentPrimary)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 6)
+                                    .background(Color.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 6))
                             }
-                        }
-                        .pickerStyle(.menu)
-                        
-                        Picker("Сек", selection: $lthrPaceSeconds) {
-                            ForEach(0..<60) { sec in
-                                Text(String(format: "%02d сек", sec)).tag(sec)
+                            
+                            Text(":")
+                                .font(.system(size: 15, weight: .bold))
+                                .foregroundColor(.secondary)
+                            
+                            Menu {
+                                Picker("Секунды", selection: $lthrPaceSeconds) {
+                                    ForEach(0..<60) { sec in
+                                        Text(String(format: "%02d сек", sec)).tag(sec)
+                                    }
+                                }
+                            } label: {
+                                Text(String(format: "%02d", lthrPaceSeconds))
+                                    .font(.system(size: 15, weight: .bold))
+                                    .foregroundColor(.accentPrimary)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 6)
+                                    .background(Color.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 6))
                             }
+                            
+                            Text("/км")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
                         }
-                        .pickerStyle(.menu)
                     }
                     
                     HStack {
@@ -443,7 +484,7 @@ struct ProfileView: View {
                     HStack {
                         Text(Locale.current.identifier.hasPrefix("ru") ? "Контейнер CloudKit" : "CloudKit Container")
                         Spacer()
-                        Text("iCloud.com.example.TezDav")
+                        Text("iCloud.com.hafizov.tezdav")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -519,14 +560,45 @@ struct ProfileView: View {
                         Label("Сбросить все данные", systemImage: "trash")
                     }
                 }
+                
+                // Demo Data Section (for screenshots / testing)
+                Section {
+                    Button {
+                        DemoDataSeeder.seedAllDemoData(modelContext: modelContext)
+                        HapticManager.success()
+                    } label: {
+                        Label("Загрузить демо-данные", systemImage: "wand.and.stars")
+                            .foregroundStyle(Color.accentPrimary)
+                    }
+                } header: {
+                    Text("Демонстрация")
+                } footer: {
+                    Text("Заполняет все экраны реалистичными демо-данными. Текущие данные будут заменены.")
+                        .font(.caption)
+                }
             }
-            .navigationTitle("Профиль & Настройки")
+            .padding(.top, -45)
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Сохранить") {
+                    Button {
                         saveSettings()
+                        HapticManager.success()
+                    } label: {
+                        Image(systemName: "floppydisk")
+                            .renderingMode(.original)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(Color.accentPrimary)
+                            .padding(8)
+                            .background(Color.accentPrimary.opacity(0.12))
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.accentPrimary.opacity(0.35), lineWidth: 1)
+                            )
                     }
-                    .font(.headline)
+                    .buttonStyle(.plain)
                 }
             }
             .sheet(isPresented: $isShowingProfileShareSheet) {
@@ -548,9 +620,70 @@ struct ProfileView: View {
                 Text("Это действие безвозвратно удалит все синхронизированные активности, маршруты, рекорды и настройки из локального хранилища.")
             }
         }
-    }
     
     // MARK: - State Helpers
+    
+    private struct HRZoneDisplay: Identifiable {
+        let id: String
+        let name: String
+        let label: String
+        let range: String
+        let color: Color
+    }
+    
+    private func calculateAutoHRZones() -> [HRZoneDisplay] {
+        let effMax = maxHRDouble > 0 ? maxHRDouble : estimatedMaxHR
+        let z1Limit = Int(effMax * 0.65)
+        let z2Limit = Int(effMax * 0.75)
+        let z3Limit = Int(effMax * 0.85)
+        let z4Limit = Int(effMax * 0.92)
+        
+        return [
+            HRZoneDisplay(id: "Z1", name: "Z1", label: "Восстановление", range: "< \(z1Limit)", color: .blue),
+            HRZoneDisplay(id: "Z2", name: "Z2", label: "Выносливость", range: "\(z1Limit)-\(z2Limit)", color: .green),
+            HRZoneDisplay(id: "Z3", name: "Z3", label: "Темп", range: "\(z2Limit)-\(z3Limit)", color: .yellow),
+            HRZoneDisplay(id: "Z4", name: "Z4", label: "Порог", range: "\(z3Limit)-\(z4Limit)", color: .orange),
+            HRZoneDisplay(id: "Z5", name: "Z5", label: "Анаэробный", range: "> \(z4Limit)", color: .red)
+        ]
+    }
+    
+    @ViewBuilder
+    private func autoHRZonesFooterView() -> some View {
+        if isHeartRateZonesAutomatic {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Авто-зоны пульса:")
+                    .font(.caption.bold())
+                    .foregroundColor(.secondary)
+                    .padding(.top, 4)
+                
+                let zones = calculateAutoHRZones()
+                
+                ForEach(zones) { zone in
+                    HStack {
+                        Circle()
+                            .fill(zone.color)
+                            .frame(width: 8, height: 8)
+                        Text(zone.name)
+                            .font(.caption.bold())
+                            .foregroundColor(.primary)
+                            .frame(width: 24, alignment: .leading)
+                        Text(zone.label)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Text("\(zone.range) BPM")
+                            .font(.caption.monospacedDigit().bold())
+                            .foregroundColor(.primary)
+                    }
+                    .padding(.vertical, 3)
+                    .padding(.horizontal, 8)
+                    .background(Color.white.opacity(0.03), in: RoundedRectangle(cornerRadius: 6))
+                }
+            }
+        } else {
+            Text("Зона 5 будет рассчитана как пульс выше границы Зоны 4.")
+        }
+    }
     
     private var estimatedMaxHR: Double {
         if hasBirthDate {
@@ -578,7 +711,15 @@ struct ProfileView: View {
     // MARK: - UI Actions
     
     private func loadSettingsIntoUI() {
-        let settings = activeSettings
+        let settings: UserSettings
+        if let first = settingsList.first {
+            settings = first
+        } else {
+            let newSettings = UserSettings()
+            modelContext.insert(newSettings)
+            try? modelContext.save()
+            settings = newSettings
+        }
         
         isMetric = settings.isMetric
         maxHeartRate = settings.maxHeartRate > 0 ? String(format: "%.0f", settings.maxHeartRate) : ""

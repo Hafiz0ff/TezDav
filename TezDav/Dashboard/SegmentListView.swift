@@ -53,31 +53,51 @@ struct SegmentListView: View {
                 // Search Bar
                 HStack {
                     Image(systemName: "magnifyingglass")
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondaryReadable)
                     TextField("Поиск сегментов...", text: $searchText)
                         .textFieldStyle(.plain)
+                        .foregroundColor(.textPrimary)
                     if !searchText.isEmpty {
                         Button(action: { searchText = "" }) {
                             Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.textSecondaryReadable)
                         }
                     }
                 }
                 .padding(10)
-                .background(Color(.secondarySystemBackground))
+                .background(Color.white.opacity(0.04))
                 .cornerRadius(10)
-                .padding(.horizontal, 16)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+                )
+                .padding(.horizontal, 14)
                 
                 HStack(spacing: 12) {
-                    // Sport Filter Picker
-                    Picker("Спорт", selection: $sportFilter) {
-                        Text("Все").tag("All")
-                        Text("Бег").tag("Run")
-                        Text("Вело").tag("Ride")
+                    // Sport Filter Picker Menu
+                    Menu {
+                        Picker("Спорт", selection: $sportFilter) {
+                            Text("Все спорты").tag("All")
+                            Text("Бег").tag("Run")
+                            Text("Вело").tag("Ride")
+                        }
+                    } label: {
+                        HStack {
+                            Text(sportFilter == "All" ? "Все виды" : (sportFilter == "Run" ? "Бег" : "Вело"))
+                                .font(.subheadline)
+                            Image(systemName: "chevron.down")
+                                .font(.caption2)
+                        }
+                        .foregroundColor(.textPrimary)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 7)
+                        .background(Color.white.opacity(0.04))
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+                        )
                     }
-                    .pickerStyle(.menu)
-                    .padding(.horizontal, 8)
-                    .background(RoundedRectangle(cornerRadius: 8).fill(Color(.secondarySystemBackground)))
                     
                     Spacer()
                     
@@ -95,17 +115,21 @@ struct SegmentListView: View {
                             Image(systemName: "chevron.up.chevron.down")
                                 .font(.caption2)
                         }
-                        .foregroundColor(.primary)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(RoundedRectangle(cornerRadius: 8).fill(Color(.secondarySystemBackground)))
+                        .foregroundColor(.textPrimary)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 7)
+                        .background(Color.white.opacity(0.04))
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+                        )
                     }
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 14)
             }
             .padding(.vertical, 12)
-            .background(Color(.systemBackground))
-            .shadow(color: Color.black.opacity(0.02), radius: 3, x: 0, y: 3)
+            .background(Color.clear)
             
             // List content
             if filteredSegments.isEmpty {
@@ -116,27 +140,27 @@ struct SegmentListView: View {
                         .foregroundColor(.orange.opacity(0.3))
                     Text("Сегменты не найдены")
                         .font(.headline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondaryReadable)
                     Text("Попробуйте изменить параметры поиска или фильтры")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textTertiaryReadable)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
                     Spacer()
                 }
             } else {
-                List {
-                    ForEach(filteredSegments) { segment in
-                        NavigationLink(destination: SegmentDetailView(segment: segment)) {
-                            SegmentRowView(segment: segment, isMetric: activeUserSettings.isMetric)
+                ScrollView(showsIndicators: false) {
+                    LazyVStack(spacing: 12) {
+                        ForEach(filteredSegments) { segment in
+                            NavigationLink(destination: SegmentDetailView(segment: segment)) {
+                                SegmentRowView(segment: segment, isMetric: activeUserSettings.isMetric)
+                            }
+                            .buttonStyle(PlainButtonStyle())
                         }
-                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
                     }
+                    .padding(.horizontal, 14)
+                    .padding(.bottom, 120)
                 }
-                .listStyle(.plain)
-                .background(Color(.systemGroupedBackground))
             }
         }
         .onAppear {
@@ -167,7 +191,7 @@ struct SegmentRowView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(segment.name)
                         .font(.headline)
-                        .foregroundColor(.primary)
+                        .foregroundColor(.textPrimary)
                         .lineLimit(1)
                     
                     HStack(spacing: 12) {
@@ -175,17 +199,17 @@ struct SegmentRowView: View {
                             .font(.caption.weight(.bold))
                             .padding(.horizontal, 6)
                             .padding(.vertical, 3)
-                            .background(segment.sportType == "Run" ? Color.green.opacity(0.1) : Color.orange.opacity(0.1))
+                            .background(segment.sportType == "Run" ? Color.green.opacity(0.12) : Color.orange.opacity(0.12))
                             .foregroundColor(segment.sportType == "Run" ? .green : .orange)
                             .cornerRadius(4)
                         
                         Text(formatDistance(segment.distanceMeters))
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.textSecondaryReadable)
                         
                         Text(String(format: "%.1f%% уклон", segment.averageGrade))
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.textSecondaryReadable)
                     }
                 }
                 
@@ -199,22 +223,23 @@ struct SegmentRowView: View {
                             .foregroundColor(.orange)
                         Text(formatDuration(pr.elapsedTime))
                             .font(.subheadline.weight(.bold))
-                            .foregroundColor(.primary)
+                            .foregroundColor(.textPrimary)
                     }
                 } else {
                     Text("Нет попыток")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textTertiaryReadable)
                         .padding(.vertical, 4)
                 }
             }
             
             if userAttemptsCount > 0 {
                 Divider()
+                    .overlay(Color.white.opacity(0.08))
                 HStack {
                     Label("\(userAttemptsCount) попыток", systemImage: "arrow.clockwise")
                         .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondaryReadable)
                     Spacer()
                     if let bestRank = calculateRank() {
                         Label("\(bestRank) место на лидерборде", systemImage: "crown.fill")
@@ -225,9 +250,7 @@ struct SegmentRowView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.03), radius: 4, x: 0, y: 2)
+        .liquidGlassCard(cornerRadius: 12)
     }
     
     private func calculateRank() -> Int? {

@@ -1,8 +1,10 @@
 import SwiftUI
+import SwiftData
 import MapKit
+import CoreLocation
 
-/// Activity Card Component - Elevated Depth Style
-/// Used in Story Feed for displaying workout summaries
+/// Activity Card Component — Liquid Glass styling.
+/// Used in Story Feed for displaying workout summaries.
 struct ActivityCardView: View {
     let activity: Activity
     @Query private var userSettings: [UserSettings]
@@ -13,189 +15,201 @@ struct ActivityCardView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Map Preview
             mapPreview
-
-            // Content
-            VStack(alignment: .leading, spacing: Spacing.md) {
-                // Title
-                Text(activity.name)
-                    .font(.title3)
-                    .foregroundColor(.textPrimary)
-                    .lineLimit(2)
-
-                // Metrics Row
-                HStack(spacing: Spacing.md) {
-                    metricCard(
-                        label: "Дистанция",
-                        value: formatDistance(activity.distanceMeters),
-                        isAccent: true
-                    )
-
-                    metricCard(
-                        label: activity.sportType == "Ride" ? "Скорость" : "Темп",
-                        value: formatPace(activity.averageSpeed, sportType: activity.sportType),
-                        isAccent: false
-                    )
-
-                    if let avgHeartRate = activity.averageHeartRate, avgHeartRate > 0 {
-                        metricCard(
-                            label: "Пульс",
-                            value: "\(Int(avgHeartRate))",
-                            isAccent: false
-                        )
-                    }
-                }
-
-                // Insight Card (if available)
-                if let insight = generateInsight() {
-                    insightView(insight)
-                }
-            }
-            .padding(Spacing.lg + 2)
+            contentSection
         }
-        .elevatedCard()
+        .liquidGlassCard(cornerRadius: 24, tint: .neutral, glow: false)
     }
 
-    // MARK: - Map Preview
+    // MARK: - Map Preview Section
 
     private var mapPreview: some View {
         ZStack(alignment: .topLeading) {
-            // Background gradient
             MapPreviewBackground()
-                .frame(height: 140)
+                .frame(height: 150)
 
-            // Route path (if available)
-            if let coordinates = activity.routeCoordinates, !coordinates.isEmpty {
-                RoutePathView(coordinates: coordinates)
-                    .frame(height: 140)
+            if let poly = activity.encodedPolyline, !poly.isEmpty {
+                let coordinates = PolylineEncoder.decode(polyline: poly)
+                if !coordinates.isEmpty {
+                    RoutePathView(coordinates: coordinates)
+                        .frame(height: 150)
+                }
             }
 
-            // Date badge
             dateBadge
-                .padding(Spacing.md)
+                .padding(14)
         }
-        .frame(height: 140)
+        .frame(height: 150)
+        .clipShape(
+            UnevenRoundedRectangle(
+                cornerRadii: .init(topLeading: 24, topTrailing: 24)
+            )
+        )
     }
 
     private var dateBadge: some View {
         Text(formatDate(activity.startDate))
-            .font(.system(size: 12, weight: .semibold))
-            .foregroundColor(.black)
-            .padding(.vertical, 6)
-            .padding(.horizontal, 12)
-            .background(Color.accentGradient)
-            .cornerRadius(CornerRadius.small)
-            .shadow(color: Color.accentPrimary.opacity(0.4), radius: 6, x: 0, y: 4)
+            .font(.system(size: 12, weight: .bold))
+            .foregroundColor(.white)
+            .tracking(0.4)
+            .padding(.vertical, 7)
+            .padding(.horizontal, 14)
+            .liquidGlassPill(isActive: true)
     }
 
-    // MARK: - Metric Card
+    // MARK: - Content Section
 
-    private func metricCard(label: String, value: String, isAccent: Bool) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+    private var contentSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text(activity.name)
+                .font(.system(size: 19, weight: .semibold))
+                .foregroundColor(.textOnGlass)
+                .lineLimit(2)
+
+            HStack(spacing: 10) {
+                metricChip(
+                    label: "Дистанция",
+                    value: formatDistance(activity.distanceMeters),
+                    isAccent: true
+                )
+
+                metricChip(
+                    label: activity.sportType == "Ride" ? "Скорость" : "Темп",
+                    value: formatPace(activity.averageSpeed ?? 0, sportType: activity.sportType),
+                    isAccent: false
+                )
+
+                if let avgHeartRate = activity.averageHeartRate, avgHeartRate > 0 {
+                    metricChip(
+                        label: "Пульс",
+                        value: "\(Int(avgHeartRate))",
+                        isAccent: false
+                    )
+                }
+            }
+
+            if let insight = generateInsight() {
+                insightView(insight)
+            }
+        }
+        .padding(18)
+    }
+
+    // MARK: - Metric Chip
+
+    private func metricChip(label: String, value: String, isAccent: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
             Text(label.uppercased())
-                .font(.labelSmall)
-                .foregroundColor(.textDisabled)
-                .tracking(0.5)
+                .font(.system(size: 10, weight: .semibold))
+                .tracking(0.8)
+                .foregroundColor(.textTertiaryReadable)
 
             Text(value)
-                .font(.metricMedium)
-                .foregroundColor(isAccent ? .accentPrimary : .textPrimary)
-                .monospacedDigit()
+                .font(.system(size: 22, weight: .bold, design: .monospaced))
+                .foregroundColor(isAccent ? .accentPrimary : .textOnGlass)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
                 .shadow(
-                    color: isAccent ? Color.accentPrimary.opacity(0.5) : Color.clear,
-                    radius: isAccent ? 10 : 0,
-                    x: 0,
-                    y: 0
+                    color: isAccent ? Color.accentPrimary.opacity(0.4) : .clear,
+                    radius: isAccent ? 12 : 0
                 )
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(Spacing.md)
-        .metricCard(isAccent: isAccent)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(isAccent ? Color.glassEmeraldTint : Color.glassNeutralTint)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .strokeBorder(
+                    isAccent ? Color.accentPrimary.opacity(0.4) : Color.glassBorder,
+                    lineWidth: 1
+                )
+        )
     }
 
     // MARK: - Insight View
 
     private func insightView(_ insight: String) -> some View {
-        HStack(spacing: 8) {
-            Text("💡")
-                .font(.system(size: 16))
+        HStack(spacing: 10) {
+            Image(systemName: "sparkles")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(Color.accentPrimary)
 
             Text(insight)
-                .font(.callout)
-                .foregroundColor(.textSecondary)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.textSecondaryReadable)
                 .lineLimit(2)
+
+            Spacer(minLength: 0)
         }
-        .padding(Spacing.md)
-        .insightCard()
+        .padding(.vertical, 12)
+        .padding(.horizontal, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.glassEmeraldTint)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .strokeBorder(Color.accentPrimary.opacity(0.35), lineWidth: 1)
+        )
     }
 
     // MARK: - Helpers
 
     private func formatDistance(_ meters: Double) -> String {
-        if isMetric {
-            let km = meters / 1000.0
-            return String(format: "%.1f", km)
-        } else {
-            let miles = meters / 1609.34
-            return String(format: "%.1f", miles)
-        }
+        let value = isMetric ? meters / 1000.0 : meters / 1609.34
+        return String(format: "%.1f", value)
     }
 
     private func formatPace(_ speedMps: Double, sportType: String) -> String {
         if sportType == "Ride" {
-            // Speed for cycling
-            if isMetric {
-                let kmh = speedMps * 3.6
-                return String(format: "%.1f", kmh)
-            } else {
-                let mph = speedMps * 2.23694
-                return String(format: "%.1f", mph)
-            }
-        } else {
-            // Pace for running
-            if speedMps <= 0 { return "--:--" }
-            let metersPerMinute = speedMps * 60
-            let minutesPerKm = 1000.0 / metersPerMinute
-
-            if isMetric {
-                let minutes = Int(minutesPerKm)
-                let seconds = Int((minutesPerKm - Double(minutes)) * 60)
-                return String(format: "%d:%02d", minutes, seconds)
-            } else {
-                let minutesPerMile = minutesPerKm * 1.60934
-                let minutes = Int(minutesPerMile)
-                let seconds = Int((minutesPerMile - Double(minutes)) * 60)
-                return String(format: "%d:%02d", minutes, seconds)
-            }
+            let value = isMetric ? speedMps * 3.6 : speedMps * 2.23694
+            return String(format: "%.1f", value)
         }
+        guard speedMps > 0 else { return "--:--" }
+        let minutesPerKm = 1000.0 / (speedMps * 60)
+        let pace = isMetric ? minutesPerKm : minutesPerKm * 1.60934
+        let mins = Int(pace)
+        let secs = Int((pace - Double(mins)) * 60)
+        return String(format: "%d:%02d", mins, secs)
     }
 
     private func formatDate(_ date: Date) -> String {
-        let calendar = Calendar.current
-        if calendar.isDateInToday(date) {
-            return "Сегодня"
-        } else if calendar.isDateInYesterday(date) {
-            return "Вчера"
-        } else {
-            let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "ru_RU")
-            formatter.dateFormat = "d MMM"
-            return formatter.string(from: date)
-        }
+        let cal = Calendar.current
+        if cal.isDateInToday(date) { return "Сегодня" }
+        if cal.isDateInYesterday(date) { return "Вчера" }
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "ru_RU")
+        f.dateFormat = "d MMM"
+        return f.string(from: date)
     }
 
     private func generateInsight() -> String? {
-        // Simple insight generation
-        // TODO: Integrate with AI Coach for better insights
         guard let avgSpeed = activity.averageSpeed, avgSpeed > 0 else { return nil }
-
-        let calendar = Calendar.current
-        if calendar.isDateInToday(activity.startDate) {
-            return "Отличный темп! Продолжайте в том же духе"
+        if Calendar.current.isDateInToday(activity.startDate) {
+            return "Отличный темп! Продолжайте в том же духе."
         }
-
         return nil
+    }
+}
+
+// MARK: - Map Preview Background
+
+struct MapPreviewBackground: View {
+    var body: some View {
+        ZStack {
+            Color.mapPreviewGradient
+            // Subtle grain / radial fade for depth
+            RadialGradient(
+                colors: [Color.black.opacity(0.45), Color.clear],
+                center: .bottom,
+                startRadius: 20,
+                endRadius: 220
+            )
+        }
     }
 }
 
@@ -205,60 +219,57 @@ struct RoutePathView: View {
     let coordinates: [CLLocationCoordinate2D]
 
     var body: some View {
-        GeometryReader { geometry in
+        GeometryReader { geo in
             if !coordinates.isEmpty {
                 Path { path in
                     let bounds = calculateBounds()
                     let points = coordinates.map { coord in
-                        normalizeCoordinate(coord, bounds: bounds, size: geometry.size)
+                        normalize(coord, bounds: bounds, size: geo.size)
                     }
-
                     if let first = points.first {
                         path.move(to: first)
-                        points.dropFirst().forEach { point in
-                            path.addLine(to: point)
-                        }
+                        points.dropFirst().forEach { path.addLine(to: $0) }
                     }
                 }
-                .stroke(Color.accentPrimary, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
-                .opacity(0.4)
-                .shadow(color: Color.accentPrimary.opacity(0.6), radius: 4, x: 0, y: 0)
+                .stroke(
+                    Color.accentPrimary,
+                    style: StrokeStyle(lineWidth: 3.5, lineCap: .round, lineJoin: .round)
+                )
+                .shadow(color: Color.accentPrimary.opacity(0.55), radius: 5)
+                .opacity(0.85)
             }
         }
     }
 
     private func calculateBounds() -> (minLat: Double, maxLat: Double, minLon: Double, maxLon: Double) {
         var minLat = coordinates[0].latitude
-        var maxLat = coordinates[0].latitude
+        var maxLat = minLat
         var minLon = coordinates[0].longitude
-        var maxLon = coordinates[0].longitude
-
-        for coord in coordinates {
-            minLat = min(minLat, coord.latitude)
-            maxLat = max(maxLat, coord.latitude)
-            minLon = min(minLon, coord.longitude)
-            maxLon = max(maxLon, coord.longitude)
+        var maxLon = minLon
+        for c in coordinates {
+            minLat = min(minLat, c.latitude); maxLat = max(maxLat, c.latitude)
+            minLon = min(minLon, c.longitude); maxLon = max(maxLon, c.longitude)
         }
-
         return (minLat, maxLat, minLon, maxLon)
     }
 
-    private func normalizeCoordinate(_ coord: CLLocationCoordinate2D, bounds: (minLat: Double, maxLat: Double, minLon: Double, maxLon: Double), size: CGSize) -> CGPoint {
-        let padding: CGFloat = 20
-        let availableWidth = size.width - padding * 2
-        let availableHeight = size.height - padding * 2
-
-        let latRange = bounds.maxLat - bounds.minLat
-        let lonRange = bounds.maxLon - bounds.minLon
-
-        let x = padding + CGFloat((coord.longitude - bounds.minLon) / lonRange) * availableWidth
-        let y = padding + CGFloat((bounds.maxLat - coord.latitude) / latRange) * availableHeight
-
+    private func normalize(
+        _ c: CLLocationCoordinate2D,
+        bounds: (minLat: Double, maxLat: Double, minLon: Double, maxLon: Double),
+        size: CGSize
+    ) -> CGPoint {
+        let pad: CGFloat = 24
+        let w = size.width - pad * 2
+        let h = size.height - pad * 2
+        let latRange = max(bounds.maxLat - bounds.minLat, 0.000001)
+        let lonRange = max(bounds.maxLon - bounds.minLon, 0.000001)
+        let x = pad + CGFloat((c.longitude - bounds.minLon) / lonRange) * w
+        let y = pad + CGFloat((bounds.maxLat - c.latitude) / latRange) * h
         return CGPoint(x: x, y: y)
     }
 }
 
-// MARK: - Compact Activity Card (for older activities)
+// MARK: - Compact Activity Card (for secondary feed items)
 
 struct CompactActivityCardView: View {
     let activity: Activity
@@ -269,83 +280,84 @@ struct CompactActivityCardView: View {
     }
 
     var body: some View {
-        HStack(spacing: Spacing.md) {
+        HStack(spacing: 14) {
+            // Sport icon bubble
+            ZStack {
+                Circle()
+                    .fill(Color.glassEmeraldTint)
+                Image(systemName: sportIcon)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(Color.accentPrimary)
+            }
+            .frame(width: 44, height: 44)
+            .overlay(Circle().strokeBorder(Color.accentPrimary.opacity(0.3), lineWidth: 1))
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(activity.name)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.textPrimary)
+                    .foregroundColor(.textOnGlass)
                     .lineLimit(1)
 
-                Text(formatDate(activity.startDate) + " • " + formatDistance(activity.distanceMeters))
-                    .font(.caption1)
-                    .foregroundColor(.textDisabled)
+                Text(formatDate(activity.startDate) + " · " + formatDistance(activity.distanceMeters))
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(.textTertiaryReadable)
             }
 
             Spacer()
 
             VStack(alignment: .trailing, spacing: 2) {
-                Text(formatPace(activity.averageSpeed, sportType: activity.sportType))
-                    .font(.metricRegular)
+                Text(formatPace(activity.averageSpeed ?? 0, sportType: activity.sportType))
+                    .font(.system(size: 17, weight: .bold, design: .monospaced))
                     .foregroundColor(.accentPrimary)
-                    .monospacedDigit()
-
-                Text(activity.sportType == "Ride" ? "средняя" : "темп")
-                    .font(.caption2)
-                    .foregroundColor(.textDisabled)
+                Text(activity.sportType == "Ride" ? unitSpeedLabel : unitPaceLabel)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.textTertiaryReadable)
             }
         }
-        .padding(Spacing.md + 2)
-        .card()
+        .padding(14)
+        .liquidGlassCard(cornerRadius: 18, tint: .neutral)
     }
+
+    private var sportIcon: String {
+        switch activity.sportType.lowercased() {
+        case let s where s.contains("ride") || s.contains("cycl"): return "bicycle"
+        case let s where s.contains("swim"): return "figure.pool.swim"
+        case let s where s.contains("walk") || s.contains("hike"): return "figure.walk"
+        default: return "figure.run"
+        }
+    }
+
+    private var unitPaceLabel: String { isMetric ? "мин/км" : "мин/ми" }
+    private var unitSpeedLabel: String { isMetric ? "км/ч" : "ми/ч" }
 
     private func formatDistance(_ meters: Double) -> String {
         if isMetric {
-            let km = meters / 1000.0
-            return String(format: "%.1f км", km)
+            return String(format: "%.1f км", meters / 1000.0)
         } else {
-            let miles = meters / 1609.34
-            return String(format: "%.1f mi", miles)
+            return String(format: "%.1f mi", meters / 1609.34)
         }
     }
 
     private func formatPace(_ speedMps: Double, sportType: String) -> String {
         if sportType == "Ride" {
-            if isMetric {
-                let kmh = speedMps * 3.6
-                return String(format: "%.1f", kmh)
-            } else {
-                let mph = speedMps * 2.23694
-                return String(format: "%.1f", mph)
-            }
-        } else {
-            if speedMps <= 0 { return "--:--" }
-            let metersPerMinute = speedMps * 60
-            let minutesPerKm = 1000.0 / metersPerMinute
-
-            if isMetric {
-                let minutes = Int(minutesPerKm)
-                let seconds = Int((minutesPerKm - Double(minutes)) * 60)
-                return String(format: "%d:%02d", minutes, seconds)
-            } else {
-                let minutesPerMile = minutesPerKm * 1.60934
-                let minutes = Int(minutesPerMile)
-                let seconds = Int((minutesPerMile - Double(minutes)) * 60)
-                return String(format: "%d:%02d", minutes, seconds)
-            }
+            let v = isMetric ? speedMps * 3.6 : speedMps * 2.23694
+            return String(format: "%.1f", v)
         }
+        guard speedMps > 0 else { return "--:--" }
+        let minutesPerKm = 1000.0 / (speedMps * 60)
+        let pace = isMetric ? minutesPerKm : minutesPerKm * 1.60934
+        let m = Int(pace)
+        let s = Int((pace - Double(m)) * 60)
+        return String(format: "%d:%02d", m, s)
     }
 
     private func formatDate(_ date: Date) -> String {
-        let calendar = Calendar.current
-        if calendar.isDateInToday(date) {
-            return "Сегодня"
-        } else if calendar.isDateInYesterday(date) {
-            return "Вчера"
-        } else {
-            let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "ru_RU")
-            formatter.dateFormat = "d MMM"
-            return formatter.string(from: date)
-        }
+        let cal = Calendar.current
+        if cal.isDateInToday(date) { return "Сегодня" }
+        if cal.isDateInYesterday(date) { return "Вчера" }
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "ru_RU")
+        f.dateFormat = "d MMM"
+        return f.string(from: date)
     }
 }

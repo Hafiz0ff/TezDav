@@ -7,7 +7,8 @@ final class SyncServiceTests: XCTestCase {
     func testImportAllSavesActivitiesAndProgress() async throws {
         let container = try ModelContainer(
             for: Activity.self, ActivityStreamSample.self, SyncState.self, UserSettings.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+            WeatherSnapshot.self, GearItem.self, Achievement.self, PlannedWorkout.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         )
         let context = ModelContext(container)
         let progress = SyncProgress()

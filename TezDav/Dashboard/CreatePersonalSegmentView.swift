@@ -33,8 +33,8 @@ struct CreatePersonalSegmentView: View {
         return Array(coords[startIndex...endIndex])
     }
     
-    // Region for Map
-    @State private var position: MapCameraPosition = .automatic
+    @State private var cameraCenter: CLLocationCoordinate2D? = nil
+    @State private var cameraZoom: Float? = nil
     
     var body: some View {
         NavigationStack {
@@ -45,36 +45,14 @@ struct CreatePersonalSegmentView: View {
                     .padding(.horizontal)
                     .padding(.top)
                 
-                // Map
-                Map(position: $position) {
-                    // Full route
-                    MapPolyline(coordinates: coordinates)
-                        .stroke(.gray.opacity(0.5), lineWidth: 4)
-                    
-                    // Selected segment portion
-                    MapPolyline(coordinates: selectedCoordinates)
-                        .stroke(.purple, lineWidth: 6)
-                    
-                    // Markers for Start and End of selected segment
-                    if let start = selectedCoordinates.first {
-                        Annotation(isRussian ? "Старт" : "Start", coordinate: start, anchor: .bottom) {
-                            Image(systemName: "play.circle.fill")
-                                .foregroundStyle(.green)
-                                .font(.title3)
-                                .background(.white)
-                                .clipShape(Circle())
-                        }
-                    }
-                    if let end = selectedCoordinates.last {
-                        Annotation(isRussian ? "Финиш" : "Finish", coordinate: end, anchor: .bottom) {
-                            Image(systemName: "flag.checkered.2.circle.fill")
-                                .foregroundStyle(.red)
-                                .font(.title3)
-                                .background(.white)
-                                .clipShape(Circle())
-                        }
-                    }
-                }
+                GoogleMapView(
+                    coordinates: selectedCoordinates,
+                    segments: [MapSegment(coordinates: coordinates, color: Color.gray.opacity(0.5))],
+                    sportType: "Segment",
+                    showStartEndMarkers: true,
+                    cameraCenter: $cameraCenter,
+                    cameraZoom: $cameraZoom
+                )
                 .frame(height: 300)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .padding(.horizontal)

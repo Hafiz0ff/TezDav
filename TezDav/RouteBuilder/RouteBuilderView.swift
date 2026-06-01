@@ -24,13 +24,8 @@ struct RouteBuilderView: View {
     @State private var errorMessage = ""
     
     // Map state
-    // Default region is Dushanbe, Tajikistan
-    @State private var position: MapCameraPosition = .region(
-        MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 38.5598, longitude: 68.7870),
-            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-        )
-    )
+    @State private var googleCameraCenter: CLLocationCoordinate2D? = CLLocationCoordinate2D(latitude: 38.5598, longitude: 68.7870)
+    @State private var googleCameraZoom: Float? = 12.0
     
     @Query private var userSettingsList: [UserSettings]
     private var userSettings: UserSettings? {
@@ -89,67 +84,63 @@ struct RouteBuilderView: View {
         self.routeToEdit = routeToEdit
     }
     
-    private func handleMapTap(at position: CGPoint, proxy: MapProxy) {
-        if let coordinate = proxy.convert(position, from: .local) {
-            Task {
-                await routeEngine.addWaypoint(coordinate)
-            }
-        }
-    }
-    
     private var mapView: some View {
-        MapReader { reader in
-            Map(position: $position) {
-                MapPolyline(coordinates: routeEngine.fullRouteCoordinates)
-                    .stroke(routeLineGradient, lineWidth: 5)
-                
-                ForEach(waypointMarkers) { marker in
-                    Annotation("\(marker.id + 1)", coordinate: marker.coordinate) {
-                        Button {
-                            selectedWaypointIndex = marker.id
-                            showDeleteWaypointAlert = true
-                        } label: {
-                            ZStack {
-                                Circle()
-                                    .fill(waypointColor(for: marker.id, totalCount: routeEngine.waypoints.count))
-                                    .frame(width: 26, height: 26)
-                                    .shadow(radius: 3)
-                                Circle()
-                                    .stroke(Color.white, lineWidth: 2)
-                                    .frame(width: 26, height: 26)
-                                Text("\(marker.id + 1)")
-                                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                                    .foregroundColor(.white)
-                            }
-                        }
-                    }
+        GoogleMapView(
+            coordinates: routeEngine.fullRouteCoordinates,
+            waypoints: routeEngine.waypoints,
+            sportType: selectedSport,
+            onTap: { coordinate in
+                Task {
+                    await routeEngine.addWaypoint(coordinate)
                 }
-            }
-            .mapStyle(.standard(elevation: .realistic))
-            .onTapGesture { position in
-                handleMapTap(at: position, proxy: reader)
-            }
-        }
+            },
+            onWaypointTap: { index in
+                selectedWaypointIndex = index
+                showDeleteWaypointAlert = true
+            },
+            cameraCenter: $googleCameraCenter,
+            cameraZoom: $googleCameraZoom
+        )
     }
     
     private var topOverlayPanel: some View {
         VStack(spacing: 12) {
-            HStack {
+            HStack(spacing: 12) {
                 TextField("Название маршрута", text: $routeName)
                     .font(.headline)
                     .padding(10)
-                    .background(Color(.systemBackground).opacity(0.8))
+                    .background(Color.white.opacity(0.04))
                     .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+                    )
+                    .foregroundColor(.textPrimary)
                 
-                Picker("Вид", selection: $selectedSport) {
-                    Text("Бег").tag("Run")
-                    Text("Вело").tag("Ride")
+                HStack(spacing: 4) {
+                    ForEach(["Run", "Ride"], id: \.self) { sport in
+                        Button {
+                            HapticManager.trigger(.light)
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
+                                selectedSport = sport
+                                routeEngine.sportType = sport
+                            }
+                        } label: {
+                            Text(sport == "Run" ? "Бег" : "Вело")
+                                .font(.system(size: 11, weight: .bold))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(selectedSport == sport ? Color.accentPrimary.opacity(0.12) : Color.white.opacity(0.04))
+                                .foregroundColor(selectedSport == sport ? Color.accentPrimary : Color.textSecondaryReadable)
+                                .clipShape(Capsule())
+                                .overlay(
+                                    Capsule()
+                                        .strokeBorder(selectedSport == sport ? Color.accentPrimary.opacity(0.4) : Color.white.opacity(0.08), lineWidth: 1)
+                                )
+                        }
+                    }
                 }
-                .pickerStyle(.segmented)
                 .frame(width: 120)
-                .onChange(of: selectedSport) { _, newValue in
-                    routeEngine.sportType = newValue
-                }
             }
             
             if routeEngine.isCalculating {
@@ -158,14 +149,12 @@ struct RouteBuilderView: View {
                         .padding(.trailing, 6)
                     Text("Прокладываем маршрут...")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondaryReadable)
                 }
             }
         }
         .padding()
-        .background(.ultraThinMaterial)
-        .cornerRadius(12)
-        .shadow(radius: 5)
+        .liquidGlassCard(cornerRadius: 16)
         .padding(.horizontal)
         .padding(.top, 10)
     }
@@ -174,33 +163,33 @@ struct RouteBuilderView: View {
         VStack(spacing: 16) {
             // Metric Grid
             HStack(spacing: 24) {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("ДИСТАНЦИЯ")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .bold()
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundColor(.textSecondaryReadable)
                     Text(formatDistance(routeEngine.totalDistance))
-                        .font(.system(.title2, design: .rounded, weight: .bold))
+                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .foregroundColor(.textPrimary)
                         .contentTransition(.numericText())
                 }
                 
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("НАБОР ВЫСОТЫ")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .bold()
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundColor(.textSecondaryReadable)
                     Text(formatElevation(routeEngine.totalElevationGain))
-                        .font(.system(.title2, design: .rounded, weight: .bold))
+                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .foregroundColor(.textPrimary)
                         .contentTransition(.numericText())
                 }
                 
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("ВРЕМЯ (~)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .bold()
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundColor(.textSecondaryReadable)
                     Text(formatTime(routeEngine.estimatedTime(averagePaceSecPerKm: currentPace)))
-                        .font(.system(.title2, design: .rounded, weight: .bold))
+                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .foregroundColor(.textPrimary)
                         .contentTransition(.numericText())
                 }
             }
@@ -213,12 +202,16 @@ struct RouteBuilderView: View {
                     routeEngine.undo()
                 }) {
                     Label("Назад", systemImage: "arrow.uturn.backward")
+                        .font(.subheadline.bold())
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(Color(.systemGray5))
-                        .foregroundColor(.primary)
+                        .background(Color.white.opacity(0.04))
+                        .foregroundColor(routeEngine.waypoints.isEmpty ? .textTertiaryReadable : .textPrimary)
                         .cornerRadius(10)
-                        .bold()
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+                        )
                 }
                 .disabled(routeEngine.waypoints.isEmpty)
                 
@@ -226,31 +219,41 @@ struct RouteBuilderView: View {
                     routeEngine.clearAll()
                 }) {
                     Label("Очистить", systemImage: "trash")
+                        .font(.subheadline.bold())
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(Color(.systemGray5))
-                        .foregroundColor(.red)
+                        .background(Color.red.opacity(routeEngine.waypoints.isEmpty ? 0.04 : 0.12))
+                        .foregroundColor(routeEngine.waypoints.isEmpty ? .textTertiaryReadable : .red)
                         .cornerRadius(10)
-                        .bold()
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .strokeBorder(routeEngine.waypoints.isEmpty ? Color.white.opacity(0.08) : Color.red.opacity(0.3), lineWidth: 1)
+                        )
                 }
                 .disabled(routeEngine.waypoints.isEmpty)
                 
                 Button(action: saveRoute) {
                     Text("Сохранить")
+                        .font(.subheadline.bold())
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(saveButtonColor)
+                        .background(
+                            Group {
+                                if routeName.isEmpty || routeEngine.waypoints.count < 2 {
+                                    Color.orange.opacity(0.3)
+                                } else {
+                                    Color.orange
+                                }
+                            }
+                        )
                         .foregroundColor(.white)
                         .cornerRadius(10)
-                        .bold()
                 }
                 .disabled(routeName.isEmpty || routeEngine.waypoints.count < 2)
             }
         }
         .padding()
-        .background(.ultraThinMaterial)
-        .cornerRadius(16)
-        .shadow(radius: 5)
+        .liquidGlassCard(cornerRadius: 16)
         .padding(.horizontal)
         .padding(.bottom, 20)
     }
@@ -287,12 +290,8 @@ struct RouteBuilderView: View {
                     
                     // Center map on route
                     if let firstCoord = route.waypoints.first {
-                        position = .region(
-                            MKCoordinateRegion(
-                                center: firstCoord,
-                                span: MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
-                            )
-                        )
+                        googleCameraCenter = firstCoord
+                        googleCameraZoom = 14.0
                     }
                 }
             }

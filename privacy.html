@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Политика конфиденциальности — TezDav</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --text-color: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent-color: #58a6ff;
+            --accent-gradient: linear-gradient(135deg, #58a6ff, #bc85ff);
+            --card-bg: rgba(22, 27, 34, 0.6);
+            --border-color: #30363d;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 40px 20px;
+            padding: 40px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-top: 0;
+            margin-bottom: 24px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        p, li {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin-bottom: 16px;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin-bottom: 24px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        a:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TezDav</h1>
+        <p style="text-align: center; font-weight: 500; font-size: 1.1rem; color: #fff;">Политика конфиденциальности</p>
+        
+        <h2>1. Общие положения</h2>
+        <p>Мы высоко ценим конфиденциальность ваших данных. Настоящая Политика конфиденциальности объясняет, как мобильное приложение <strong>TezDav</strong> обрабатывает, хранит и защищает вашу информацию.</p>
+        
+        <h2>2. Локальное хранение данных</h2>
+        <p>Все ваши спортивные метрики, GPS-треки, файлы тренировок (GPX/FIT), показатели пульса и настройки профиля сохраняются <strong>исключительно локально на вашем устройстве</strong> во встроенной зашифрованной базе данных iOS (SwiftData/SQLite) и защищенном хранилище Keychain.</p>
+        <p>Приложение не имеет собственных внешних серверов баз данных и не передает ваши персональные данные третьим лицам.</p>
+
+        <h2>3. Интеграция с Strava API</h2>
+        <p>TezDav использует официальное API сервиса Strava исключительно для выполнения следующих задач по вашему запросу:</p>
+        <ul>
+            <li>Авторизация пользователя и получение токенов доступа.</li>
+            <li>Считывание списка ваших спортивных активностей и их деталей.</li>
+            <li>Синхронизация истории ваших тренировок с локальной базой данных приложения.</li>
+        </ul>
+        <p>Токены авторизации сохраняются в системном Keychain вашего устройства. Вы можете в любой момент отозвать авторизацию в настройках профиля приложения.</p>
+
+        <h2>4. Датчики и разрешения iOS</h2>
+        <p>Приложение может запрашивать доступ к следующим функциям вашего устройства:</p>
+        <ul>
+            <li><strong>HealthKit (Apple Здоровье):</strong> Используется исключительно для чтения пульсовых данных, показателей сна и HRV с целью расчета индекса готовности (Readiness Score) локально на устройстве.</li>
+            <li><strong>Геолокация:</strong> Используется только для записи трека в реальном времени при симуляции тренировок или построении маршрутов на карте.</li>
+            <li><strong>Push-уведомления:</strong> Служат для информирования о новых личных рекордах и подготовки еженедельных спортивных отчетов.</li>
+        </ul>
+
+        <h2>5. Изменения политики конфиденциальности</h2>
+        <p>Мы можем обновлять данную политику конфиденциальности по мере добавления новых функций. Все обновления вступают в силу с момента публикации новой версии приложения в App Store.</p>
+
+        <div class="footer">
+            &copy; 2026 TezDav. Все права защищены.<br>
+            Если у вас возникли вопросы, свяжитесь с нами по адресу: <a href="mailto:hafizhafizov9@gmail.com">hafizhafizov9@gmail.com</a>
+        </div>
+    </div>
+</body>
+</html>

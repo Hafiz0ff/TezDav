@@ -19,7 +19,7 @@ struct FitnessPoint: Equatable, Sendable {
 
 enum TrainingLoadCalculator {
     static func trimp(duration: TimeInterval, averageHeartRate: Double?, restingHeartRate: Double = 60, maxHeartRate: Double) -> Double {
-        guard let averageHeartRate, maxHeartRate > restingHeartRate, duration > 0 else {
+        guard let averageHeartRate, maxHeartRate > restingHeartRate, restingHeartRate > 0, duration > 0 else {
             return 0
         }
 
@@ -101,8 +101,9 @@ enum TrainingLoadCalculator {
                     let powerStream = samples.compactMap { $0.power }
                     if !powerStream.isEmpty {
                         if let np = calculateNormalizedPower(from: powerStream) {
-                            let intensityFactor = np / settings.cyclingFTP
-                            let tss = (activity.movingTime * np * intensityFactor) / (settings.cyclingFTP * 3600.0) * 100.0
+                            let ftp = max(1.0, settings.cyclingFTP)
+                            let intensityFactor = np / ftp
+                            let tss = (activity.movingTime * np * intensityFactor) / (ftp * 3600.0) * 100.0
                             load = tss
                         }
                     }

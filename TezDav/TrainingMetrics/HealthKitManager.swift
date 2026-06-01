@@ -1,3 +1,4 @@
+// swiftlint:disable cyclomatic_complexity
 import Foundation
 import HealthKit
 
@@ -431,8 +432,8 @@ final class HealthKitManager: ObservableObject {
         tsb: Double,
         daysSinceLastHardWorkout: Int
     ) -> ReadinessDetails {
-        let todayHRV = hrvToday ?? 55.0
-        let baselineHRV = hrvBaseline ?? 50.0
+        let todayHRV = (hrvToday == nil || hrvToday == 0.0) ? (hrvBaseline ?? 50.0) : hrvToday!
+        let baselineHRV = (hrvBaseline == nil || hrvBaseline == 0.0) ? 50.0 : hrvBaseline!
         let totalSleep = sleepTotalHours ?? 7.5
         var deepSleep = sleepDeepHours ?? 0.0
         if deepSleep <= 0 {

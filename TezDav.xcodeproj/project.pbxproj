@@ -7,20 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		RP010000000000000000000002 /* TrainingMetrics/RacePredictorEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP010000000000000000000001 /* TrainingMetrics/RacePredictorEngine.swift */; };
-		RP010000000000000000000004 /* Dashboard/PacingWristbandExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP010000000000000000000003 /* Dashboard/PacingWristbandExporter.swift */; };
-		RP010000000000000000000006 /* RacePredictorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP010000000000000000000005 /* RacePredictorTests.swift */; };
-		A00100000000000000000091 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000091 /* Assets.xcassets */; };
-		A00100000000000000000081 /* GpxParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000081 /* GpxParser.swift */; };
-		A00100000000000000000082 /* FitParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000082 /* FitParser.swift */; };
-		A00100000000000000000083 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000083 /* HapticManager.swift */; };
-		A00100000000000000000084 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000084 /* OnboardingView.swift */; };
-		A00100000000000000000085 /* FileImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000085 /* FileImportView.swift */; };
+		0AD88C6F7A6CCCD8A8558A05 /* ActivityCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E149FD25BF0B21FE78663 /* ActivityCardView.swift */; };
+		154374480578EE95344BDF9F /* GoogleMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 36AACD64712C473DE326E237 /* GoogleMaps */; };
+		58721DC4373B687F0C2D422A /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D23C83D6D43DCEAA0B3E35 /* CustomTabBar.swift */; };
+		999900019999000199990001 /* GoogleMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999900019999000199990002 /* GoogleMapView.swift */; };
 		598F8D16404199C9E89E047D /* FitDataProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = "TEMP_F2492D5D-8A8F-4FFB-9D9F-36BD3FC4C05B" /* FitDataProtocol */; };
-		780FAA6CEBDE15ECC6794193 /* FitDataProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 7EFE2C791C65C4881CC65413 /* FitDataProtocol */; };
 		598F8D16404199C9E89E048A /* FitnessUnits in Frameworks */ = {isa = PBXBuildFile; productRef = 7EFE2C791C65C4881CC6548A /* FitnessUnits */; };
 		598F8D16404199C9E89E048B /* AntMessageProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 7EFE2C791C65C4881CC6548B /* AntMessageProtocol */; };
 		598F8D16404199C9E89E048C /* DataDecoder in Frameworks */ = {isa = PBXBuildFile; productRef = 7EFE2C791C65C4881CC6548C /* DataDecoder */; };
+		780FAA6CEBDE15ECC6794193 /* FitDataProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 7EFE2C791C65C4881CC65413 /* FitDataProtocol */; };
+		780FAA6CEBDE15ECC67941E0 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 7EFE2C791C65C4881CC654E0 /* SnapshotTesting */; };
+		782872D6A5B5C27CD8222FCD /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21BA22CA20C970255D953AAB /* Colors.swift */; };
+		9142D9B3592ADAB220C1C3F2 /* ComponentStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9BC215D5A4C43480845BA1F /* ComponentStyles.swift */; };
+		9CDAD0F22FDFAC16B12053D5 /* StoryFeedDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318CA1B210669D9078106847 /* StoryFeedDashboardView.swift */; };
 		A00100000000000000000001 /* TezDavApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000001 /* TezDavApp.swift */; };
 		A00100000000000000000002 /* AppRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000002 /* AppRootView.swift */; };
 		A00100000000000000000003 /* TrainingMetrics/TrainingLoadCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000003 /* TrainingMetrics/TrainingLoadCalculator.swift */; };
@@ -62,15 +61,43 @@
 		A00100000000000000000074 /* TrainingMetrics/TrainingPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000074 /* TrainingMetrics/TrainingPlanner.swift */; };
 		A00100000000000000000075 /* Sync/ExportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000075 /* Sync/ExportManager.swift */; };
 		A00100000000000000000076 /* Dashboard/TrainingPlannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000076 /* Dashboard/TrainingPlannerView.swift */; };
+		A00100000000000000000081 /* Sync/GpxParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000081 /* Sync/GpxParser.swift */; };
+		A00100000000000000000082 /* Sync/FitParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000082 /* Sync/FitParser.swift */; };
+		A00100000000000000000083 /* Notifications/HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000083 /* Notifications/HapticManager.swift */; };
+		A00100000000000000000084 /* Dashboard/OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000084 /* Dashboard/OnboardingView.swift */; };
+		A00100000000000000000085 /* Dashboard/FileImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000085 /* Dashboard/FileImportView.swift */; };
+		A00100000000000000000091 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000091 /* Assets.xcassets */; };
+		A00100000000000000000101 /* Dashboard/DemoDataSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000101 /* Dashboard/DemoDataSeeder.swift */; };
+		AI010000000000000000000002 /* TrainingMetrics/AICoachEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AI010000000000000000000001 /* TrainingMetrics/AICoachEngine.swift */; };
+		AI010000000000000000000004 /* AICoachTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AI010000000000000000000003 /* AICoachTests.swift */; };
+		D1BD8C6B9D6C6D6AE92619B8 /* LiquidGlass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8654AB12950F487CF2572F0 /* LiquidGlass.swift */; };
+		EB4E8FB725BE0E65345B04E4 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBE4608AE34BAC5C03D4882A /* Typography.swift */; };
+		FC0100000000000000000002 /* Persistence/PlannedWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0100000000000000000001 /* Persistence/PlannedWorkout.swift */; };
+		FC0100000000000000000004 /* ForecastTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0100000000000000000003 /* ForecastTests.swift */; };
+		HM010000000000000000000001 /* RouteBuilder/PolylineEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = HM020000000000000000000001 /* RouteBuilder/PolylineEncoder.swift */; };
+		HM010000000000000000000002 /* RouteBuilder/PersonalHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = HM020000000000000000000002 /* RouteBuilder/PersonalHeatmapView.swift */; };
+		HM010000000000000000000003 /* PolylineEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = HM020000000000000000000003 /* PolylineEncoderTests.swift */; };
 		LA01000000000000000000001 /* LiveActivity/WorkoutActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000001 /* LiveActivity/WorkoutActivityAttributes.swift */; };
 		LA01000000000000000000002 /* LiveActivity/LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000002 /* LiveActivity/LiveActivityManager.swift */; };
 		LA01000000000000000000003 /* LiveActivity/WorkoutSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000003 /* LiveActivity/WorkoutSimulator.swift */; };
-		LA01000000000000000000011 /* WorkoutActivityAttributes.swift in Sources (LA) */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000001 /* LiveActivity/WorkoutActivityAttributes.swift */; };
-		LA01000000000000000000012 /* TezDavLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000012 /* TezDavLiveActivityBundle.swift */; };
-		LA01000000000000000000013 /* WorkoutLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000013 /* WorkoutLiveActivity.swift */; };
-		LA01000000000000000000014 /* LockScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000014 /* LockScreenView.swift */; };
-		LA01000000000000000000015 /* DynamicIslandViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000015 /* DynamicIslandViews.swift */; };
-		LA01000000000000000000016 /* LiveActivityHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000016 /* LiveActivityHelpers.swift */; };
+		LA01000000000000000000009 /* LiveActivity/TezDavAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000009 /* LiveActivity/TezDavAttributes.swift */; };
+		LA01000000000000000000011 /* LiveActivity/WorkoutActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000001 /* LiveActivity/WorkoutActivityAttributes.swift */; };
+		LA01000000000000000000012 /* TezDavLiveActivity/TezDavLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000012 /* TezDavLiveActivity/TezDavLiveActivityBundle.swift */; };
+		LA01000000000000000000013 /* TezDavLiveActivity/WorkoutLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000013 /* TezDavLiveActivity/WorkoutLiveActivity.swift */; };
+		LA01000000000000000000014 /* TezDavLiveActivity/LockScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000014 /* TezDavLiveActivity/LockScreenView.swift */; };
+		LA01000000000000000000015 /* TezDavLiveActivity/DynamicIslandViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000015 /* TezDavLiveActivity/DynamicIslandViews.swift */; };
+		LA01000000000000000000016 /* TezDavLiveActivity/LiveActivityHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000016 /* TezDavLiveActivity/LiveActivityHelpers.swift */; };
+		LA01000000000000000000029 /* LiveActivity/TezDavAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000009 /* LiveActivity/TezDavAttributes.swift */; };
+		LA01000000000000000000039 /* TezDavLiveActivity/TezDavLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000019 /* TezDavLiveActivity/TezDavLiveActivity.swift */; };
+		LS01000000000000000000001 /* LiveActivity/LiveSegmentCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = LS02000000000000000000001 /* LiveActivity/LiveSegmentCoordinator.swift */; };
+		LS01000000000000000000002 /* LiveActivity/LiveSegmentOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = LS02000000000000000000002 /* LiveActivity/LiveSegmentOverlayView.swift */; };
+		LS01000000000000000000003 /* LiveActivity/WorkoutSimulatorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = LS02000000000000000000003 /* LiveActivity/WorkoutSimulatorSheet.swift */; };
+		LS01000000000000000000004 /* LiveSegmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = LS02000000000000000000004 /* LiveSegmentTests.swift */; };
+		PC0100000000000000000001 /* TrainingMetrics/PowerCurveCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000001 /* TrainingMetrics/PowerCurveCalculator.swift */; };
+		PC0100000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift */; };
+		PC0100000000000000000003 /* Dashboard/PowerCurveChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000003 /* Dashboard/PowerCurveChartView.swift */; };
+		PC0100000000000000000004 /* Dashboard/PowerCurveFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000004 /* Dashboard/PowerCurveFormView.swift */; };
+		PC0100000000000000000005 /* PowerCurveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000005 /* PowerCurveTests.swift */; };
 		RB0100000000000000000001 /* Persistence/SavedRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB0200000000000000000001 /* Persistence/SavedRoute.swift */; };
 		RB0100000000000000000002 /* RouteBuilder/ElevationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB0200000000000000000002 /* RouteBuilder/ElevationService.swift */; };
 		RB0100000000000000000003 /* RouteBuilder/RouteEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB0200000000000000000003 /* RouteBuilder/RouteEngine.swift */; };
@@ -78,41 +105,24 @@
 		RB0100000000000000000005 /* RouteBuilder/RouteBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB0200000000000000000005 /* RouteBuilder/RouteBuilderView.swift */; };
 		RB0100000000000000000006 /* RouteBuilder/RouteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB0200000000000000000006 /* RouteBuilder/RouteDetailView.swift */; };
 		RB0100000000000000000007 /* RouteBuilder/RouteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB0200000000000000000007 /* RouteBuilder/RouteListView.swift */; };
+		RD010000000000000000000002 /* TrainingMetrics/RunningDynamicsEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = RD010000000000000000000001 /* TrainingMetrics/RunningDynamicsEngine.swift */; };
+		RD010000000000000000000004 /* RunningDynamicsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = RD010000000000000000000003 /* RunningDynamicsTests.swift */; };
+		RP010000000000000000000002 /* TrainingMetrics/RacePredictorEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP010000000000000000000001 /* TrainingMetrics/RacePredictorEngine.swift */; };
+		RP010000000000000000000004 /* Dashboard/PacingWristbandExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP010000000000000000000003 /* Dashboard/PacingWristbandExporter.swift */; };
+		RP010000000000000000000006 /* RacePredictorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = RP010000000000000000000005 /* RacePredictorTests.swift */; };
 		RT0100000000000000000001 /* RouteBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = RT0200000000000000000001 /* RouteBuilderTests.swift */; };
-		PC0100000000000000000001 /* TrainingMetrics/PowerCurveCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000001 /* TrainingMetrics/PowerCurveCalculator.swift */; };
-		PC0100000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift */; };
-		PC0100000000000000000003 /* Dashboard/PowerCurveChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000003 /* Dashboard/PowerCurveChartView.swift */; };
-		PC0100000000000000000004 /* Dashboard/PowerCurveFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000004 /* Dashboard/PowerCurveFormView.swift */; };
-		PC0100000000000000000005 /* PowerCurveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PC0200000000000000000005 /* PowerCurveTests.swift */; };
 		SG0100000000000000000001 /* Persistence/Segment.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000001 /* Persistence/Segment.swift */; };
 		SG0100000000000000000002 /* Persistence/SegmentEffort.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000002 /* Persistence/SegmentEffort.swift */; };
 		SG0100000000000000000003 /* TrainingMetrics/SegmentMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000003 /* TrainingMetrics/SegmentMatcher.swift */; };
 		SG0100000000000000000004 /* Dashboard/SegmentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000004 /* Dashboard/SegmentListView.swift */; };
 		SG0100000000000000000005 /* Dashboard/SegmentDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000005 /* Dashboard/SegmentDetailView.swift */; };
 		SG0100000000000000000006 /* SegmentMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SG0200000000000000000006 /* SegmentMatcherTests.swift */; };
-		HM010000000000000000000001 /* RouteBuilder/PolylineEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = HM020000000000000000000001 /* RouteBuilder/PolylineEncoder.swift */; };
-		HM010000000000000000000002 /* RouteBuilder/PersonalHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = HM020000000000000000000002 /* RouteBuilder/PersonalHeatmapView.swift */; };
-		HM010000000000000000000003 /* PolylineEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = HM020000000000000000000003 /* PolylineEncoderTests.swift */; };
-		AI010000000000000000000002 /* TrainingMetrics/AICoachEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AI010000000000000000000001 /* TrainingMetrics/AICoachEngine.swift */; };
-		AI010000000000000000000004 /* AICoachTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AI010000000000000000000003 /* AICoachTests.swift */; };
-		RD010000000000000000000002 /* TrainingMetrics/RunningDynamicsEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = RD010000000000000000000001 /* TrainingMetrics/RunningDynamicsEngine.swift */; };
-		RD010000000000000000000004 /* RunningDynamicsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = RD010000000000000000000003 /* RunningDynamicsTests.swift */; };
-		TZ8000000000000000000002 /* Persistence/PersonalSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ8000000000000000000001 /* Persistence/PersonalSegment.swift */; };
-		TZ8000000000000000000004 /* TrainingMetrics/PersonalSegmentMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ8000000000000000000003 /* TrainingMetrics/PersonalSegmentMatcher.swift */; };
-		TZ8000000000000000000006 /* Dashboard/CreatePersonalSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ8000000000000000000005 /* Dashboard/CreatePersonalSegmentView.swift */; };
-		LA01000000000000000000009 /* LiveActivity/TezDavAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000009 /* LiveActivity/TezDavAttributes.swift */; };
-		LA01000000000000000000029 /* TezDavAttributes.swift in Sources (LA) */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000009 /* LiveActivity/TezDavAttributes.swift */; };
-		LA01000000000000000000039 /* TezDavLiveActivity.swift in Sources (LA) */ = {isa = PBXBuildFile; fileRef = LA02000000000000000000019 /* TezDavLiveActivity.swift */; };
-		TZ9000000000000000000001 /* Persistence/GearItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000000 /* Persistence/GearItem.swift */; };
-		TZ9000000000000000000003 /* Persistence/WeatherSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000002 /* Persistence/WeatherSnapshot.swift */; };
-		TZ9000000000000000000005 /* Sync/WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000004 /* Sync/WeatherService.swift */; };
-		TZ9000000000000000000007 /* Dashboard/WeatherAnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000006 /* Dashboard/WeatherAnalyticsView.swift */; };
-		TZ9000000000000000000009 /* Dashboard/GearListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000008 /* Dashboard/GearListView.swift */; };
-		TZ900000000000000000000B /* TrainingMetrics/CoachingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ900000000000000000000A /* TrainingMetrics/CoachingEngine.swift */; };
-		TZ900000000000000000000D /* Dashboard/CoachingInsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ900000000000000000000C /* Dashboard/CoachingInsightsView.swift */; };
-		TZ900000000000000000000F /* CoachingEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ900000000000000000000E /* CoachingEngineTests.swift */; };
-		TZ9000000000000000000011 /* GearTrackingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000010 /* GearTrackingTests.swift */; };
-		TZ9000000000000000000013 /* WeatherServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000012 /* WeatherServiceTests.swift */; };
+		SH1200000000000000000002 /* Dashboard/WorkoutCardShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000001 /* Dashboard/WorkoutCardShareView.swift */; };
+		SH1200000000000000000004 /* Dashboard/WeeklySummaryShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000003 /* Dashboard/WeeklySummaryShareView.swift */; };
+		SH1200000000000000000006 /* RouteBuilder/GlobalHeatmapTileOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000005 /* RouteBuilder/GlobalHeatmapTileOverlay.swift */; };
+		SH1200000000000000000008 /* RouteBuilder/HeatmapMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000007 /* RouteBuilder/HeatmapMapView.swift */; };
+		SH1200000000000000000010 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000009 /* PrivacyInfo.xcprivacy */; };
+		SH1200000000000000000012 /* AppStoreAndSharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000011 /* AppStoreAndSharingTests.swift */; };
 		TZ1000000000000000000002 /* Shortcuts/ShortcutsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1000000000000000000001 /* Shortcuts/ShortcutsProvider.swift */; };
 		TZ1000000000000000000004 /* Sync/CoreSpotlightManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1000000000000000000003 /* Sync/CoreSpotlightManager.swift */; };
 		TZ1000000000000000000006 /* TrainingMetrics/CyclingDynamicsEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1000000000000000000005 /* TrainingMetrics/CyclingDynamicsEngine.swift */; };
@@ -127,23 +137,30 @@
 		TZ1101000000000000000004 /* CasualAndGamificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1102000000000000000004 /* CasualAndGamificationTests.swift */; };
 		TZ1101000000000000000005 /* Dashboard/CasualDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1102000000000000000005 /* Dashboard/CasualDashboardView.swift */; };
 		TZ1101000000000000000006 /* Persistence/Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1102000000000000000006 /* Persistence/Achievement.swift */; };
-		SH1200000000000000000002 /* Dashboard/WorkoutCardShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000001 /* Dashboard/WorkoutCardShareView.swift */; };
-		SH1200000000000000000004 /* Dashboard/WeeklySummaryShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000003 /* Dashboard/WeeklySummaryShareView.swift */; };
-		SH1200000000000000000006 /* RouteBuilder/GlobalHeatmapTileOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000005 /* RouteBuilder/GlobalHeatmapTileOverlay.swift */; };
-		SH1200000000000000000008 /* RouteBuilder/HeatmapMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000007 /* RouteBuilder/HeatmapMapView.swift */; };
-		SH1200000000000000000010 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000009 /* PrivacyInfo.xcprivacy */; };
-		SH1200000000000000000012 /* AppStoreAndSharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH1200000000000000000011 /* AppStoreAndSharingTests.swift */; };
-		TZ8000000000000000000008 /* PersonalSegmentMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ8000000000000000000007 /* PersonalSegmentMatcherTests.swift */; };
+		TZ1301000000000000000001 /* TestDataFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1302000000000000000001 /* TestDataFactory.swift */; };
+		TZ1301000000000000000002 /* BoundaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1302000000000000000002 /* BoundaryTests.swift */; };
+		TZ1301000000000000000003 /* IntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1302000000000000000003 /* IntegrationTests.swift */; };
+		TZ1301000000000000000004 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1302000000000000000004 /* PerformanceTests.swift */; };
+		TZ1301000000000000000005 /* AccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1302000000000000000005 /* AccessibilityTests.swift */; };
+		TZ1301000000000000000006 /* SnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1302000000000000000006 /* SnapshotTests.swift */; };
 		TZ1700000000000000000002 /* Persistence/FriendActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1700000000000000000001 /* Persistence/FriendActivity.swift */; };
 		TZ1700000000000000000004 /* Persistence/FriendComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1700000000000000000003 /* Persistence/FriendComment.swift */; };
 		TZ1700000000000000000006 /* Dashboard/SocialFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1700000000000000000005 /* Dashboard/SocialFeedView.swift */; };
 		TZ1700000000000000000008 /* SocialFeedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ1700000000000000000007 /* SocialFeedTests.swift */; };
-		FC0100000000000000000002 /* Persistence/PlannedWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0100000000000000000001 /* Persistence/PlannedWorkout.swift */; };
-		FC0100000000000000000004 /* ForecastTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0100000000000000000003 /* ForecastTests.swift */; };
-		LS01000000000000000000001 /* LiveActivity/LiveSegmentCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = LS02000000000000000000001 /* LiveActivity/LiveSegmentCoordinator.swift */; };
-		LS01000000000000000000002 /* LiveActivity/LiveSegmentOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = LS02000000000000000000002 /* LiveActivity/LiveSegmentOverlayView.swift */; };
-		LS01000000000000000000003 /* LiveActivity/WorkoutSimulatorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = LS02000000000000000000003 /* LiveActivity/WorkoutSimulatorSheet.swift */; };
-		LS01000000000000000000004 /* LiveSegmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = LS02000000000000000000004 /* LiveSegmentTests.swift */; };
+		TZ8000000000000000000002 /* Persistence/PersonalSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ8000000000000000000001 /* Persistence/PersonalSegment.swift */; };
+		TZ8000000000000000000004 /* TrainingMetrics/PersonalSegmentMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ8000000000000000000003 /* TrainingMetrics/PersonalSegmentMatcher.swift */; };
+		TZ8000000000000000000006 /* Dashboard/CreatePersonalSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ8000000000000000000005 /* Dashboard/CreatePersonalSegmentView.swift */; };
+		TZ8000000000000000000008 /* PersonalSegmentMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ8000000000000000000007 /* PersonalSegmentMatcherTests.swift */; };
+		TZ9000000000000000000001 /* Persistence/GearItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000000 /* Persistence/GearItem.swift */; };
+		TZ9000000000000000000003 /* Persistence/WeatherSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000002 /* Persistence/WeatherSnapshot.swift */; };
+		TZ9000000000000000000005 /* Sync/WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000004 /* Sync/WeatherService.swift */; };
+		TZ9000000000000000000007 /* Dashboard/WeatherAnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000006 /* Dashboard/WeatherAnalyticsView.swift */; };
+		TZ9000000000000000000009 /* Dashboard/GearListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000008 /* Dashboard/GearListView.swift */; };
+		TZ900000000000000000000B /* TrainingMetrics/CoachingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ900000000000000000000A /* TrainingMetrics/CoachingEngine.swift */; };
+		TZ900000000000000000000D /* Dashboard/CoachingInsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ900000000000000000000C /* Dashboard/CoachingInsightsView.swift */; };
+		TZ900000000000000000000F /* CoachingEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ900000000000000000000E /* CoachingEngineTests.swift */; };
+		TZ9000000000000000000011 /* GearTrackingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000010 /* GearTrackingTests.swift */; };
+		TZ9000000000000000000013 /* WeatherServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000012 /* WeatherServiceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -164,15 +181,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		RP010000000000000000000001 /* TrainingMetrics/RacePredictorEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/RacePredictorEngine.swift; sourceTree = "<group>"; };
-		RP010000000000000000000003 /* Dashboard/PacingWristbandExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/PacingWristbandExporter.swift; sourceTree = "<group>"; };
-		RP010000000000000000000005 /* RacePredictorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RacePredictorTests.swift; sourceTree = "<group>"; };
-		A00200000000000000000091 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A00200000000000000000081 /* GpxParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/GpxParser.swift; sourceTree = "<group>"; };
-		A00200000000000000000082 /* FitParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/FitParser.swift; sourceTree = "<group>"; };
-		A00200000000000000000083 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications/HapticManager.swift; sourceTree = "<group>"; };
-		A00200000000000000000084 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/OnboardingView.swift; sourceTree = "<group>"; };
-		A00200000000000000000085 /* FileImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/FileImportView.swift; sourceTree = "<group>"; };
+		21BA22CA20C970255D953AAB /* Colors.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		318CA1B210669D9078106847 /* StoryFeedDashboardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StoryFeedDashboardView.swift; sourceTree = "<group>"; };
+		5C2E149FD25BF0B21FE78663 /* ActivityCardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ActivityCardView.swift; sourceTree = "<group>"; };
 		A00200000000000000000001 /* TezDavApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavApp.swift; sourceTree = "<group>"; };
 		A00200000000000000000002 /* AppRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRootView.swift; sourceTree = "<group>"; };
 		A00200000000000000000003 /* TrainingMetrics/TrainingLoadCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/TrainingLoadCalculator.swift; sourceTree = "<group>"; };
@@ -220,15 +231,48 @@
 		A00200000000000000000074 /* TrainingMetrics/TrainingPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/TrainingPlanner.swift; sourceTree = "<group>"; };
 		A00200000000000000000075 /* Sync/ExportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/ExportManager.swift; sourceTree = "<group>"; };
 		A00200000000000000000076 /* Dashboard/TrainingPlannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/TrainingPlannerView.swift; sourceTree = "<group>"; };
+		A00200000000000000000081 /* Sync/GpxParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/GpxParser.swift; sourceTree = "<group>"; };
+		A00200000000000000000082 /* Sync/FitParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/FitParser.swift; sourceTree = "<group>"; };
+		A00200000000000000000083 /* Notifications/HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications/HapticManager.swift; sourceTree = "<group>"; };
+		A00200000000000000000084 /* Dashboard/OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/OnboardingView.swift; sourceTree = "<group>"; };
+		A00200000000000000000085 /* Dashboard/FileImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/FileImportView.swift; sourceTree = "<group>"; };
+		A00200000000000000000091 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A00200000000000000000099 /* SharedVersion.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SharedVersion.xcconfig; sourceTree = "<group>"; };
+		A00200000000000000000100 /* TezDav/TezDav.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TezDav/TezDav.entitlements; sourceTree = "<group>"; };
+		A00200000000000000000101 /* Dashboard/DemoDataSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/DemoDataSeeder.swift; sourceTree = "<group>"; };
+		A3D23C83D6D43DCEAA0B3E35 /* CustomTabBar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
+		999900019999000199990002 /* GoogleMapView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GoogleMapView.swift; sourceTree = "<group>"; };
+		AI010000000000000000000001 /* TrainingMetrics/AICoachEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/AICoachEngine.swift; sourceTree = "<group>"; };
+		AI010000000000000000000003 /* AICoachTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AICoachTests.swift; sourceTree = "<group>"; };
+		B9BC215D5A4C43480845BA1F /* ComponentStyles.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ComponentStyles.swift; sourceTree = "<group>"; };
+		C8654AB12950F487CF2572F0 /* LiquidGlass.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LiquidGlass.swift; sourceTree = "<group>"; };
+		CBE4608AE34BAC5C03D4882A /* Typography.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
+		FC0100000000000000000001 /* Persistence/PlannedWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/PlannedWorkout.swift; sourceTree = "<group>"; };
+		FC0100000000000000000003 /* ForecastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastTests.swift; sourceTree = "<group>"; };
+		HM020000000000000000000001 /* RouteBuilder/PolylineEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/PolylineEncoder.swift; sourceTree = "<group>"; };
+		HM020000000000000000000002 /* RouteBuilder/PersonalHeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/PersonalHeatmapView.swift; sourceTree = "<group>"; };
+		HM020000000000000000000003 /* PolylineEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolylineEncoderTests.swift; sourceTree = "<group>"; };
 		LA02000000000000000000001 /* LiveActivity/WorkoutActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/WorkoutActivityAttributes.swift; sourceTree = "<group>"; };
 		LA02000000000000000000002 /* LiveActivity/LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/LiveActivityManager.swift; sourceTree = "<group>"; };
 		LA02000000000000000000003 /* LiveActivity/WorkoutSimulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/WorkoutSimulator.swift; sourceTree = "<group>"; };
+		LA02000000000000000000009 /* LiveActivity/TezDavAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/TezDavAttributes.swift; sourceTree = "<group>"; };
 		LA02000000000000000000010 /* TezDavLiveActivity.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TezDavLiveActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		LA02000000000000000000012 /* TezDavLiveActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/TezDavLiveActivityBundle.swift; sourceTree = SOURCE_ROOT; };
-		LA02000000000000000000013 /* WorkoutLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/WorkoutLiveActivity.swift; sourceTree = SOURCE_ROOT; };
-		LA02000000000000000000014 /* LockScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/LockScreenView.swift; sourceTree = SOURCE_ROOT; };
-		LA02000000000000000000015 /* DynamicIslandViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/DynamicIslandViews.swift; sourceTree = SOURCE_ROOT; };
-		LA02000000000000000000016 /* LiveActivityHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/LiveActivityHelpers.swift; sourceTree = SOURCE_ROOT; };
+		LA02000000000000000000012 /* TezDavLiveActivity/TezDavLiveActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/TezDavLiveActivityBundle.swift; sourceTree = SOURCE_ROOT; };
+		LA02000000000000000000013 /* TezDavLiveActivity/WorkoutLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/WorkoutLiveActivity.swift; sourceTree = SOURCE_ROOT; };
+		LA02000000000000000000014 /* TezDavLiveActivity/LockScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/LockScreenView.swift; sourceTree = SOURCE_ROOT; };
+		LA02000000000000000000015 /* TezDavLiveActivity/DynamicIslandViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/DynamicIslandViews.swift; sourceTree = SOURCE_ROOT; };
+		LA02000000000000000000016 /* TezDavLiveActivity/LiveActivityHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/LiveActivityHelpers.swift; sourceTree = SOURCE_ROOT; };
+		LA02000000000000000000019 /* TezDavLiveActivity/TezDavLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/TezDavLiveActivity.swift; sourceTree = SOURCE_ROOT; };
+		LA02000000000000000000020 /* TezDavLiveActivity/TezDavLiveActivity.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TezDavLiveActivity/TezDavLiveActivity.entitlements; sourceTree = "<group>"; };
+		LS02000000000000000000001 /* LiveActivity/LiveSegmentCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/LiveSegmentCoordinator.swift; sourceTree = "<group>"; };
+		LS02000000000000000000002 /* LiveActivity/LiveSegmentOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/LiveSegmentOverlayView.swift; sourceTree = "<group>"; };
+		LS02000000000000000000003 /* LiveActivity/WorkoutSimulatorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/WorkoutSimulatorSheet.swift; sourceTree = "<group>"; };
+		LS02000000000000000000004 /* LiveSegmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveSegmentTests.swift; sourceTree = "<group>"; };
+		PC0200000000000000000001 /* TrainingMetrics/PowerCurveCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/PowerCurveCalculator.swift; sourceTree = "<group>"; };
+		PC0200000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/CriticalPowerSolver.swift; sourceTree = "<group>"; };
+		PC0200000000000000000003 /* Dashboard/PowerCurveChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/PowerCurveChartView.swift; sourceTree = "<group>"; };
+		PC0200000000000000000004 /* Dashboard/PowerCurveFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/PowerCurveFormView.swift; sourceTree = "<group>"; };
+		PC0200000000000000000005 /* PowerCurveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerCurveTests.swift; sourceTree = "<group>"; };
 		RB0200000000000000000001 /* Persistence/SavedRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/SavedRoute.swift; sourceTree = "<group>"; };
 		RB0200000000000000000002 /* RouteBuilder/ElevationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/ElevationService.swift; sourceTree = "<group>"; };
 		RB0200000000000000000003 /* RouteBuilder/RouteEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/RouteEngine.swift; sourceTree = "<group>"; };
@@ -236,40 +280,24 @@
 		RB0200000000000000000005 /* RouteBuilder/RouteBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/RouteBuilderView.swift; sourceTree = "<group>"; };
 		RB0200000000000000000006 /* RouteBuilder/RouteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/RouteDetailView.swift; sourceTree = "<group>"; };
 		RB0200000000000000000007 /* RouteBuilder/RouteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/RouteListView.swift; sourceTree = "<group>"; };
+		RD010000000000000000000001 /* TrainingMetrics/RunningDynamicsEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/RunningDynamicsEngine.swift; sourceTree = "<group>"; };
+		RD010000000000000000000003 /* RunningDynamicsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningDynamicsTests.swift; sourceTree = "<group>"; };
+		RP010000000000000000000001 /* TrainingMetrics/RacePredictorEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/RacePredictorEngine.swift; sourceTree = "<group>"; };
+		RP010000000000000000000003 /* Dashboard/PacingWristbandExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/PacingWristbandExporter.swift; sourceTree = "<group>"; };
+		RP010000000000000000000005 /* RacePredictorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RacePredictorTests.swift; sourceTree = "<group>"; };
 		RT0200000000000000000001 /* RouteBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilderTests.swift; sourceTree = "<group>"; };
-		PC0200000000000000000001 /* TrainingMetrics/PowerCurveCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/PowerCurveCalculator.swift; sourceTree = "<group>"; };
-		PC0200000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/CriticalPowerSolver.swift; sourceTree = "<group>"; };
-		PC0200000000000000000003 /* Dashboard/PowerCurveChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/PowerCurveChartView.swift; sourceTree = "<group>"; };
-		PC0200000000000000000004 /* Dashboard/PowerCurveFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/PowerCurveFormView.swift; sourceTree = "<group>"; };
-		PC0200000000000000000005 /* PowerCurveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerCurveTests.swift; sourceTree = "<group>"; };
 		SG0200000000000000000001 /* Persistence/Segment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/Segment.swift; sourceTree = "<group>"; };
 		SG0200000000000000000002 /* Persistence/SegmentEffort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/SegmentEffort.swift; sourceTree = "<group>"; };
 		SG0200000000000000000003 /* TrainingMetrics/SegmentMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/SegmentMatcher.swift; sourceTree = "<group>"; };
 		SG0200000000000000000004 /* Dashboard/SegmentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/SegmentListView.swift; sourceTree = "<group>"; };
 		SG0200000000000000000005 /* Dashboard/SegmentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/SegmentDetailView.swift; sourceTree = "<group>"; };
 		SG0200000000000000000006 /* SegmentMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentMatcherTests.swift; sourceTree = "<group>"; };
-		HM020000000000000000000001 /* RouteBuilder/PolylineEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/PolylineEncoder.swift; sourceTree = "<group>"; };
-		HM020000000000000000000002 /* RouteBuilder/PersonalHeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/PersonalHeatmapView.swift; sourceTree = "<group>"; };
-		HM020000000000000000000003 /* PolylineEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolylineEncoderTests.swift; sourceTree = "<group>"; };
-		AI010000000000000000000001 /* TrainingMetrics/AICoachEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/AICoachEngine.swift; sourceTree = "<group>"; };
-		AI010000000000000000000003 /* AICoachTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AICoachTests.swift; sourceTree = "<group>"; };
-		RD010000000000000000000001 /* TrainingMetrics/RunningDynamicsEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/RunningDynamicsEngine.swift; sourceTree = "<group>"; };
-		RD010000000000000000000003 /* RunningDynamicsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningDynamicsTests.swift; sourceTree = "<group>"; };
-		TZ8000000000000000000001 /* Persistence/PersonalSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/PersonalSegment.swift; sourceTree = "<group>"; };
-		TZ8000000000000000000003 /* TrainingMetrics/PersonalSegmentMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/PersonalSegmentMatcher.swift; sourceTree = "<group>"; };
-		TZ8000000000000000000005 /* Dashboard/CreatePersonalSegmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/CreatePersonalSegmentView.swift; sourceTree = "<group>"; };
-		LA02000000000000000000009 /* LiveActivity/TezDavAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/TezDavAttributes.swift; sourceTree = "<group>"; };
-		LA02000000000000000000019 /* TezDavLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavLiveActivity/TezDavLiveActivity.swift; sourceTree = SOURCE_ROOT; };
-		TZ9000000000000000000000 /* Persistence/GearItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/GearItem.swift; sourceTree = "<group>"; };
-		TZ9000000000000000000002 /* Persistence/WeatherSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/WeatherSnapshot.swift; sourceTree = "<group>"; };
-		TZ9000000000000000000004 /* Sync/WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/WeatherService.swift; sourceTree = "<group>"; };
-		TZ9000000000000000000006 /* Dashboard/WeatherAnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/WeatherAnalyticsView.swift; sourceTree = "<group>"; };
-		TZ9000000000000000000008 /* Dashboard/GearListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/GearListView.swift; sourceTree = "<group>"; };
-		TZ900000000000000000000A /* TrainingMetrics/CoachingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/CoachingEngine.swift; sourceTree = "<group>"; };
-		TZ900000000000000000000C /* Dashboard/CoachingInsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/CoachingInsightsView.swift; sourceTree = "<group>"; };
-		TZ900000000000000000000E /* CoachingEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachingEngineTests.swift; sourceTree = "<group>"; };
-		TZ9000000000000000000010 /* GearTrackingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GearTrackingTests.swift; sourceTree = "<group>"; };
-		TZ9000000000000000000012 /* WeatherServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherServiceTests.swift; sourceTree = "<group>"; };
+		SH1200000000000000000001 /* Dashboard/WorkoutCardShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/WorkoutCardShareView.swift; sourceTree = "<group>"; };
+		SH1200000000000000000003 /* Dashboard/WeeklySummaryShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/WeeklySummaryShareView.swift; sourceTree = "<group>"; };
+		SH1200000000000000000005 /* RouteBuilder/GlobalHeatmapTileOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/GlobalHeatmapTileOverlay.swift; sourceTree = "<group>"; };
+		SH1200000000000000000007 /* RouteBuilder/HeatmapMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/HeatmapMapView.swift; sourceTree = "<group>"; };
+		SH1200000000000000000009 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		SH1200000000000000000011 /* AppStoreAndSharingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStoreAndSharingTests.swift; sourceTree = "<group>"; };
 		TZ1000000000000000000001 /* Shortcuts/ShortcutsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shortcuts/ShortcutsProvider.swift; sourceTree = "<group>"; };
 		TZ1000000000000000000003 /* Sync/CoreSpotlightManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/CoreSpotlightManager.swift; sourceTree = "<group>"; };
 		TZ1000000000000000000005 /* TrainingMetrics/CyclingDynamicsEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/CyclingDynamicsEngine.swift; sourceTree = "<group>"; };
@@ -284,25 +312,32 @@
 		TZ1102000000000000000004 /* CasualAndGamificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CasualAndGamificationTests.swift; sourceTree = "<group>"; };
 		TZ1102000000000000000005 /* Dashboard/CasualDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/CasualDashboardView.swift; sourceTree = "<group>"; };
 		TZ1102000000000000000006 /* Persistence/Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/Achievement.swift; sourceTree = "<group>"; };
-		SH1200000000000000000001 /* Dashboard/WorkoutCardShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/WorkoutCardShareView.swift; sourceTree = "<group>"; };
-		SH1200000000000000000003 /* Dashboard/WeeklySummaryShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/WeeklySummaryShareView.swift; sourceTree = "<group>"; };
-		SH1200000000000000000005 /* RouteBuilder/GlobalHeatmapTileOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/GlobalHeatmapTileOverlay.swift; sourceTree = "<group>"; };
-		SH1200000000000000000007 /* RouteBuilder/HeatmapMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteBuilder/HeatmapMapView.swift; sourceTree = "<group>"; };
-		SH1200000000000000000009 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		SH1200000000000000000011 /* AppStoreAndSharingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStoreAndSharingTests.swift; sourceTree = "<group>"; };
-		TZ8000000000000000000007 /* PersonalSegmentMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalSegmentMatcherTests.swift; sourceTree = "<group>"; };
+		TZ1302000000000000000001 /* TestDataFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDataFactory.swift; sourceTree = "<group>"; };
+		TZ1302000000000000000002 /* BoundaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundaryTests.swift; sourceTree = "<group>"; };
+		TZ1302000000000000000003 /* IntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationTests.swift; sourceTree = "<group>"; };
+		TZ1302000000000000000004 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
+		TZ1302000000000000000005 /* AccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTests.swift; sourceTree = "<group>"; };
+		TZ1302000000000000000006 /* SnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotTests.swift; sourceTree = "<group>"; };
+		TZ1302000000000000000007 /* TezDavUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavUITests.swift; sourceTree = "<group>"; };
 		TZ1700000000000000000001 /* Persistence/FriendActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/FriendActivity.swift; sourceTree = "<group>"; };
 		TZ1700000000000000000003 /* Persistence/FriendComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/FriendComment.swift; sourceTree = "<group>"; };
 		TZ1700000000000000000005 /* Dashboard/SocialFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/SocialFeedView.swift; sourceTree = "<group>"; };
 		TZ1700000000000000000007 /* SocialFeedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialFeedTests.swift; sourceTree = "<group>"; };
-		FC0100000000000000000001 /* Persistence/PlannedWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/PlannedWorkout.swift; sourceTree = "<group>"; };
-		FC0100000000000000000003 /* ForecastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastTests.swift; sourceTree = "<group>"; };
-		LS02000000000000000000001 /* LiveActivity/LiveSegmentCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/LiveSegmentCoordinator.swift; sourceTree = "<group>"; };
-		LS02000000000000000000002 /* LiveActivity/LiveSegmentOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/LiveSegmentOverlayView.swift; sourceTree = "<group>"; };
-		LS02000000000000000000003 /* LiveActivity/WorkoutSimulatorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity/WorkoutSimulatorSheet.swift; sourceTree = "<group>"; };
-		LS02000000000000000000004 /* LiveSegmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveSegmentTests.swift; sourceTree = "<group>"; };
+		TZ8000000000000000000001 /* Persistence/PersonalSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/PersonalSegment.swift; sourceTree = "<group>"; };
+		TZ8000000000000000000003 /* TrainingMetrics/PersonalSegmentMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/PersonalSegmentMatcher.swift; sourceTree = "<group>"; };
+		TZ8000000000000000000005 /* Dashboard/CreatePersonalSegmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/CreatePersonalSegmentView.swift; sourceTree = "<group>"; };
+		TZ8000000000000000000007 /* PersonalSegmentMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalSegmentMatcherTests.swift; sourceTree = "<group>"; };
+		TZ9000000000000000000000 /* Persistence/GearItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/GearItem.swift; sourceTree = "<group>"; };
+		TZ9000000000000000000002 /* Persistence/WeatherSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/WeatherSnapshot.swift; sourceTree = "<group>"; };
+		TZ9000000000000000000004 /* Sync/WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/WeatherService.swift; sourceTree = "<group>"; };
+		TZ9000000000000000000006 /* Dashboard/WeatherAnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/WeatherAnalyticsView.swift; sourceTree = "<group>"; };
+		TZ9000000000000000000008 /* Dashboard/GearListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/GearListView.swift; sourceTree = "<group>"; };
+		TZ900000000000000000000A /* TrainingMetrics/CoachingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/CoachingEngine.swift; sourceTree = "<group>"; };
+		TZ900000000000000000000C /* Dashboard/CoachingInsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/CoachingInsightsView.swift; sourceTree = "<group>"; };
+		TZ900000000000000000000E /* CoachingEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachingEngineTests.swift; sourceTree = "<group>"; };
+		TZ9000000000000000000010 /* GearTrackingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GearTrackingTests.swift; sourceTree = "<group>"; };
+		TZ9000000000000000000012 /* WeatherServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherServiceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
 
 /* Begin PBXFrameworksBuildPhase section */
 		A00600000000000000000001 /* Frameworks */ = {
@@ -313,6 +348,7 @@
 				598F8D16404199C9E89E048A /* FitnessUnits in Frameworks */,
 				598F8D16404199C9E89E048B /* AntMessageProtocol in Frameworks */,
 				598F8D16404199C9E89E048C /* DataDecoder in Frameworks */,
+				154374480578EE95344BDF9F /* GoogleMaps in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -320,6 +356,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				780FAA6CEBDE15ECC67941E0 /* SnapshotTesting in Frameworks */,
 				598F8D16404199C9E89E047D /* FitDataProtocol in Frameworks */,
 				780FAA6CEBDE15ECC6794193 /* FitDataProtocol in Frameworks */,
 			);
@@ -335,12 +372,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1DEE7564BB1BF3A763B6F89E /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				318CA1B210669D9078106847 /* StoryFeedDashboardView.swift */,
+			);
+			name = Dashboard;
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
 		A00700000000000000000001 = {
 			isa = PBXGroup;
 			children = (
 				A00700000000000000000002 /* TezDav */,
 				A00700000000000000000003 /* TezDavTests */,
 				A00700000000000000000004 /* Products */,
+				A00200000000000000000099 /* SharedVersion.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -358,14 +405,17 @@
 				SH1200000000000000000005 /* RouteBuilder/GlobalHeatmapTileOverlay.swift */,
 				SH1200000000000000000007 /* RouteBuilder/HeatmapMapView.swift */,
 				SH1200000000000000000009 /* PrivacyInfo.xcprivacy */,
+				A00200000000000000000100 /* TezDav/TezDav.entitlements */,
+				LA02000000000000000000020 /* TezDavLiveActivity/TezDavLiveActivity.entitlements */,
 				RD010000000000000000000001 /* TrainingMetrics/RunningDynamicsEngine.swift */,
 				RP010000000000000000000003 /* Dashboard/PacingWristbandExporter.swift */,
 				A00200000000000000000091 /* Assets.xcassets */,
-				A00200000000000000000081 /* GpxParser.swift */,
-				A00200000000000000000082 /* FitParser.swift */,
-				A00200000000000000000083 /* HapticManager.swift */,
-				A00200000000000000000084 /* OnboardingView.swift */,
-				A00200000000000000000085 /* FileImportView.swift */,
+				A00200000000000000000081 /* Sync/GpxParser.swift */,
+				A00200000000000000000082 /* Sync/FitParser.swift */,
+				A00200000000000000000083 /* Notifications/HapticManager.swift */,
+				A00200000000000000000084 /* Dashboard/OnboardingView.swift */,
+				A00200000000000000000101 /* Dashboard/DemoDataSeeder.swift */,
+				A00200000000000000000085 /* Dashboard/FileImportView.swift */,
 				A00200000000000000000071 /* Persistence/IntervalSegment.swift */,
 				A00200000000000000000072 /* Persistence/TrainingWeek.swift */,
 				A00200000000000000000073 /* TrainingMetrics/IntervalDetector.swift */,
@@ -430,11 +480,11 @@
 				RB0200000000000000000005 /* RouteBuilder/RouteBuilderView.swift */,
 				RB0200000000000000000006 /* RouteBuilder/RouteDetailView.swift */,
 				RB0200000000000000000007 /* RouteBuilder/RouteListView.swift */,
-				LA02000000000000000000012 /* TezDavLiveActivityBundle.swift */,
-				LA02000000000000000000013 /* WorkoutLiveActivity.swift */,
-				LA02000000000000000000014 /* LockScreenView.swift */,
-				LA02000000000000000000015 /* DynamicIslandViews.swift */,
-				LA02000000000000000000016 /* LiveActivityHelpers.swift */,
+				LA02000000000000000000012 /* TezDavLiveActivity/TezDavLiveActivityBundle.swift */,
+				LA02000000000000000000013 /* TezDavLiveActivity/WorkoutLiveActivity.swift */,
+				LA02000000000000000000014 /* TezDavLiveActivity/LockScreenView.swift */,
+				LA02000000000000000000015 /* TezDavLiveActivity/DynamicIslandViews.swift */,
+				LA02000000000000000000016 /* TezDavLiveActivity/LiveActivityHelpers.swift */,
 				PC0200000000000000000001 /* TrainingMetrics/PowerCurveCalculator.swift */,
 				PC0200000000000000000002 /* TrainingMetrics/CriticalPowerSolver.swift */,
 				PC0200000000000000000003 /* Dashboard/PowerCurveChartView.swift */,
@@ -442,14 +492,10 @@
 				SG0200000000000000000001 /* Persistence/Segment.swift */,
 				SG0200000000000000000002 /* Persistence/SegmentEffort.swift */,
 				TZ8000000000000000000001 /* Persistence/PersonalSegment.swift */,
-
-								TZ8000000000000000000003 /* TrainingMetrics/PersonalSegmentMatcher.swift */,
-
-								TZ8000000000000000000005 /* Dashboard/CreatePersonalSegmentView.swift */,
-
-								LA02000000000000000000009 /* LiveActivity/TezDavAttributes.swift */,
-
-								LA02000000000000000000019 /* TezDavLiveActivity.swift */,
+				TZ8000000000000000000003 /* TrainingMetrics/PersonalSegmentMatcher.swift */,
+				TZ8000000000000000000005 /* Dashboard/CreatePersonalSegmentView.swift */,
+				LA02000000000000000000009 /* LiveActivity/TezDavAttributes.swift */,
+				LA02000000000000000000019 /* TezDavLiveActivity/TezDavLiveActivity.swift */,
 				SG0200000000000000000003 /* TrainingMetrics/SegmentMatcher.swift */,
 				SG0200000000000000000004 /* Dashboard/SegmentListView.swift */,
 				SG0200000000000000000005 /* Dashboard/SegmentDetailView.swift */,
@@ -460,6 +506,9 @@
 				TZ1102000000000000000003 /* Gamification/ContributionsHeatmapView.swift */,
 				TZ1102000000000000000005 /* Dashboard/CasualDashboardView.swift */,
 				TZ1102000000000000000006 /* Persistence/Achievement.swift */,
+				E43EB8478004AB8D7E047C2B /* DesignSystem */,
+				F0F75E382C4BF8A76627EE38 /* Components */,
+				1DEE7564BB1BF3A763B6F89E /* Dashboard */,
 			);
 			path = TezDav;
 			sourceTree = "<group>";
@@ -480,6 +529,13 @@
 				TZ9000000000000000000012 /* WeatherServiceTests.swift */,
 				RD010000000000000000000003 /* RunningDynamicsTests.swift */,
 				A00200000000000000000020 /* TezDavTests.swift */,
+				TZ1302000000000000000001 /* TestDataFactory.swift */,
+				TZ1302000000000000000002 /* BoundaryTests.swift */,
+				TZ1302000000000000000003 /* IntegrationTests.swift */,
+				TZ1302000000000000000004 /* PerformanceTests.swift */,
+				TZ1302000000000000000005 /* AccessibilityTests.swift */,
+				TZ1302000000000000000006 /* SnapshotTests.swift */,
+				TZ1302000000000000000007 /* TezDavUITests.swift */,
 				A00200000000000000000021 /* TrainingLoadCalculatorTests.swift */,
 				A00200000000000000000022 /* StravaOAuthTests.swift */,
 				A00200000000000000000023 /* RateLimitQueueTests.swift */,
@@ -506,6 +562,29 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		E43EB8478004AB8D7E047C2B /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				21BA22CA20C970255D953AAB /* Colors.swift */,
+				CBE4608AE34BAC5C03D4882A /* Typography.swift */,
+				B9BC215D5A4C43480845BA1F /* ComponentStyles.swift */,
+				C8654AB12950F487CF2572F0 /* LiquidGlass.swift */,
+			);
+			name = DesignSystem;
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		F0F75E382C4BF8A76627EE38 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				5C2E149FD25BF0B21FE78663 /* ActivityCardView.swift */,
+				A3D23C83D6D43DCEAA0B3E35 /* CustomTabBar.swift */,
+				999900019999000199990002 /* GoogleMapView.swift */,
+			);
+			name = Components;
+			path = Components;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -513,6 +592,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A01100000000000000000002 /* Build configuration list for PBXNativeTarget "TezDav" */;
 			buildPhases = (
+				A00800000000000000000003 /* SwiftLint */,
 				A00800000000000000000001 /* Sources */,
 				A00600000000000000000001 /* Frameworks */,
 				A00900000000000000000001 /* Resources */,
@@ -528,6 +608,7 @@
 				7EFE2C791C65C4881CC6548A /* FitnessUnits */,
 				7EFE2C791C65C4881CC6548B /* AntMessageProtocol */,
 				7EFE2C791C65C4881CC6548C /* DataDecoder */,
+				36AACD64712C473DE326E237 /* GoogleMaps */,
 			);
 			productName = TezDav;
 			productReference = A00200000000000000000027 /* TezDav.app */;
@@ -548,6 +629,7 @@
 			);
 			name = TezDavTests;
 			packageProductDependencies = (
+				7EFE2C791C65C4881CC654E0 /* SnapshotTesting */,
 				7EFE2C791C65C4881CC65413 /* FitDataProtocol */,
 			);
 			productName = TezDavTests;
@@ -600,10 +682,12 @@
 			);
 			mainGroup = A00700000000000000000001;
 			packageReferences = (
+				59FEB8010D350F2F2ABBF7E0 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 				59FEB8010D350F2F2ABBF7DF /* XCRemoteSwiftPackageReference "FitDataProtocol" */,
 				59FEB8010D350F2F2ABBF78A /* XCRemoteSwiftPackageReference "FitnessUnits" */,
 				59FEB8010D350F2F2ABBF78B /* XCRemoteSwiftPackageReference "AntMessageProtocol" */,
 				59FEB8010D350F2F2ABBF78C /* XCRemoteSwiftPackageReference "DataDecoder" */,
+				CFDCB4B38C66B515C1657939 /* XCRemoteSwiftPackageReference "ios-maps-sdk" */,
 			);
 			productRefGroup = A00700000000000000000004 /* Products */;
 			projectDirPath = "";
@@ -643,6 +727,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A00800000000000000000003 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A00800000000000000000001 /* Sources */ = {
@@ -708,11 +813,12 @@
 				A00100000000000000000076 /* Dashboard/TrainingPlannerView.swift in Sources */,
 				A00100000000000000000052 /* TrainingMetrics/HealthKitManager.swift in Sources */,
 				A00100000000000000000053 /* Sync/WatchConnectivityManager.swift in Sources */,
-				A00100000000000000000081 /* GpxParser.swift in Sources */,
-				A00100000000000000000082 /* FitParser.swift in Sources */,
-				A00100000000000000000083 /* HapticManager.swift in Sources */,
-				A00100000000000000000084 /* OnboardingView.swift in Sources */,
-				A00100000000000000000085 /* FileImportView.swift in Sources */,
+				A00100000000000000000081 /* Sync/GpxParser.swift in Sources */,
+				A00100000000000000000082 /* Sync/FitParser.swift in Sources */,
+				A00100000000000000000083 /* Notifications/HapticManager.swift in Sources */,
+				A00100000000000000000084 /* Dashboard/OnboardingView.swift in Sources */,
+				A00100000000000000000101 /* Dashboard/DemoDataSeeder.swift in Sources */,
+				A00100000000000000000085 /* Dashboard/FileImportView.swift in Sources */,
 				LA01000000000000000000001 /* LiveActivity/WorkoutActivityAttributes.swift in Sources */,
 				LA01000000000000000000002 /* LiveActivity/LiveActivityManager.swift in Sources */,
 				LA01000000000000000000003 /* LiveActivity/WorkoutSimulator.swift in Sources */,
@@ -733,12 +839,9 @@
 				SG0100000000000000000001 /* Persistence/Segment.swift in Sources */,
 				SG0100000000000000000002 /* Persistence/SegmentEffort.swift in Sources */,
 				TZ8000000000000000000002 /* Persistence/PersonalSegment.swift in Sources */,
-
-								TZ8000000000000000000004 /* TrainingMetrics/PersonalSegmentMatcher.swift in Sources */,
-
-								TZ8000000000000000000006 /* Dashboard/CreatePersonalSegmentView.swift in Sources */,
-
-								LA01000000000000000000009 /* LiveActivity/TezDavAttributes.swift in Sources */,
+				TZ8000000000000000000004 /* TrainingMetrics/PersonalSegmentMatcher.swift in Sources */,
+				TZ8000000000000000000006 /* Dashboard/CreatePersonalSegmentView.swift in Sources */,
+				LA01000000000000000000009 /* LiveActivity/TezDavAttributes.swift in Sources */,
 				SG0100000000000000000003 /* TrainingMetrics/SegmentMatcher.swift in Sources */,
 				SG0100000000000000000004 /* Dashboard/SegmentListView.swift in Sources */,
 				SG0100000000000000000005 /* Dashboard/SegmentDetailView.swift in Sources */,
@@ -749,6 +852,14 @@
 				TZ1101000000000000000003 /* Gamification/ContributionsHeatmapView.swift in Sources */,
 				TZ1101000000000000000005 /* Dashboard/CasualDashboardView.swift in Sources */,
 				TZ1101000000000000000006 /* Persistence/Achievement.swift in Sources */,
+				782872D6A5B5C27CD8222FCD /* Colors.swift in Sources */,
+				EB4E8FB725BE0E65345B04E4 /* Typography.swift in Sources */,
+				9142D9B3592ADAB220C1C3F2 /* ComponentStyles.swift in Sources */,
+				0AD88C6F7A6CCCD8A8558A05 /* ActivityCardView.swift in Sources */,
+				58721DC4373B687F0C2D422A /* CustomTabBar.swift in Sources */,
+				999900019999000199990001 /* GoogleMapView.swift in Sources */,
+				9CDAD0F22FDFAC16B12053D5 /* StoryFeedDashboardView.swift in Sources */,
+				D1BD8C6B9D6C6D6AE92619B8 /* LiquidGlass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -769,6 +880,12 @@
 				TZ9000000000000000000013 /* WeatherServiceTests.swift in Sources */,
 				RD010000000000000000000004 /* RunningDynamicsTests.swift in Sources */,
 				A00100000000000000000020 /* TezDavTests.swift in Sources */,
+				TZ1301000000000000000001 /* TestDataFactory.swift in Sources */,
+				TZ1301000000000000000002 /* BoundaryTests.swift in Sources */,
+				TZ1301000000000000000003 /* IntegrationTests.swift in Sources */,
+				TZ1301000000000000000004 /* PerformanceTests.swift in Sources */,
+				TZ1301000000000000000005 /* AccessibilityTests.swift in Sources */,
+				TZ1301000000000000000006 /* SnapshotTests.swift in Sources */,
 				A00100000000000000000021 /* TrainingLoadCalculatorTests.swift in Sources */,
 				A00100000000000000000022 /* StravaOAuthTests.swift in Sources */,
 				A00100000000000000000023 /* RateLimitQueueTests.swift in Sources */,
@@ -788,15 +905,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				LA01000000000000000000011 /* WorkoutActivityAttributes.swift in Sources (LA) */,
-				LA01000000000000000000012 /* TezDavLiveActivityBundle.swift in Sources */,
-				LA01000000000000000000013 /* WorkoutLiveActivity.swift in Sources */,
-				LA01000000000000000000029 /* TezDavAttributes.swift in Sources (LA) */,
-
-								LA01000000000000000000039 /* TezDavLiveActivity.swift in Sources (LA) */,
-				LA01000000000000000000014 /* LockScreenView.swift in Sources */,
-				LA01000000000000000000015 /* DynamicIslandViews.swift in Sources */,
-				LA01000000000000000000016 /* LiveActivityHelpers.swift in Sources */,
+				LA01000000000000000000011 /* LiveActivity/WorkoutActivityAttributes.swift in Sources */,
+				LA01000000000000000000012 /* TezDavLiveActivity/TezDavLiveActivityBundle.swift in Sources */,
+				LA01000000000000000000013 /* TezDavLiveActivity/WorkoutLiveActivity.swift in Sources */,
+				LA01000000000000000000029 /* LiveActivity/TezDavAttributes.swift in Sources */,
+				LA01000000000000000000039 /* TezDavLiveActivity/TezDavLiveActivity.swift in Sources */,
+				LA01000000000000000000014 /* TezDavLiveActivity/LockScreenView.swift in Sources */,
+				LA01000000000000000000015 /* TezDavLiveActivity/DynamicIslandViews.swift in Sources */,
+				LA01000000000000000000016 /* TezDavLiveActivity/LiveActivityHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -852,7 +968,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -880,8 +996,6 @@
 		A01200000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEAD_CODE_STRIPPING = YES;
-				LLVM_LTO = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -912,10 +1026,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -925,6 +1040,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LLVM_LTO = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -935,12 +1051,13 @@
 		};
 		A01200000000000000000003 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A00200000000000000000099 /* SharedVersion.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = TezDav/TezDav.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 3QA38P45PV;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TezDav/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -948,8 +1065,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.TezDav;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hafizov.tezdav;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -959,14 +1075,14 @@
 		};
 		A01200000000000000000004 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A00200000000000000000099 /* SharedVersion.xcconfig */;
 			buildSettings = {
-				DEAD_CODE_STRIPPING = YES;
-				LLVM_LTO = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = TezDav/TezDav.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 3QA38P45PV;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TezDav/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -974,8 +1090,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.TezDav;
+				LLVM_LTO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hafizov.tezdav;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -985,11 +1101,11 @@
 		};
 		A01200000000000000000005 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A00200000000000000000099 /* SharedVersion.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 3QA38P45PV;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -997,8 +1113,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.TezDavTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hafizov.tezdav.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -1009,11 +1124,11 @@
 		};
 		A01200000000000000000006 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A00200000000000000000099 /* SharedVersion.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 3QA38P45PV;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1021,8 +1136,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.TezDavTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hafizov.tezdav.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -1033,10 +1147,11 @@
 		};
 		LA12000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A00200000000000000000099 /* SharedVersion.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = TezDavLiveActivity/TezDavLiveActivity.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 3QA38P45PV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = TezDavLiveActivity;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -1046,8 +1161,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.TezDav.LiveActivity;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hafizov.tezdav.liveactivity;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1058,10 +1172,11 @@
 		};
 		LA12000000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A00200000000000000000099 /* SharedVersion.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = TezDavLiveActivity/TezDavLiveActivity.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 3QA38P45PV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = TezDavLiveActivity;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -1071,8 +1186,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.TezDav.LiveActivity;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hafizov.tezdav.liveactivity;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1123,14 +1237,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		59FEB8010D350F2F2ABBF7DF /* XCRemoteSwiftPackageReference "FitDataProtocol" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/FitnessKit/FitDataProtocol";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.1.4;
-			};
-		};
 		59FEB8010D350F2F2ABBF78A /* XCRemoteSwiftPackageReference "FitnessUnits" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/FitnessKit/FitnessUnits";
@@ -1155,15 +1261,39 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		59FEB8010D350F2F2ABBF7DF /* XCRemoteSwiftPackageReference "FitDataProtocol" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/FitnessKit/FitDataProtocol";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.4;
+			};
+		};
+		59FEB8010D350F2F2ABBF7E0 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.15.0;
+			};
+		};
+		CFDCB4B38C66B515C1657939 /* XCRemoteSwiftPackageReference "ios-maps-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googlemaps/ios-maps-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		7EFE2C791C65C4881CC65413 /* FitDataProtocol */ = {
+		36AACD64712C473DE326E237 /* GoogleMaps */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 59FEB8010D350F2F2ABBF7DF /* XCRemoteSwiftPackageReference "FitDataProtocol" */;
-			productName = FitDataProtocol;
+			package = CFDCB4B38C66B515C1657939 /* XCRemoteSwiftPackageReference "ios-maps-sdk" */;
+			productName = GoogleMaps;
 		};
-		"TEMP_F2492D5D-8A8F-4FFB-9D9F-36BD3FC4C05B" /* FitDataProtocol */ = {
+		7EFE2C791C65C4881CC65413 /* FitDataProtocol */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 59FEB8010D350F2F2ABBF7DF /* XCRemoteSwiftPackageReference "FitDataProtocol" */;
 			productName = FitDataProtocol;
@@ -1182,6 +1312,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 59FEB8010D350F2F2ABBF78C /* XCRemoteSwiftPackageReference "DataDecoder" */;
 			productName = DataDecoder;
+		};
+		7EFE2C791C65C4881CC654E0 /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 59FEB8010D350F2F2ABBF7E0 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
+		"TEMP_F2492D5D-8A8F-4FFB-9D9F-36BD3FC4C05B" /* FitDataProtocol */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 59FEB8010D350F2F2ABBF7DF /* XCRemoteSwiftPackageReference "FitDataProtocol" */;
+			productName = FitDataProtocol;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

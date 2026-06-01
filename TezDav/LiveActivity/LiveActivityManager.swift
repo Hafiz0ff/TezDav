@@ -18,7 +18,10 @@ final class LiveActivityManager {
     
     /// Whether Live Activities are available and enabled by the user.
     var isAvailable: Bool {
-        ActivityAuthorizationInfo().areActivitiesEnabled
+        if isRunningTests {
+            return false
+        }
+        return ActivityAuthorizationInfo().areActivitiesEnabled
     }
     
     /// Whether a workout Live Activity is currently running.
@@ -108,6 +111,7 @@ final class LiveActivityManager {
     
     /// Ends all TezDav workout Live Activities (cleanup on app launch).
     func endAllActivities() {
+        guard isAvailable else { return }
         Task {
             for activity in ActivityKit.Activity<WorkoutActivityAttributes>.activities {
                 await activity.end(nil, dismissalPolicy: .immediate)

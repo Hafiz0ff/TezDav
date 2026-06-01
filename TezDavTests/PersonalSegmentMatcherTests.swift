@@ -12,7 +12,7 @@ final class PersonalSegmentMatcherTests: XCTestCase {
         try super.setUpWithError()
         container = try ModelContainer(
             for: Activity.self, ActivityStreamSample.self, PersonalSegment.self, SegmentEffort.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         )
         context = ModelContext(container)
     }

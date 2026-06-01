@@ -1,8 +1,8 @@
 import SwiftData
 import SwiftUI
 
-/// Story Feed Dashboard - New Design
-/// Vertical feed of activity cards with elevated depth style
+/// Story Feed Dashboard — Liquid Glass redesign.
+/// Vertical feed of activity cards over an ambient emerald-tinted backdrop.
 struct StoryFeedDashboardView: View {
     @Query(sort: \Activity.startDate, order: .reverse) private var activities: [Activity]
     @Query private var userSettings: [UserSettings]
@@ -16,90 +16,86 @@ struct StoryFeedDashboardView: View {
 
     private var filteredActivities: [Activity] {
         activities.filter { activity in
+            let type = activity.sportType.lowercased()
             switch selectedSport {
             case .all:
                 return true
             case .run:
-                return activity.sportType.lowercased().contains("run")
+                return type.contains("run")
             case .ride:
-                return activity.sportType.lowercased().contains("ride") || activity.sportType.lowercased().contains("cycl")
+                return type.contains("ride") || type.contains("cycl")
             case .walk:
-                return activity.sportType.lowercased().contains("walk") || activity.sportType.lowercased().contains("hike")
+                return type.contains("walk") || type.contains("hike")
             case .swim:
-                return activity.sportType.lowercased().contains("swim")
+                return type.contains("swim")
             case .other:
-                let type = activity.sportType.lowercased()
-                return !type.contains("run") && !type.contains("ride") && !type.contains("cycl") && !type.contains("walk") && !type.contains("hike") && !type.contains("swim")
+                return !type.contains("run") && !type.contains("ride")
+                    && !type.contains("cycl") && !type.contains("walk")
+                    && !type.contains("hike") && !type.contains("swim")
             }
         }
     }
 
     var body: some View {
-        ZStack {
-            // Background
-            Color.backgroundPrimary
-                .ignoresSafeArea()
+        ScrollView {
+            VStack(alignment: .leading, spacing: 22) {
+                header
+                    .padding(.horizontal, 22)
+                    .padding(.top, 20)
 
-            ScrollView {
-                VStack(spacing: 0) {
-                    // Header
-                    header
-                        .padding(.horizontal, Spacing.xl)
-                        .padding(.top, Spacing.md)
-                        .padding(.bottom, Spacing.lg)
+                quickStatsBar
+                    .padding(.horizontal, 22)
 
-                    // Quick Stats Bar
-                    quickStatsBar
-                        .padding(.horizontal, Spacing.xl)
-                        .padding(.bottom, Spacing.xl)
+                sportFilterPills
 
-                    // Sport Filter Pills
-                    sportFilterPills
-                        .padding(.bottom, Spacing.lg)
-
-                    // Activity Feed
-                    activityFeed
-                        .padding(.horizontal, Spacing.xl)
-                        .padding(.bottom, Spacing.xl)
-                }
+                activityFeed
+                    .padding(.horizontal, 22)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.bottom, 140)  // room for floating tab bar
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.clear)
+        .toolbar(.hidden, for: .navigationBar)
     }
 
     // MARK: - Header
 
     private var header: some View {
         HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text("Активности")
-                    .font(.largeTitle)
-                    .foregroundColor(.textPrimary)
+                    .font(.system(size: 30, weight: .bold))
+                    .foregroundColor(.textOnGlass)
+                    .tracking(-0.4)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
 
                 Text("Ваша история тренировок")
-                    .font(.callout)
-                    .foregroundColor(.textDisabled)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.textSecondaryReadable)
+                    .lineLimit(1)
             }
 
-            Spacer()
+            Spacer(minLength: 12)
 
-            // Profile Button
+            // Profile button — glass circle
             Button {
                 // Navigate to profile
             } label: {
-                Circle()
-                    .fill(Color.backgroundSecondary)
-                    .frame(width: 40, height: 40)
-                    .overlay(
-                        Circle()
-                            .stroke(Color.accentPrimary, lineWidth: 2)
-                    )
-                    .overlay(
-                        Image(systemName: "person.fill")
-                            .font(.system(size: 18))
-                            .foregroundColor(.accentPrimary)
-                    )
-                    .shadow(color: Color.black.opacity(0.3), radius: 6, x: 0, y: 4)
+                ZStack {
+                    Circle()
+                        .fill(Color.glassNeutralTint)
+                    Circle()
+                        .strokeBorder(Color.accentPrimary.opacity(0.6), lineWidth: 1.5)
+                    Image(systemName: "person.fill")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(Color.accentPrimary)
+                }
+                .frame(width: 42, height: 42)
+                .shadow(color: Color.accentPrimary.opacity(0.35), radius: 12, x: 0, y: 6)
             }
+            .buttonStyle(.plain)
         }
     }
 
@@ -107,28 +103,24 @@ struct StoryFeedDashboardView: View {
 
     private var quickStatsBar: some View {
         let summary = DashboardViewModel.summary(from: activities)
-        let readinessScore = 87 // TODO: Get from HealthKit
+        let readinessScore = 87  // TODO: wire to HealthKit-derived readiness
 
-        return HStack(spacing: Spacing.lg) {
+        return HStack(spacing: 0) {
             quickStatItem(
                 label: "Готовность",
                 value: "\(readinessScore)%",
                 isAccent: true
             )
 
-            Divider()
-                .frame(height: 40)
-                .background(Color.backgroundTertiary)
+            statDivider
 
             quickStatItem(
-                label: "км неделя",
-                value: String(format: "%.1f", summary.weeklyDistanceMeters / 1000.0),
+                label: activeUserSettings.isMetric ? "км неделя" : "ми неделя",
+                value: weeklyDistanceString(summary.weeklyDistanceMeters),
                 isAccent: false
             )
 
-            Divider()
-                .frame(height: 40)
-                .background(Color.backgroundTertiary)
+            statDivider
 
             quickStatItem(
                 label: "Форма",
@@ -136,73 +128,86 @@ struct StoryFeedDashboardView: View {
                 isAccent: summary.tsb > 0
             )
         }
-        .padding(Spacing.lg)
-        .background(Color.backgroundSecondary)
-        .cornerRadius(CornerRadius.regular)
-        .overlay(
-            RoundedRectangle(cornerRadius: CornerRadius.regular)
-                .stroke(Color.backgroundTertiary, lineWidth: 1)
-        )
+        .padding(.vertical, 16)
+        .padding(.horizontal, 12)
+        .liquidGlassCard(cornerRadius: 20, tint: .neutral)
+    }
+
+    private var statDivider: some View {
+        Rectangle()
+            .fill(Color.white.opacity(0.12))
+            .frame(width: 1, height: 36)
     }
 
     private func quickStatItem(label: String, value: String, isAccent: Bool) -> some View {
-        VStack(spacing: 2) {
+        VStack(spacing: 6) {
             Text(value)
-                .font(.metricRegular)
-                .foregroundColor(isAccent ? .accentPrimary : .textPrimary)
-                .monospacedDigit()
+                .font(.system(size: 22, weight: .bold, design: .monospaced))
+                .foregroundColor(isAccent ? .accentPrimary : .textOnGlass)
+                .shadow(
+                    color: isAccent ? Color.accentPrimary.opacity(0.45) : .clear,
+                    radius: isAccent ? 10 : 0
+                )
 
             Text(label)
-                .font(.caption2)
-                .foregroundColor(.textDisabled)
+                .font(.system(size: 11, weight: .semibold))
+                .tracking(0.4)
+                .foregroundColor(.textSecondaryReadable)
         }
         .frame(maxWidth: .infinity)
+    }
+
+    private func weeklyDistanceString(_ meters: Double) -> String {
+        let value = activeUserSettings.isMetric ? meters / 1000.0 : meters / 1609.34
+        return String(format: "%.1f", value)
     }
 
     // MARK: - Sport Filter Pills
 
     private var sportFilterPills: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: Spacing.sm) {
+            HStack(spacing: 10) {
                 ForEach(SportFilter.allCases, id: \.self) { sport in
                     Button {
                         HapticManager.trigger(.light)
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.72)) {
                             selectedSport = sport
                         }
                     } label: {
                         Text(sport.displayName)
-                            .pillBadge(isActive: selectedSport == sport)
+                            .font(.system(size: 14, weight: selectedSport == sport ? .bold : .semibold))
+                            .foregroundColor(
+                                selectedSport == sport ? .textOnGlass : .textSecondaryReadable
+                            )
+                            .padding(.vertical, 9)
+                            .padding(.horizontal, 18)
+                            .liquidGlassPill(isActive: selectedSport == sport)
                     }
+                    .buttonStyle(.plain)
                 }
             }
-            .padding(.horizontal, Spacing.xl)
+            .padding(.horizontal, 22)
         }
     }
 
     // MARK: - Activity Feed
 
     private var activityFeed: some View {
-        LazyVStack(spacing: Spacing.lg) {
-            ForEach(Array(filteredActivities.enumerated()), id: \.element.stravaId) { index, activity in
-                if index == 0 {
-                    // First card - full with map preview
+        LazyVStack(spacing: 16) {
+            if filteredActivities.isEmpty {
+                emptyStateView
+                    .padding(.top, 40)
+            } else {
+                ForEach(Array(filteredActivities.enumerated()), id: \.element.stravaId) { index, activity in
                     NavigationLink(destination: ActivityDetailView(activity: activity)) {
-                        ActivityCardView(activity: activity)
-                    }
-                    .buttonStyle(CardButtonStyle())
-                } else {
-                    // Compact cards for older activities
-                    NavigationLink(destination: ActivityDetailView(activity: activity)) {
-                        CompactActivityCardView(activity: activity)
+                        if index == 0 {
+                            ActivityCardView(activity: activity)
+                        } else {
+                            CompactActivityCardView(activity: activity)
+                        }
                     }
                     .buttonStyle(CardButtonStyle())
                 }
-            }
-
-            if filteredActivities.isEmpty {
-                emptyStateView
-                    .padding(.top, Spacing.xxxl)
             }
         }
     }
@@ -210,23 +215,34 @@ struct StoryFeedDashboardView: View {
     // MARK: - Empty State
 
     private var emptyStateView: some View {
-        VStack(spacing: Spacing.lg) {
-            Image(systemName: "figure.run")
-                .font(.system(size: 64))
-                .foregroundColor(.textDisabled)
-                .opacity(0.3)
+        VStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(Color.glassEmeraldTint)
+                    .frame(width: 100, height: 100)
+                Circle()
+                    .strokeBorder(Color.accentPrimary.opacity(0.4), lineWidth: 1.5)
+                    .frame(width: 100, height: 100)
+                Image(systemName: "figure.run")
+                    .font(.system(size: 44, weight: .semibold))
+                    .foregroundStyle(Color.accentPrimary)
+            }
+            .shadow(color: Color.accentPrimary.opacity(0.35), radius: 24, x: 0, y: 10)
 
             Text("Нет активностей")
-                .font(.title3)
-                .foregroundColor(.textSecondary)
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(.textOnGlass)
 
-            Text("Импортируйте GPX/FIT файлы или подключите Strava")
-                .font(.callout)
-                .foregroundColor(.textTertiary)
+            Text("Импортируйте GPX или FIT файл, либо подключите Strava — все ваши тренировки появятся здесь.")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.textSecondaryReadable)
                 .multilineTextAlignment(.center)
+                .padding(.horizontal, 8)
         }
         .frame(maxWidth: .infinity)
-        .padding(Spacing.xxxl)
+        .padding(.vertical, 24)
+        .padding(.horizontal, 22)
+        .liquidGlassCard(cornerRadius: 22, tint: .neutral)
     }
 }
 
@@ -236,17 +252,20 @@ struct CardButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
-            .opacity(configuration.isPressed ? 0.9 : 1.0)
-            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: configuration.isPressed)
+            .opacity(configuration.isPressed ? 0.95 : 1.0)
+            .animation(.spring(response: 0.28, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 
 // MARK: - Preview
 
 #Preview {
-    NavigationStack {
-        StoryFeedDashboardView()
-            .modelContainer(for: [Activity.self, UserSettings.self], inMemory: true)
+    ZStack {
+        AmbientBackgroundView()
+        NavigationStack {
+            StoryFeedDashboardView()
+                .modelContainer(for: [Activity.self, UserSettings.self], inMemory: true)
+        }
     }
     .preferredColorScheme(.dark)
 }

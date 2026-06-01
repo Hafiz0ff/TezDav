@@ -40,11 +40,12 @@ final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
 
 struct AppRootView: View {
     @Query private var allActivities: [Activity]
+    @Environment(\.modelContext) private var modelContext
     
     @State private var isConnected = false
     @State private var isLoading = false
     @State private var errorMessage: String?
-    @State private var selectedTab = 0
+    @AppStorage("selectedTab") private var selectedTab = 0
     @State private var sidebarSelection: Int? = 0
     @State private var activityIdWrapper: ActivityIdWrapper? = nil
     
@@ -134,42 +135,8 @@ struct AppRootView: View {
                         }
                     }
                 } else {
-                    TabView(selection: $selectedTab) {
-                        DashboardView()
-                            .tabItem {
-                                Label("Dashboard", systemImage: "chart.bar.fill")
-                            }
-                            .tag(0)
-
-                        FormView()
-                            .tabItem {
-                                Label("Form", systemImage: "waveform.path.ecg")
-                            }
-                            .tag(1)
-
-                        RouteListView()
-                            .tabItem {
-                                Label("Routes", systemImage: "map.fill")
-                            }
-                            .tag(2)
-
-                        SocialFeedView()
-                            .tabItem {
-                                Label("Social", systemImage: "person.2.fill")
-                            }
-                            .tag(3)
-
-                        RecordsView()
-                            .tabItem {
-                                Label("Records", systemImage: "trophy.fill")
-                            }
-                            .tag(4)
-                            
-                        ProfileView()
-                            .tabItem {
-                                Label("Profile", systemImage: "person.crop.circle.fill")
-                            }
-                            .tag(5)
+                    CustomTabView(selectedTab: $selectedTab) {
+                        TabContentView(selectedTab: $selectedTab)
                     }
                     .sheet(item: $activityIdWrapper) { wrapper in
                         if let targetAct = allActivities.first(where: { $0.stravaId == wrapper.id }) {
@@ -243,6 +210,12 @@ struct AppRootView: View {
         }
         .onAppear {
             setupNotificationDelegate()
+            #if targetEnvironment(simulator)
+            if allActivities.isEmpty {
+                DemoDataSeeder.seedAllDemoData(modelContext: modelContext)
+                onboardingCompleted = true
+            }
+            #endif
         }
     }
 

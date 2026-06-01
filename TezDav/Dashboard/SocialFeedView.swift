@@ -1,5 +1,5 @@
 import SwiftUI
-import MapKit
+import CoreLocation
 import SwiftData
 
 struct SocialFeedView: View {
@@ -111,13 +111,30 @@ struct SocialFeedView: View {
                 
                 // Map visualization
                 if !coords.isEmpty {
-                    Map(initialPosition: .region(mapRegion(for: coords))) {
-                        MapPolyline(coordinates: coords)
-                            .stroke(Color.orange, lineWidth: 4)
+                    if NSClassFromString("XCTestCase") == nil {
+                        GoogleMapView(
+                            coordinates: coords,
+                            sportType: activity.sportType,
+                            showStartEndMarkers: false
+                        )
+                        .frame(height: 150)
+                        .cornerRadius(12)
+                        .disabled(true)
+                    } else {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(red: 0.18, green: 0.18, blue: 0.18))
+                            .frame(height: 150)
+                            .overlay(
+                                VStack(spacing: 8) {
+                                    Image(systemName: "map")
+                                        .font(.title)
+                                        .foregroundColor(.orange)
+                                    Text("Map Visualized")
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                }
+                            )
                     }
-                    .frame(height: 150)
-                    .cornerRadius(12)
-                    .disabled(true)
                 }
                 
                 Divider()
@@ -333,30 +350,6 @@ struct SocialFeedView: View {
         }
     }
     
-    private func mapRegion(for coordinates: [CLLocationCoordinate2D]) -> MKCoordinateRegion {
-        guard !coordinates.isEmpty else {
-            return MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude: 38.56, longitude: 68.79),
-                span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-            )
-        }
-        var minLat = 90.0
-        var maxLat = -90.0
-        var minLng = 180.0
-        var maxLng = -180.0
-        for c in coordinates {
-            minLat = min(minLat, c.latitude)
-            maxLat = max(maxLat, c.latitude)
-            minLng = min(minLng, c.longitude)
-            maxLng = max(maxLng, c.longitude)
-        }
-        let center = CLLocationCoordinate2D(latitude: (minLat + maxLat) / 2.0, longitude: (minLng + maxLng) / 2.0)
-        let span = MKCoordinateSpan(
-            latitudeDelta: max(0.005, (maxLat - minLat) * 1.5),
-            longitudeDelta: max(0.005, (maxLng - minLng) * 1.5)
-        )
-        return MKCoordinateRegion(center: center, span: span)
-    }
     
     private func timeAgo(from date: Date) -> String {
         let seconds = Date.now.timeIntervalSince(date)

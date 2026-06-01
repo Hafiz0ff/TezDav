@@ -74,7 +74,8 @@ struct RunningDynamicsEngine {
             // 2. Vertical Oscillation (cm)
             // base bounce: 8.5 cm. Decreases with higher cadence. Add variance based on speed and offset.
             let baseOsc = 8.5 - 0.05 * (cad - 170.0) + (speed - 3.0) * 0.4
-            let osc = sample.verticalOscillation ?? max(4.0, min(15.0, baseOsc + sin(Double(sample.offsetSeconds) / 25.0) * 0.4))
+            let rawOsc = sample.verticalOscillation ?? max(4.0, min(15.0, baseOsc + sin(Double(sample.offsetSeconds) / 25.0) * 0.4))
+            let osc = max(0.0, rawOsc)
             sample.verticalOscillation = osc
             
             // 3. Ground Contact Time (ms)

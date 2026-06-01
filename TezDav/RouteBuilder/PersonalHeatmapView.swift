@@ -38,7 +38,8 @@ struct PersonalHeatmapView: View {
     @State private var selectedZoneMaxDistance = 0.0
     
     // Map State
-    @State private var mapPosition: MapCameraPosition = .automatic
+    @State private var cameraCenter: CLLocationCoordinate2D? = CLLocationCoordinate2D(latitude: 38.56, longitude: 68.79)
+    @State private var cameraZoom: Float? = 12.0
     @State private var currentRegion = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 38.56, longitude: 68.79),
         span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
@@ -101,8 +102,8 @@ struct PersonalHeatmapView: View {
     var body: some View {
         ZStack {
             // Main Map View with Tile Overlay
-            HeatmapMapView(
-                tracks: filteredTracks,
+            GoogleMapView(
+                heatmapTracks: filteredTracks,
                 filterSport: filterSport,
                 periodDays: periodDays,
                 opacity: opacity,
@@ -117,7 +118,9 @@ struct PersonalHeatmapView: View {
                     withAnimation {
                         self.showZoneCard = true
                     }
-                }
+                },
+                cameraCenter: $cameraCenter,
+                cameraZoom: $cameraZoom
             )
             .ignoresSafeArea()
             
@@ -173,45 +176,102 @@ struct PersonalHeatmapView: View {
     
     // MARK: - Subviews
     
+    // MARK: - Subviews
+    
+    private var sportFilterView: some View {
+        HStack(spacing: 4) {
+            ForEach(["All", "Run", "Ride", "Walk", "Swim"], id: \.self) { sport in
+                Button {
+                    HapticManager.trigger(.light)
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
+                        filterSport = sport
+                    }
+                } label: {
+                    Text(sport == "All" ? "Все" : (sport == "Run" ? "Бег" : (sport == "Ride" ? "Вело" : (sport == "Walk" ? "Ход" : "Плав"))))
+                        .font(.system(size: 9, weight: .bold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 6)
+                        .background(filterSport == sport ? Color.accentPrimary.opacity(0.12) : Color.white.opacity(0.04))
+                        .foregroundColor(filterSport == sport ? Color.accentPrimary : Color.textSecondaryReadable)
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule()
+                                .strokeBorder(filterSport == sport ? Color.accentPrimary.opacity(0.4) : Color.white.opacity(0.08), lineWidth: 1)
+                        )
+                }
+            }
+        }
+    }
+    
+    private var mapStyleFilterView: some View {
+        HStack(spacing: 4) {
+            ForEach(MapStyleSelection.allCases) { style in
+                Button {
+                    HapticManager.trigger(.light)
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
+                        mapStyle = style
+                    }
+                } label: {
+                    Text(style.rawValue)
+                        .font(.system(size: 9, weight: .bold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 6)
+                        .background(mapStyle == style ? Color.accentPrimary.opacity(0.12) : Color.white.opacity(0.04))
+                        .foregroundColor(mapStyle == style ? Color.accentPrimary : Color.textSecondaryReadable)
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule()
+                                .strokeBorder(mapStyle == style ? Color.accentPrimary.opacity(0.4) : Color.white.opacity(0.08), lineWidth: 1)
+                        )
+                }
+            }
+        }
+    }
+    
+    private var periodFilterView: some View {
+        HStack(spacing: 6) {
+            let options: [(label: String, val: Int?)] = [
+                ("30д", 30),
+                ("6м", 180),
+                ("Год", 365),
+                ("Всё время", nil)
+            ]
+            ForEach(options, id: \.label) { opt in
+                Button {
+                    HapticManager.trigger(.light)
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
+                        periodDays = opt.val
+                    }
+                } label: {
+                    Text(opt.label)
+                        .font(.system(size: 9, weight: .bold))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(periodDays == opt.val ? Color.accentPrimary.opacity(0.12) : Color.white.opacity(0.04))
+                        .foregroundColor(periodDays == opt.val ? Color.accentPrimary : Color.textSecondaryReadable)
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule()
+                                .strokeBorder(periodDays == opt.val ? Color.accentPrimary.opacity(0.4) : Color.white.opacity(0.08), lineWidth: 1)
+                        )
+                }
+            }
+        }
+    }
+
     private var topControlPanel: some View {
         VStack(spacing: 8) {
-            VStack(spacing: 6) {
-                HStack(spacing: 8) {
-                    // Sport type filter picker (including Walk and Swim)
-                    Picker("Вид спорта", selection: $filterSport) {
-                        Text("Все").tag("All")
-                        Text("Бег").tag("Run")
-                        Text("Вело").tag("Ride")
-                        Text("Ходьба").tag("Walk")
-                        Text("Плав").tag("Swim")
-                    }
-                    .pickerStyle(.segmented)
-                    
-                    // Map Style picker
-                    Picker("Тип карты", selection: $mapStyle) {
-                        ForEach(MapStyleSelection.allCases) { style in
-                            Text(style.rawValue).tag(style)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .frame(width: 170)
+            VStack(spacing: 8) {
+                HStack(spacing: 4) {
+                    sportFilterView
+                    Spacer(minLength: 4)
+                    mapStyleFilterView
                 }
                 
-                // Period Slider/Segmented Control
-                Picker("Период", selection: $periodDays) {
-                    Text("30 дней").tag(Int?(30))
-                    Text("6 мес").tag(Int?(180))
-                    Text("Год").tag(Int?(365))
-                    Text("Всё время").tag(Int?(nil))
-                }
-                .pickerStyle(.segmented)
+                periodFilterView
             }
             .padding(8)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.ultraThinMaterial)
-                    .shadow(color: Color.black.opacity(0.15), radius: 6, y: 3)
-            )
+            .liquidGlassCard(cornerRadius: 16)
         }
     }
     
@@ -219,12 +279,13 @@ struct PersonalHeatmapView: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "mappin.circle.fill")
-                    .foregroundColor(.orange)
+                    .foregroundColor(.accentPrimary)
                     .font(.headline)
                 
                 Text(selectedZoneName)
                     .font(.headline)
                     .bold()
+                    .foregroundColor(.textPrimary)
                     .lineLimit(1)
                 
                 Spacer()
@@ -235,7 +296,7 @@ struct PersonalHeatmapView: View {
                     }
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondaryReadable)
                         .font(.title3)
                 }
             }
@@ -243,26 +304,28 @@ struct PersonalHeatmapView: View {
             HStack(spacing: 24) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("ПОСЕЩЕНИЙ")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 8, weight: .bold))
+                        .foregroundColor(.textSecondaryReadable)
                     Text("\(selectedZoneCount)")
                         .font(.subheadline)
                         .bold()
+                        .foregroundColor(.textPrimary)
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("КИЛОМЕТРАЖ")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 8, weight: .bold))
+                        .foregroundColor(.textSecondaryReadable)
                     Text(formatDistanceText(selectedZoneDistance))
                         .font(.subheadline)
                         .bold()
+                        .foregroundColor(.textPrimary)
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("РЕКОРД ЗОНЫ")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 8, weight: .bold))
+                        .foregroundColor(.textSecondaryReadable)
                     Text(formatDistanceText(selectedZoneMaxDistance))
                         .font(.subheadline)
                         .bold()
@@ -271,11 +334,7 @@ struct PersonalHeatmapView: View {
             }
         }
         .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.ultraThinMaterial)
-                .shadow(color: Color.black.opacity(0.15), radius: 8, y: 4)
-        )
+        .liquidGlassCard(cornerRadius: 16, tint: .emerald)
     }
     
     private var bottomControlDrawer: some View {
@@ -284,52 +343,74 @@ struct PersonalHeatmapView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Треков на карте")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundColor(.textSecondaryReadable)
                     Text("\(filteredTracks.count)")
                         .font(.headline)
+                        .foregroundColor(.textPrimary)
                 }
                 
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 4) {
                     Text("Суммарная дистанция")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundColor(.textSecondaryReadable)
                     Text(totalDistanceText)
                         .font(.headline)
+                        .foregroundColor(.textPrimary)
                 }
             }
             
             Divider()
+                .overlay(Color.white.opacity(0.08))
             
             // Customization Options
             VStack(spacing: 8) {
                 // Color Scheme Choice
                 HStack {
                     Text("Палитра свечения")
-                        .font(.subheadline)
-                        .bold()
+                        .font(.subheadline.bold())
+                        .foregroundColor(.textPrimary)
                     Spacer()
-                    Picker("Схема", selection: $colorScheme) {
-                        ForEach(HeatmapColorScheme.allCases) { scheme in
-                            Text(scheme.rawValue).tag(scheme)
+                    
+                    Menu {
+                        Picker("Схема", selection: $colorScheme) {
+                            ForEach(HeatmapColorScheme.allCases) { scheme in
+                                Text(scheme.rawValue).tag(scheme)
+                            }
                         }
+                    } label: {
+                        HStack {
+                            Text(colorScheme.rawValue)
+                                .font(.footnote.weight(.semibold))
+                            Image(systemName: "chevron.down")
+                                .font(.caption2)
+                        }
+                        .foregroundColor(.orange)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color.orange.opacity(0.1))
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(Color.orange.opacity(0.3), lineWidth: 1)
+                        )
                     }
-                    .pickerStyle(.menu)
-                    .tint(.orange)
                 }
                 
                 // Opacity slider
                 HStack {
                     Image(systemName: "circle.circle")
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondaryReadable)
                     Text("Свечение")
                         .font(.footnote)
+                        .foregroundColor(.textSecondaryReadable)
                     Slider(value: $opacity, in: 0.1...1.0)
                         .tint(.orange)
                     Text(String(format: "%.0f%%", opacity * 100))
                         .font(.caption)
+                        .foregroundColor(.textPrimary)
                         .monospacedDigit()
                         .frame(width: 40, alignment: .trailing)
                 }
@@ -337,19 +418,22 @@ struct PersonalHeatmapView: View {
                 // Thickness slider
                 HStack {
                     Image(systemName: "line.horizontal.3")
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.textSecondaryReadable)
                     Text("Толщина")
                         .font(.footnote)
+                        .foregroundColor(.textSecondaryReadable)
                     Slider(value: $lineWidth, in: 1.0...8.0)
                         .tint(.orange)
                     Text(String(format: "%.1f px", lineWidth))
                         .font(.caption)
+                        .foregroundColor(.textPrimary)
                         .monospacedDigit()
                         .frame(width: 40, alignment: .trailing)
                 }
             }
             
             Divider()
+                .overlay(Color.white.opacity(0.08))
             
             // Sharing and Refresh buttons
             HStack(spacing: 12) {
@@ -359,11 +443,16 @@ struct PersonalHeatmapView: View {
                     }
                 }) {
                     Label("Обновить", systemImage: "arrow.clockwise")
-                        .bold()
-                        .foregroundColor(.primary)
+                        .font(.subheadline.bold())
+                        .foregroundColor(.orange)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
-                        .background(RoundedRectangle(cornerRadius: 10).fill(Color.orange.opacity(0.15)))
+                        .background(Color.orange.opacity(0.1))
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .strokeBorder(Color.orange.opacity(0.3), lineWidth: 1)
+                        )
                 }
                 
                 Button(action: {
@@ -380,22 +469,19 @@ struct PersonalHeatmapView: View {
                             Image(systemName: "square.and.arrow.up")
                         }
                         Text("Экспорт карты")
-                            .bold()
+                            .font(.subheadline.bold())
                     }
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
-                    .background(RoundedRectangle(cornerRadius: 10).fill(Color.orange))
+                    .background(Color.orange.gradient)
+                    .cornerRadius(10)
                 }
                 .disabled(isExporting)
             }
         }
         .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.ultraThinMaterial)
-                .shadow(color: Color.black.opacity(0.15), radius: 10, y: 5)
-        )
+        .liquidGlassCard(cornerRadius: 16)
     }
     
     // MARK: - Logic / Helper functions
@@ -453,7 +539,8 @@ struct PersonalHeatmapView: View {
         let allCoords = loadedTracks.flatMap { $0.coordinates }
         if let autoRegion = bounds(for: allCoords) {
             currentRegion = autoRegion
-            mapPosition = .region(autoRegion)
+            cameraCenter = autoRegion.center
+            cameraZoom = Float(log2(360.0 / max(0.001, autoRegion.span.latitudeDelta))) - 1.0
         }
         
         isLoading = false
@@ -532,6 +619,15 @@ struct PersonalHeatmapView: View {
     private func generateAndShareHeatmap() async {
         isExporting = true
         
+        if let center = cameraCenter {
+            let zoomLevel = cameraZoom ?? 12.0
+            let delta = 360.0 / pow(2.0, Double(zoomLevel))
+            currentRegion = MKCoordinateRegion(
+                center: center,
+                span: MKCoordinateSpan(latitudeDelta: delta, longitudeDelta: delta)
+            )
+        }
+        
         let options = MKMapSnapshotter.Options()
         options.region = currentRegion
         options.size = CGSize(width: 1024, height: 1024)
@@ -595,4 +691,12 @@ struct PersonalHeatmapView: View {
         
         isExporting = false
     }
+}
+
+struct HeatmapShareSheet: UIViewControllerRepresentable {
+    let activityItems: [Any]
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+    }
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

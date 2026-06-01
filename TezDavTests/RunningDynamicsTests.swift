@@ -10,7 +10,7 @@ final class RunningDynamicsTests: XCTestCase {
     @MainActor
     override func setUp() {
         super.setUp()
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let config = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         do {
             modelContainer = try ModelContainer(
                 for: Activity.self,
