@@ -96,7 +96,7 @@ struct CasualDashboardView: View {
     }
     
     private var weeklyProgressCard: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         let target = settings.targetWeeklyActiveMinutes
         let mins = weeklyActiveMinutes
         let pct = target > 0 ? min(1.0, mins / target) : 0.0
@@ -174,7 +174,7 @@ struct CasualDashboardView: View {
     }
     
     private var activeDaysCard: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         let (activeDates, streak) = activeDaysAndStreak
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: .now)
@@ -260,7 +260,7 @@ struct CasualDashboardView: View {
     }
     
     private var todayCard: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         
         return VStack(alignment: .leading, spacing: 14) {
             VStack(alignment: .leading, spacing: 4) {
@@ -326,7 +326,7 @@ struct CasualDashboardView: View {
     }
     
     private func lastActivityBriefCard(_ activity: Activity) -> some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         let isMetric = settings.isMetric
         let divisor = isMetric ? 1000.0 : 1609.344
         let unit = isMetric ? (isRussian ? " км" : " km") : (isRussian ? " миль" : " mi")
@@ -358,7 +358,7 @@ struct CasualDashboardView: View {
                 HStack(spacing: 6) {
                     Image(systemName: sportIcon(activity.sportType))
                         .foregroundStyle(.orange)
-                    Text(activity.sportType)
+                    Text(AppLanguage.sportName(activity.sportType))
                         .font(.subheadline.bold())
                 }
                 

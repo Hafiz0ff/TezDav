@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// TezDav Design System - Typography
-/// Hybrid system: SF Pro for text, SF Mono for metrics
+/// Dynamic Type based typography with rounded, tabular metrics.
 
 // MARK: - Font Extensions
 
@@ -9,40 +8,29 @@ extension Font {
 
     // MARK: - SF Pro Display (Headings)
 
-    /// Large title - 32px Bold
-    static let largeTitle = Font.system(size: 32, weight: .bold, design: .default)
+    static let largeTitle = Font.system(.largeTitle, design: .default, weight: .bold)
 
-    /// Title 1 - 28px Bold
-    static let title1 = Font.system(size: 28, weight: .bold, design: .default)
+    static let title1 = Font.system(.title, design: .default, weight: .bold)
 
-    /// Title 2 - 24px Semibold
-    static let title2 = Font.system(size: 24, weight: .semibold, design: .default)
+    static let title2 = Font.system(.title2, design: .default, weight: .semibold)
 
-    /// Title 3 - 20px Semibold
-    static let title3 = Font.system(size: 20, weight: .semibold, design: .default)
+    static let title3 = Font.system(.title3, design: .default, weight: .semibold)
 
     // MARK: - SF Pro Text (Body)
 
-    /// Body - 17px Regular
-    static let body = Font.system(size: 17, weight: .regular, design: .default)
+    static let body = Font.system(.body, design: .default, weight: .regular)
 
-    /// Body emphasized - 17px Medium
-    static let bodyEmphasized = Font.system(size: 17, weight: .medium, design: .default)
+    static let bodyEmphasized = Font.system(.body, design: .default, weight: .medium)
 
-    /// Callout - 15px Regular
-    static let callout = Font.system(size: 15, weight: .regular, design: .default)
+    static let callout = Font.system(.callout, design: .default, weight: .regular)
 
-    /// Subheadline - 14px Regular
-    static let subheadline = Font.system(size: 14, weight: .regular, design: .default)
+    static let subheadline = Font.system(.subheadline, design: .default, weight: .regular)
 
-    /// Footnote - 13px Regular
-    static let footnote = Font.system(size: 13, weight: .regular, design: .default)
+    static let footnote = Font.system(.footnote, design: .default, weight: .regular)
 
-    /// Caption 1 - 12px Regular
-    static let caption1 = Font.system(size: 12, weight: .regular, design: .default)
+    static let caption1 = Font.system(.caption, design: .default, weight: .regular)
 
-    /// Caption 2 - 11px Regular
-    static let caption2 = Font.system(size: 11, weight: .regular, design: .default)
+    static let caption2 = Font.system(.caption2, design: .default, weight: .regular)
 
     // MARK: - Labels (Uppercase)
 
@@ -57,28 +45,21 @@ extension Font {
 
     // MARK: - SF Mono (Metrics & Numbers)
 
-    /// Hero metric - 48px Bold (for main metrics)
-    static let metricHero = Font.system(size: 48, weight: .bold, design: .monospaced)
+    static let metricHero = Font.system(.largeTitle, design: .rounded, weight: .bold)
 
-    /// Large metric - 36px Bold
-    static let metricLarge = Font.system(size: 36, weight: .bold, design: .monospaced)
+    static let metricLarge = Font.system(.title, design: .rounded, weight: .bold)
 
-    /// Medium metric - 24px Bold
-    static let metricMedium = Font.system(size: 24, weight: .bold, design: .monospaced)
+    static let metricMedium = Font.system(.title2, design: .rounded, weight: .bold)
 
-    /// Regular metric - 20px Bold
-    static let metricRegular = Font.system(size: 20, weight: .bold, design: .monospaced)
+    static let metricRegular = Font.system(.title3, design: .rounded, weight: .bold)
 
-    /// Small metric - 18px Semibold
-    static let metricSmall = Font.system(size: 18, weight: .semibold, design: .monospaced)
+    static let metricSmall = Font.system(.headline, design: .rounded, weight: .semibold)
 
-    /// Tiny metric - 16px Semibold
-    static let metricTiny = Font.system(size: 16, weight: .semibold, design: .monospaced)
+    static let metricTiny = Font.system(.body, design: .rounded, weight: .semibold)
 
     // MARK: - Inline Numbers (for text with numbers)
 
-    /// Inline number - 15px Semibold (for numbers in body text)
-    static let inlineNumber = Font.system(size: 15, weight: .semibold, design: .monospaced)
+    static let inlineNumber = Font.system(.callout, design: .rounded, weight: .semibold)
 }
 
 // MARK: - Text Styles with Tracking (Letter Spacing)
@@ -90,25 +71,25 @@ struct TezDavTextStyle {
     static func largeTitle(_ text: String) -> some View {
         Text(text)
             .font(.largeTitle)
-            .tracking(-0.5)
+            .tracking(0)
     }
 
     static func title1(_ text: String) -> some View {
         Text(text)
             .font(.title1)
-            .tracking(-0.5)
+            .tracking(0)
     }
 
     static func title2(_ text: String) -> some View {
         Text(text)
             .font(.title2)
-            .tracking(-0.3)
+            .tracking(0)
     }
 
     static func title3(_ text: String) -> some View {
         Text(text)
             .font(.title3)
-            .tracking(-0.3)
+            .tracking(0)
     }
 
     // MARK: - Label Styles (Uppercase with tracking)
@@ -136,13 +117,13 @@ struct TezDavTextStyle {
     static func metricHero(_ value: String) -> some View {
         Text(value)
             .font(.metricHero)
-            .tracking(-1.0)
+            .tracking(0)
     }
 
     static func metricLarge(_ value: String) -> some View {
         Text(value)
             .font(.metricLarge)
-            .tracking(-0.8)
+            .tracking(0)
     }
 
     static func metricMedium(_ value: String) -> some View {
@@ -164,7 +145,7 @@ struct HeroMetricModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.metricHero)
-            .tracking(-1.0)
+            .tracking(0)
             .monospacedDigit()
     }
 }
@@ -173,7 +154,7 @@ struct LargeMetricModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.metricLarge)
-            .tracking(-0.8)
+            .tracking(0)
             .monospacedDigit()
     }
 }

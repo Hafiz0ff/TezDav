@@ -1,1 +1,1 @@
-// Replaced by GoogleMapView.swift
+// Replaced by TezDavMapView.swift

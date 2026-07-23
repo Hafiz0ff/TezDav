@@ -51,6 +51,7 @@ struct ProfileView: View {
     @State private var isHealthKitEnabled = false
     @State private var stepsToday: Double = 0
     @State private var activeCaloriesToday: Double = 0
+    @State private var healthImportSummary: String?
     
     @State private var exportStartDate = Date().addingTimeInterval(-86400 * 30)
     @State private var exportEndDate = Date()
@@ -69,11 +70,18 @@ struct ProfileView: View {
     }
     
     var lastSyncDate: String {
-        let descriptor = FetchDescriptor<SyncState>()
-        if let syncState = try? modelContext.fetch(descriptor).first, let date = syncState.lastSuccessfulSync {
+        let descriptor = FetchDescriptor<SyncState>(
+            predicate: #Predicate { $0.key == "healthkit" }
+        )
+        if let syncState = try? modelContext.fetch(descriptor).first,
+           let date = syncState.lastSuccessfulSync {
             return date.formatted(date: .abbreviated, time: .shortened)
         }
         return "Никогда"
+    }
+
+    private var isStravaConnected: Bool {
+        (try? tokenStore.loadToken()) != nil
     }
 
     var body: some View {
@@ -92,7 +100,7 @@ struct ProfileView: View {
                                 } else {
                                     Image(systemName: "person.crop.circle.fill")
                                         .font(.system(size: 60))
-                                        .foregroundStyle(.blue.gradient)
+                                        .foregroundStyle(Color.accentPrimary)
                                 }
                                 
                                 Image(systemName: "plus.circle.fill")
@@ -114,7 +122,7 @@ struct ProfileView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(activeSettings.stravaAccountName ?? "Атлет TezDav")
                                 .font(.headline)
-                            Text("Подключено к Strava")
+                            Text(isHealthKitEnabled ? "Apple Health подключено" : "Требуется доступ к Apple Health")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
@@ -125,7 +133,8 @@ struct ProfileView: View {
                         VStack(alignment: .trailing, spacing: 4) {
                             if dailyStreak > 0 {
                                 HStack(spacing: 4) {
-                                    Text("🔥")
+                                    Image(systemName: "flame.fill")
+                                        .foregroundStyle(Color.warning)
                                     Text("\(dailyStreak) дн")
                                         .font(.subheadline.bold())
                                         .foregroundColor(.orange)
@@ -135,10 +144,10 @@ struct ProfileView: View {
                                 HStack(spacing: 4) {
                                     Image(systemName: "calendar.badge.clock")
                                         .font(.caption)
-                                        .foregroundColor(.purple)
+                                        .foregroundColor(.accentPrimary)
                                     Text("\(weeklyStreak) нед")
                                         .font(.caption.bold())
-                                        .foregroundColor(.purple)
+                                        .foregroundColor(.accentPrimary)
                                 }
                             }
                         }
@@ -208,6 +217,18 @@ struct ProfileView: View {
                         Text("Ходьба").tag("Walk")
                         Text("Плавание").tag("Swim")
                     }
+                }
+
+                Section("Уведомления") {
+                    Button {
+                        requestNotificationsOnFirstEntry()
+                    } label: {
+                        Label(
+                            notificationStatusGranted ? "Уведомления разрешены" : "Разрешить уведомления",
+                            systemImage: notificationStatusGranted ? "bell.badge.fill" : "bell.badge"
+                        )
+                    }
+                    .disabled(notificationStatusGranted)
                 }
                 
                 // Section 2: Heart Rate Zones
@@ -397,10 +418,10 @@ struct ProfileView: View {
                     }
                 }
                 // Section: Gear & Equipment
-                Section(Locale.current.identifier.hasPrefix("ru") ? "Снаряжение & Экипировка" : "Gear & Equipment") {
+                Section(AppLanguage.isRussian ? "Снаряжение и экипировка" : "Gear & Equipment") {
                     NavigationLink(destination: GearListView()) {
                         HStack {
-                            Label(Locale.current.identifier.hasPrefix("ru") ? "Управление экипировкой" : "Manage Equipment", systemImage: "shoeprints.fill")
+                            Label(AppLanguage.isRussian ? "Управление экипировкой" : "Manage Equipment", systemImage: "shoeprints.fill")
                             
                             Spacer()
                             
@@ -418,40 +439,67 @@ struct ProfileView: View {
                 }
                 
                 // Section: Gamification & Achievements
-                Section(Locale.current.identifier.hasPrefix("ru") ? "Достижения & Награды" : "Gamification & Achievements") {
+                Section(AppLanguage.isRussian ? "Достижения и награды" : "Gamification & Achievements") {
                     NavigationLink(destination: AchievementsShowcaseView()) {
                         Label(
-                            Locale.current.identifier.hasPrefix("ru") ? "Мои награды и значки" : "My Badges & Rewards",
+                            AppLanguage.isRussian ? "Мои награды и значки" : "My Badges & Rewards",
                             systemImage: "trophy.fill"
                         )
                     }
                 }
                 
                 // Section: Activity Heatmap
-                Section(Locale.current.identifier.hasPrefix("ru") ? "Карта активности" : "Activity Heatmap") {
+                Section(AppLanguage.isRussian ? "Карта активности" : "Activity Heatmap") {
                     ContributionsHeatmapView(activities: activities)
                         .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
                 }
                 
                 // Section: Personal Geography
-                Section(Locale.current.identifier.hasPrefix("ru") ? "Личная география" : "Personal Geography") {
+                Section(AppLanguage.isRussian ? "Личная география" : "Personal Geography") {
                     personalGeographySection
                 }
                 
                 // Section: Apple Health & Telemetry
                 Section("Синхронизация Apple Health") {
-                    Toggle("Интеграция с Apple Health", isOn: $isHealthKitEnabled)
-                        .onChange(of: isHealthKitEnabled) { oldValue, newValue in
-                            if newValue {
-                                Task {
-                                    let success = await HealthKitManager.shared.requestAuthorization()
-                                    isHealthKitEnabled = success
-                                    if success {
-                                        await loadHealthTelemetry()
-                                    }
-                                }
-                            }
+                    HStack {
+                        Label(
+                            isHealthKitEnabled ? "Доступ разрешён" : "Доступ не подтверждён",
+                            systemImage: isHealthKitEnabled ? "checkmark.circle.fill" : "heart.text.square"
+                        )
+                        .foregroundStyle(isHealthKitEnabled ? Color.green : Color.primary)
+                        Spacer()
+                        Text("\(activities.filter { $0.healthKitUUID != nil }.count) тренировок")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    HStack {
+                        Text("Последний импорт")
+                        Spacer()
+                        Text(lastSyncDate)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    if isSyncing {
+                        HStack {
+                            ProgressView()
+                            Text(syncText(progress.phase))
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
                         }
+                    } else {
+                        Button {
+                            triggerHealthKitSync()
+                        } label: {
+                            Label("Импортировать тренировки", systemImage: "arrow.clockwise")
+                        }
+                    }
+
+                    if let healthImportSummary {
+                        Text(healthImportSummary)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                     
                     if isHealthKitEnabled {
                         HStack {
@@ -470,41 +518,6 @@ struct ProfileView: View {
                     }
                 }
                 
-                // Section: iCloud Synchronization
-                Section(Locale.current.identifier.hasPrefix("ru") ? "Синхронизация iCloud" : "iCloud Synchronization") {
-                    HStack {
-                        Label(Locale.current.identifier.hasPrefix("ru") ? "Статус iCloud" : "iCloud Status", systemImage: "cloud.fill")
-                            .foregroundColor(.blue)
-                        Spacer()
-                        Text(Locale.current.identifier.hasPrefix("ru") ? "Синхронизировано" : "Synced")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    HStack {
-                        Text(Locale.current.identifier.hasPrefix("ru") ? "Контейнер CloudKit" : "CloudKit Container")
-                        Spacer()
-                        Text("iCloud.com.hafizov.tezdav")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    HStack {
-                        Text(Locale.current.identifier.hasPrefix("ru") ? "Последнее обновление" : "Last Synced")
-                        Spacer()
-                        Text(DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    Button(action: {
-                        try? modelContext.save()
-                    }) {
-                        Text(Locale.current.identifier.hasPrefix("ru") ? "Синхронизировать сейчас" : "Force Sync Now")
-                            .foregroundColor(.blue)
-                    }
-                }
-                
                 // Section: Export Data
                 Section("Экспорт данных") {
                     DatePicker("С даты", selection: $exportStartDate, displayedComponents: .date)
@@ -519,38 +532,50 @@ struct ProfileView: View {
                     Button {
                         triggerJSONBackupExport()
                     } label: {
-                        Label("Полный бэкап в JSON", systemImage: "archivebox")
+                        Label("Полная резервная копия в JSON", systemImage: "archivebox")
                     }
                 }
                 
-                // Section 6: Strava Sync & Reconnection
-                Section("Синхронизация с Strava") {
-                    HStack {
-                        Text("Последний импорт")
-                        Spacer()
-                        Text(lastSyncDate)
-                            .foregroundStyle(.secondary)
-                    }
-                    
-                    if isSyncing {
+                // Section 6: Optional Strava connection
+                Section("Strava — необязательно") {
+                    if isStravaConnected {
                         HStack {
-                            ProgressView()
-                                .padding(.trailing, 8)
-                            Text(syncText(progress.phase))
-                                .font(.subheadline)
+                            Text("Последний импорт")
+                            Spacer()
+                            Text(lastSyncDate)
                                 .foregroundStyle(.secondary)
                         }
-                    } else {
-                        Button {
-                            triggerSync()
-                        } label: {
-                            Label("Синхронизировать сейчас", systemImage: "arrow.clockwise")
+
+                        if isSyncing {
+                            HStack {
+                                ProgressView()
+                                    .padding(.trailing, 8)
+                                Text(syncText(progress.phase))
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                        } else {
+                            Button {
+                                triggerStravaSync()
+                            } label: {
+                                Label("Импортировать из Strava", systemImage: "arrow.clockwise")
+                            }
                         }
-                        
+
                         Button {
                             reconnectStrava()
                         } label: {
                             Label("Переподключить Strava", systemImage: "link")
+                        }
+                    } else {
+                        Text("Основной источник TezDav — Apple Health. Подключение Strava оставлено для будущего использования.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+
+                        Button {
+                            reconnectStrava()
+                        } label: {
+                            Label("Подключить Strava позже", systemImage: "link")
                         }
                     }
                     
@@ -577,26 +602,22 @@ struct ProfileView: View {
                         .font(.caption)
                 }
             }
-            .padding(.top, -45)
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.inline)
+            .scrollContentBackground(.hidden)
+            .background(Color.clear)
+            .tint(Color.accentPrimary)
+            .navigationTitle("Профиль")
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         saveSettings()
                         HapticManager.success()
                     } label: {
-                        Image(systemName: "floppydisk")
-                            .renderingMode(.original)
+                        Image(systemName: "checkmark")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(Color.accentPrimary)
-                            .padding(8)
-                            .background(Color.accentPrimary.opacity(0.12))
-                            .clipShape(Circle())
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.accentPrimary.opacity(0.35), lineWidth: 1)
-                            )
+                            .foregroundStyle(Color.textPrimary)
+                            .frame(width: 36, height: 36)
+                            .liquidGlassControl(shape: .circle, tint: .emerald)
                     }
                     .buttonStyle(.plain)
                 }
@@ -608,7 +629,7 @@ struct ProfileView: View {
             }
             .onAppear {
                 loadSettingsIntoUI()
-                requestNotificationsOnFirstEntry()
+                refreshNotificationStatus()
                 checkHealthKitStatus()
             }
             .alert("Удалить все данные?", isPresented: $showDeleteConfirmation) {
@@ -860,13 +881,50 @@ struct ProfileView: View {
     private func requestNotificationsOnFirstEntry() {
         Task {
             let alreadyGranted = await NotificationManager.shared.isPermissionGranted()
-            if !alreadyGranted {
-                _ = await NotificationManager.shared.requestPermission()
+            let granted: Bool
+            if alreadyGranted {
+                granted = true
+            } else {
+                granted = await NotificationManager.shared.requestPermission()
+            }
+            await MainActor.run {
+                notificationStatusGranted = granted
+            }
+        }
+    }
+
+    private func refreshNotificationStatus() {
+        Task {
+            let granted = await NotificationManager.shared.isPermissionGranted()
+            await MainActor.run {
+                notificationStatusGranted = granted
             }
         }
     }
     
-    private func triggerSync() {
+    private func triggerHealthKitSync() {
+        guard !isSyncing else { return }
+        progress.phase = .authenticating
+        healthImportSummary = nil
+
+        Task {
+            let authorized = await HealthKitManager.shared.requestAuthorization()
+            isHealthKitEnabled = authorized
+            guard authorized else {
+                progress.phase = .failed("Нет доступа к тренировкам Apple Health.")
+                return
+            }
+
+            let report = await HealthKitWorkoutImporter.shared.importAll(
+                into: modelContext,
+                progress: progress
+            )
+            healthImportSummary = "Новых: \(report.imported), обновлено: \(report.updated), пропущено: \(report.skipped)"
+            await loadHealthTelemetry()
+        }
+    }
+
+    private func triggerStravaSync() {
         guard !isSyncing else { return }
         
         let refresher = StravaTokenRefresher(config: config)
@@ -901,13 +959,7 @@ struct ProfileView: View {
     }
     
     private func reconnectStrava() {
-        do {
-            let state = UUID().uuidString
-            let authURL = try StravaOAuth.authorizationURL(config: config, state: state)
-            UIApplication.shared.open(authURL)
-        } catch {
-            print("Failed to reconnect Strava: \(error)")
-        }
+        StravaOAuthCoordinator.shared.start()
     }
     
     private func resetAllData() {
@@ -930,9 +982,9 @@ struct ProfileView: View {
         case .idle:
             return "Готово"
         case .authenticating:
-            return "Подключение к Strava..."
+            return "Подключение к источнику данных..."
         case let .importing(page, imported):
-            return "Импорт страницы \(page), \(imported) тренировок сохранено"
+            return "Обработано \(page), сохранено \(imported)"
         case let .finished(imported):
             return "Успешно импортировано \(imported) тренировок"
         case let .failed(message):
@@ -1119,14 +1171,14 @@ struct ProfileView: View {
     private var personalGeographySection: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Label(Locale.current.identifier.hasPrefix("ru") ? "Уникальные города" : "Unique Cities", systemImage: "building.2.fill")
+                Label(AppLanguage.isRussian ? "Уникальные города" : "Unique Cities", systemImage: "building.2.fill")
                 Spacer()
                 Text("\(uniqueCitiesCount)")
                     .bold()
             }
             
             HStack {
-                Label(Locale.current.identifier.hasPrefix("ru") ? "Площадь исследования" : "Explored Area", systemImage: "square.dashed")
+                Label(AppLanguage.isRussian ? "Площадь исследования" : "Explored Area", systemImage: "square.dashed")
                 Spacer()
                 Text(String(format: "%.1f км²", exploredAreaSqKm))
                     .bold()
@@ -1134,26 +1186,26 @@ struct ProfileView: View {
             
             Divider()
             
-            Text(Locale.current.identifier.hasPrefix("ru") ? "Крайние географические точки:" : "Extreme Geographical Points:")
+            Text(AppLanguage.isRussian ? "Крайние географические точки:" : "Extreme Geographical Points:")
                 .font(.caption)
                 .foregroundColor(.secondary)
             
             let pts = extremePoints
             Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 6) {
                 GridRow {
-                    Text(Locale.current.identifier.hasPrefix("ru") ? "Север:" : "North:").foregroundColor(.secondary)
+                    Text(AppLanguage.isRussian ? "Север:" : "North:").foregroundColor(.secondary)
                     Text(String(format: "%.5f° N", pts.north)).monospacedDigit()
                 }
                 GridRow {
-                    Text(Locale.current.identifier.hasPrefix("ru") ? "Юг:" : "South:").foregroundColor(.secondary)
+                    Text(AppLanguage.isRussian ? "Юг:" : "South:").foregroundColor(.secondary)
                     Text(String(format: "%.5f° N", pts.south)).monospacedDigit()
                 }
                 GridRow {
-                    Text(Locale.current.identifier.hasPrefix("ru") ? "Восток:" : "East:").foregroundColor(.secondary)
+                    Text(AppLanguage.isRussian ? "Восток:" : "East:").foregroundColor(.secondary)
                     Text(String(format: "%.5f° E", pts.east)).monospacedDigit()
                 }
                 GridRow {
-                    Text(Locale.current.identifier.hasPrefix("ru") ? "Запад:" : "West:").foregroundColor(.secondary)
+                    Text(AppLanguage.isRussian ? "Запад:" : "West:").foregroundColor(.secondary)
                     Text(String(format: "%.5f° E", pts.west)).monospacedDigit()
                 }
             }

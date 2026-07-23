@@ -24,6 +24,7 @@ struct FormView: View {
     @Query(sort: \PlannedWorkout.date, order: .forward) private var plannedWorkouts: [PlannedWorkout]
     @Query private var userSettings: [UserSettings]
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isShowingAddPlannedWorkout = false
     
     private var activeUserSettings: UserSettings {
@@ -32,14 +33,14 @@ struct FormView: View {
     
     enum FormTab: String, CaseIterable, Identifiable {
         case pmc = "PMC"
-        case hrv = "Готовность (HRV)"
+        case hrv = "Готовность (ВСР)"
         case powerCurve = "Кривая мощности"
         case dynamics = "Динамика бега"
         case weather = "Погода"
         var id: String { self.rawValue }
         
         var displayName: String {
-            let isRussian = Locale.current.identifier.hasPrefix("ru")
+            let isRussian = AppLanguage.isRussian
             switch self {
             case .pmc: return isRussian ? "Форма" : "PMC"
             case .hrv: return isRussian ? "Готовность" : "Readiness"
@@ -73,6 +74,16 @@ struct FormView: View {
         case all = "All"
         
         var id: String { self.rawValue }
+
+        var displayName: String {
+            switch self {
+            case .oneMonth: return "1 мес"
+            case .threeMonths: return "3 мес"
+            case .sixMonths: return "6 мес"
+            case .oneYear: return "1 год"
+            case .all: return "Всё"
+            }
+        }
         
         var daysCount: Int? {
             switch self {
@@ -93,72 +104,35 @@ struct FormView: View {
     @ViewBuilder
     private var tabSelectorView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(FormTab.allCases) { tab in
-                    Button {
-                        HapticManager.trigger(.light)
-                        withAnimation(.spring(response: 0.35, dampingFraction: 0.72)) {
-                            selectedTab = tab
-                        }
-                    } label: {
-                        Text(tab.displayName)
-                            .font(.system(size: 13, weight: .bold))
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(selectedTab == tab ? Color.accentPrimary.opacity(0.12) : Color.white.opacity(0.04))
-                            .foregroundColor(selectedTab == tab ? Color.accentPrimary : Color.textSecondaryReadable)
-                            .clipShape(Capsule())
-                            .overlay(
-                                Capsule()
-                                    .strokeBorder(selectedTab == tab ? Color.accentPrimary.opacity(0.4) : Color.white.opacity(0.08), lineWidth: 1)
-                            )
-                    }
-                }
-            }
-            .padding(.horizontal, 14)
+            GlassSegmentedControl(
+                options: FormTab.allCases,
+                selection: $selectedTab,
+                title: { $0.displayName }
+            )
+            .frame(minWidth: 500)
+            .padding(.horizontal, DesignTokens.Spacing.screen)
             .padding(.vertical, 8)
         }
     }
 
     @ViewBuilder
     private var periodSelectorView: some View {
-        HStack(spacing: 8) {
-            ForEach(Period.allCases) { period in
-                Button {
-                    HapticManager.trigger(.light)
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
-                        selectedPeriod = period
-                    }
-                } label: {
-                    Text(period.rawValue)
-                        .font(.system(size: 11, weight: .bold))
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 7)
-                        .background(selectedPeriod == period ? Color.accentPrimary.opacity(0.12) : Color.white.opacity(0.04))
-                        .foregroundColor(selectedPeriod == period ? Color.accentPrimary : Color.textSecondaryReadable)
-                        .clipShape(Capsule())
-                        .overlay(
-                            Capsule()
-                                .strokeBorder(selectedPeriod == period ? Color.accentPrimary.opacity(0.4) : Color.white.opacity(0.08), lineWidth: 1)
-                        )
-                }
-            }
+        HStack(spacing: DesignTokens.Spacing.xs) {
+            GlassSegmentedControl(
+                options: Period.allCases,
+                selection: $selectedPeriod,
+                title: { $0.displayName }
+            )
             
             Button {
                 HapticManager.trigger(.light)
                 isShowingPlanner = true
             } label: {
                 Image(systemName: "calendar")
-                    .font(.system(size: 11, weight: .bold))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 7)
-                    .background(Color.white.opacity(0.04))
-                    .foregroundColor(Color.textSecondaryReadable)
-                    .clipShape(Capsule())
-                    .overlay(
-                        Capsule()
-                            .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
-                    )
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(Color.textPrimary)
+                    .frame(width: 42, height: 42)
+                    .liquidGlassControl(shape: .circle)
             }
         }
         .padding(.horizontal, 4)
@@ -197,22 +171,22 @@ struct FormView: View {
                 Spacer()
                     .frame(height: 120)
             }
-            .padding(.horizontal, 14)
+            .padding(.horizontal, DesignTokens.Spacing.screen)
             .padding(.top, 4)
         }
     }
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if activities.isEmpty {
-                    ContentUnavailableView(
-                        "Нет тренировок",
-                        systemImage: "waveform.path.ecg.rectangle",
-                        description: Text("Импортируйте тренировки, чтобы начать анализ.")
-                    )
-                } else {
-                    VStack(spacing: 0) {
+        Group {
+            if activities.isEmpty {
+                TezDavEmptyState(
+                    symbol: "waveform.path.ecg.rectangle",
+                    title: "Нет данных о форме",
+                    message: "Импортируйте тренировки, чтобы рассчитать CTL, ATL и TSB."
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                VStack(spacing: 0) {
                         tabSelectorView
                         
                         if selectedTab == .pmc {
@@ -250,35 +224,33 @@ struct FormView: View {
                         } else if selectedTab == .weather {
                             WeatherAnalyticsView()
                         }
-                    }
-                    .navigationTitle("")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbarBackground(.hidden, for: .navigationBar)
-                    .sheet(isPresented: $isShowingPlanner) {
-                        TrainingPlannerView()
-                    }
-                    .sheet(isPresented: $isShowingAddPlannedWorkout) {
-                        AddPlannedWorkoutSheet()
-                    }
-                    .onAppear {
-                        drawTracker = 0.0
-                        withAnimation(UIAccessibility.isReduceMotionEnabled ? nil : .easeOut(duration: 0.6)) {
-                            drawTracker = 1.0
-                        }
-                        if selectedTab == .hrv {
-                            loadReadinessData()
-                        }
-                    }
-                    .onChange(of: selectedTab) { oldValue, newValue in
-                        if newValue == .hrv {
-                            loadReadinessData()
-                        }
-                    }
-                    .onChange(of: readinessPeriodDays) { oldValue, newValue in
-                        loadReadinessData()
-                    }
                 }
             }
+        }
+        .navigationTitle("Форма")
+        .navigationBarTitleDisplayMode(.large)
+        .sheet(isPresented: $isShowingPlanner) {
+            TrainingPlannerView()
+        }
+        .sheet(isPresented: $isShowingAddPlannedWorkout) {
+            AddPlannedWorkoutSheet()
+        }
+        .onAppear {
+            drawTracker = 0.0
+            withAnimation(DesignTokens.Motion.content(reduceMotion: reduceMotion)) {
+                drawTracker = 1.0
+            }
+            if selectedTab == .hrv {
+                loadReadinessData()
+            }
+        }
+        .onChange(of: selectedTab) { _, newValue in
+            if newValue == .hrv {
+                loadReadinessData()
+            }
+        }
+        .onChange(of: readinessPeriodDays) { _, _ in
+            loadReadinessData()
         }
     }
 
@@ -286,7 +258,7 @@ struct FormView: View {
     private func pmcChartSection(_ metrics: [DailyMetrics]) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Performance Management")
+                Text("Управление формой")
                     .font(.system(size: 13, weight: .bold))
                     .foregroundStyle(Color.textPrimary)
                 Spacer()
@@ -399,7 +371,7 @@ struct FormView: View {
                 .frame(height: 145)
                 .chartXSelection(value: $selectedDate)
                 .chartXAxis {
-                    AxisMarks(values: .automatic) { value in
+                    AxisMarks(values: .automatic) { _ in
                         AxisGridLine(stroke: StrokeStyle(lineWidth: 1)).foregroundStyle(Color.white.opacity(0.03))
                         AxisValueLabel(format: .dateTime.month(.abbreviated).day(.defaultDigits))
                             .font(.system(size: 8))
@@ -407,7 +379,7 @@ struct FormView: View {
                     }
                 }
                 .chartYAxis {
-                    AxisMarks(values: .automatic) { value in
+                    AxisMarks(values: .automatic) { _ in
                         AxisGridLine(stroke: StrokeStyle(lineWidth: 1)).foregroundStyle(Color.white.opacity(0.03))
                         AxisValueLabel()
                             .font(.system(size: 8))
@@ -419,7 +391,7 @@ struct FormView: View {
                     .fill(Color.white.opacity(0.04))
                     .frame(height: 145)
                     .overlay(
-                        Text("PMC Chart (Fitness / Fatigue / Form)")
+                        Text("График управления нагрузкой")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     )
@@ -458,31 +430,28 @@ struct FormView: View {
         let tsbColor = tsbValue > 5 ? Color.accentPrimary : (tsbValue > -10 ? Color(hex: "C4923A") : Color(hex: "C8304F"))
         let tsbLabel = tsbValue > 5 ? "Свежий" : (tsbValue > -10 ? "Умеренно" : "Перегрузка")
         
-        HStack(spacing: 7) {
-            MetCardView(
-                label: "Фитнес CTL",
+        LazyVGrid(
+            columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3),
+            spacing: 8
+        ) {
+            MetricDataCard(
+                title: "Фитнес CTL",
                 value: String(format: "%.1f", today.ctl),
-                unit: "",
-                color: Color.accentPrimary,
-                sub: "↑2.1 за неделю",
-                glowColor: Color.accentPrimary
+                detail: "за 42 дня",
+                color: Color.accentPrimary
             )
-            MetCardView(
-                label: "Усталость ATL",
+            MetricDataCard(
+                title: "Усталость ATL",
                 value: String(format: "%.1f", today.atl),
-                unit: "",
-                color: Color(hex: "C8304F"),
-                sub: "↓1.3 за неделю",
-                glowColor: Color(hex: "C8304F")
+                detail: "за 7 дней",
+                color: Color.ruby
             )
             
-            MetCardView(
-                label: "Форма TSB",
+            MetricDataCard(
+                title: "Форма TSB",
                 value: String(format: "%+.1f", tsbValue),
-                unit: "",
-                color: tsbColor,
-                sub: tsbLabel,
-                glowColor: tsbColor
+                detail: tsbLabel,
+                color: tsbColor
             )
         }
     }
@@ -534,7 +503,7 @@ struct FormView: View {
     // MARK: - Weekly Load Bar Chart Section
     private func weeklyLoadSection(_ weekly: [WeeklyMetric]) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Weekly Training Load")
+            Text("Недельная нагрузка")
                 .font(.system(size: 13, weight: .bold))
                 .foregroundStyle(Color.textPrimary)
             
@@ -550,14 +519,14 @@ struct FormView: View {
                 }
                 .frame(height: 110)
                 .chartXAxis {
-                    AxisMarks(values: .automatic) { value in
+                    AxisMarks(values: .automatic) { _ in
                         AxisValueLabel(format: .dateTime.month(.abbreviated))
                             .font(.system(size: 8))
                             .foregroundStyle(Color.textSecondaryReadable)
                     }
                 }
                 .chartYAxis {
-                    AxisMarks(values: .automatic) { value in
+                    AxisMarks(values: .automatic) { _ in
                         AxisGridLine(stroke: StrokeStyle(lineWidth: 1)).foregroundStyle(Color.white.opacity(0.03))
                         AxisValueLabel()
                             .font(.system(size: 8))
@@ -569,7 +538,7 @@ struct FormView: View {
                     .fill(Color.white.opacity(0.04))
                     .frame(height: 110)
                     .overlay(
-                        Text("Weekly Training Load Chart")
+                        Text("График недельной нагрузки")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     )
@@ -706,24 +675,24 @@ struct FormView: View {
     }
 
     private func tsbStatusTitle(_ tsb: Double) -> String {
-        if tsb > 10 { return "Fresh & Ready to Race" }
-        if tsb >= 0 { return "Optimal Form (Base Mode)" }
-        if tsb >= -10 { return "Moderate Training Fatigue" }
-        if tsb >= -30 { return "High Training Overload" }
-        return "Critical Overtraining Risk"
+        if tsb > 10 { return "Свежесть и готовность к старту" }
+        if tsb >= 0 { return "Оптимальная форма" }
+        if tsb >= -10 { return "Умеренная тренировочная усталость" }
+        if tsb >= -30 { return "Высокая тренировочная нагрузка" }
+        return "Критический риск перетренированности"
     }
 
     private func tsbStatusDescription(_ tsb: Double) -> String {
         if tsb > 10 {
-            return "You are fully fresh and recovered. Perfect time to race, test your records, or perform a key training session."
+            return "Вы полностью восстановились. Подходящий момент для старта, проверки рекорда или ключевой тренировки."
         } else if tsb >= 0 {
-            return "Excellent balance between fitness and fatigue. Your body is ready for productive developmental workouts."
+            return "Хороший баланс формы и усталости. Организм готов к продуктивной развивающей тренировке."
         } else if tsb >= -10 {
-            return "Standard active training state. You are accumulating fitness. Keep balancing workouts with recovery."
+            return "Обычное состояние активного тренировочного периода. Продолжайте сочетать нагрузку с восстановлением."
         } else if tsb >= -30 {
-            return "Your fatigue exceeds recovery. Plan a recovery week or complete rest days to let your body adapt."
+            return "Усталость превышает восстановление. Запланируйте разгрузочную неделю или несколько дней отдыха."
         } else {
-            return "Critical fatigue level! Extremely high risk of injury or overtraining syndrome. Settle down and rest immediately."
+            return "Критический уровень усталости. Высокий риск травмы или перетренированности: снизьте нагрузку и отдохните."
         }
     }
 
@@ -880,7 +849,7 @@ struct FormView: View {
                     )
                     
                     ReadinessMetricCard(
-                        title: "Вариабельность (HRV)",
+                        title: "Вариабельность ритма (ВСР)",
                         value: hrvToday != nil ? String(format: "%.0f мс", hrvToday!) : "-- мс",
                         subtitle: hrvBaseline != nil ? String(format: "База: %.0f мс", hrvBaseline!) : "База: --",
                         icon: "heart.text.square.fill",
@@ -969,7 +938,7 @@ struct FormView: View {
                                 .fill(Color.secondary.opacity(0.1))
                                 .frame(height: 180)
                                 .overlay(
-                                    Text("Readiness Trend Chart")
+                                    Text("График тренда готовности")
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 )
@@ -980,7 +949,7 @@ struct FormView: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Тренд HRV и базовый коридор")
+                    Text("Динамика ВСР и базовый диапазон")
                         .font(.headline)
                         .padding(.horizontal, 4)
                     
@@ -998,25 +967,25 @@ struct FormView: View {
                                     
                                     LineMark(
                                         x: .value("Дата", point.date, unit: .day),
-                                        y: .value("Базовый HRV", point.hrvBaseline)
+                                        y: .value("Базовая ВСР", point.hrvBaseline)
                                     )
                                     .foregroundStyle(Color.secondary)
                                     .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
-                                    .accessibilityLabel("Базовый HRV")
-                                    .accessibilityValue("Базовый показатель HRV \(Int(point.hrvBaseline)) мс на \(formatChartDate(point.date))")
+                                    .accessibilityLabel("Базовая ВСР")
+                                    .accessibilityValue("Базовый показатель ВСР \(Int(point.hrvBaseline)) мс на \(formatChartDate(point.date))")
                                     
                                     LineMark(
                                         x: .value("Дата", point.date, unit: .day),
-                                        y: .value("HRV", point.hrv)
+                                        y: .value("ВСР", point.hrv)
                                     )
                                     .foregroundStyle(Color.red.gradient)
                                     .interpolationMethod(.catmullRom)
-                                    .accessibilityLabel("Текущий HRV")
-                                    .accessibilityValue("Текущий HRV \(Int(point.hrv)) мс на \(formatChartDate(point.date))")
+                                    .accessibilityLabel("Текущая ВСР")
+                                    .accessibilityValue("Текущий показатель ВСР \(Int(point.hrv)) мс на \(formatChartDate(point.date))")
                                     
                                     PointMark(
                                         x: .value("Дата", point.date, unit: .day),
-                                        y: .value("HRV", point.hrv)
+                                        y: .value("ВСР", point.hrv)
                                     )
                                     .foregroundStyle(Color.red)
                                 }
@@ -1035,7 +1004,7 @@ struct FormView: View {
                                 .fill(Color.secondary.opacity(0.1))
                                 .frame(height: 180)
                                 .overlay(
-                                    Text("HRV Trend & SWC Corridor")
+                                    Text("Тренд ВСР и коридор SWC")
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 )
@@ -1078,7 +1047,7 @@ struct FormView: View {
     
     private func runningDynamicsFormView() -> some View {
         let monthlyData = calculateMonthlyDynamics()
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         let isMetric = activeUserSettings.isMetric
         let strideMultiplier = isMetric ? 1.0 : 3.28084
         let strideUnit = isRussian ? (isMetric ? "м" : "фт") : (isMetric ? "m" : "ft")
@@ -1131,7 +1100,7 @@ struct FormView: View {
                                 .fill(Color.secondary.opacity(0.1))
                                 .frame(height: 180)
                                 .overlay(
-                                    Text("Monthly Average Cadence Chart")
+                                    Text("Средний каденс (за месяц)")
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 )
@@ -1171,7 +1140,7 @@ struct FormView: View {
                                 .fill(Color.secondary.opacity(0.1))
                                 .frame(height: 180)
                                 .overlay(
-                                    Text("Monthly Average Stride Length Chart")
+                                    Text("Средняя длина шага (за месяц)")
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 )
@@ -1265,7 +1234,7 @@ struct FormView: View {
     private func forecastPlannerSection() -> some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text(Locale.current.identifier.hasPrefix("ru") ? "Прогноз и Планировщик" : "Forecast & Planner")
+                Text(AppLanguage.isRussian ? "Прогноз и Планировщик" : "Forecast & Planner")
                     .font(.headline)
                     .foregroundStyle(.white)
                 
@@ -1275,7 +1244,7 @@ struct FormView: View {
                     isShowingAddPlannedWorkout = true
                 } label: {
                     Label {
-                        Text(Locale.current.identifier.hasPrefix("ru") ? "Запланировать" : "Plan")
+                        Text(AppLanguage.isRussian ? "Запланировать" : "Plan")
                     } icon: {
                         Image(systemName: "plus.circle.fill")
                     }
@@ -1291,10 +1260,10 @@ struct FormView: View {
                     Image(systemName: "calendar.badge.plus")
                         .font(.system(size: 36))
                         .foregroundStyle(.gray.opacity(0.5))
-                    Text(Locale.current.identifier.hasPrefix("ru") ? "Нет запланированных тренировок" : "No planned workouts")
+                    Text(AppLanguage.isRussian ? "Нет запланированных тренировок" : "No planned workouts")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.gray)
-                    Text(Locale.current.identifier.hasPrefix("ru") ? "Добавьте тренировки на будущие даты, чтобы смоделировать изменения CTL/ATL/TSB." : "Add future activities to model CTL/ATL/TSB fatigue changes.")
+                    Text(AppLanguage.isRussian ? "Добавьте тренировки на будущие даты, чтобы смоделировать изменения CTL/ATL/TSB." : "Add future activities to model CTL/ATL/TSB fatigue changes.")
                         .font(.caption)
                         .foregroundStyle(.gray.opacity(0.7))
                         .multilineTextAlignment(.center)
@@ -1359,7 +1328,7 @@ struct FormView: View {
             Button {
                 completePlannedWorkout(workout)
             } label: {
-                Text(Locale.current.identifier.hasPrefix("ru") ? "Выполнить" : "Complete")
+                Text(AppLanguage.isRussian ? "Выполнить" : "Complete")
                     .font(.system(size: 12, weight: .bold))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 6)
@@ -1500,31 +1469,31 @@ struct AddPlannedWorkoutSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(Locale.current.identifier.hasPrefix("ru") ? "Детали тренировки" : "Workout Details") {
-                    TextField(Locale.current.identifier.hasPrefix("ru") ? "Название (например: Темп)" : "Title (e.g. Tempo)", text: $title)
+                Section(AppLanguage.isRussian ? "Детали тренировки" : "Workout Details") {
+                    TextField(AppLanguage.isRussian ? "Название (например: Темп)" : "Title (e.g. Tempo)", text: $title)
                     
-                    Picker(Locale.current.identifier.hasPrefix("ru") ? "Вид спорта" : "Sport", selection: $sportType) {
-                        Text(Locale.current.identifier.hasPrefix("ru") ? "Бег" : "Run").tag("Run")
-                        Text(Locale.current.identifier.hasPrefix("ru") ? "Велосипед" : "Ride").tag("Ride")
-                        Text(Locale.current.identifier.hasPrefix("ru") ? "Ходьба" : "Walk").tag("Walk")
-                        Text(Locale.current.identifier.hasPrefix("ru") ? "Плавание" : "Swim").tag("Swim")
+                    Picker(AppLanguage.isRussian ? "Вид спорта" : "Sport", selection: $sportType) {
+                        Text(AppLanguage.isRussian ? "Бег" : "Run").tag("Run")
+                        Text(AppLanguage.isRussian ? "Велосипед" : "Ride").tag("Ride")
+                        Text(AppLanguage.isRussian ? "Ходьба" : "Walk").tag("Walk")
+                        Text(AppLanguage.isRussian ? "Плавание" : "Swim").tag("Swim")
                     }
                     
-                    DatePicker(Locale.current.identifier.hasPrefix("ru") ? "Дата" : "Date", selection: $date, displayedComponents: .date)
+                    DatePicker(AppLanguage.isRussian ? "Дата" : "Date", selection: $date, displayedComponents: .date)
                 }
                 
-                Section(Locale.current.identifier.hasPrefix("ru") ? "Объем" : "Volume") {
+                Section(AppLanguage.isRussian ? "Объем" : "Volume") {
                     HStack {
-                        Text(Locale.current.identifier.hasPrefix("ru") ? "Длительность" : "Duration")
+                        Text(AppLanguage.isRussian ? "Длительность" : "Duration")
                         Spacer()
-                        Picker("Hours", selection: $plannedDurationHours) {
+                        Picker("Часы", selection: $plannedDurationHours) {
                             ForEach(0...23, id: \.self) { hr in
                                 Text("\(hr) ч").tag(hr)
                             }
                         }
                         .pickerStyle(.menu)
                         
-                        Picker("Minutes", selection: $plannedDurationMinutes) {
+                        Picker("Минуты", selection: $plannedDurationMinutes) {
                             ForEach(0...59, id: \.self) { min in
                                 Text("\(min) м").tag(min)
                             }
@@ -1534,7 +1503,7 @@ struct AddPlannedWorkoutSheet: View {
                     
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            Text(Locale.current.identifier.hasPrefix("ru") ? "Дистанция" : "Distance")
+                            Text(AppLanguage.isRussian ? "Дистанция" : "Distance")
                             Spacer()
                             Text(String(format: "%.1f %@", plannedDistance, isMetric ? "км" : "миль"))
                                 .font(.subheadline.weight(.semibold))
@@ -1543,12 +1512,12 @@ struct AddPlannedWorkoutSheet: View {
                     }
                 }
                 
-                Section(Locale.current.identifier.hasPrefix("ru") ? "Интенсивность и Нагрузка (TSS)" : "Intensity & Load (TSS)") {
-                    Toggle(Locale.current.identifier.hasPrefix("ru") ? "Ввести TSS вручную" : "Manual TSS Entry", isOn: $isManualTSS)
+                Section(AppLanguage.isRussian ? "Интенсивность и Нагрузка (TSS)" : "Intensity & Load (TSS)") {
+                    Toggle(AppLanguage.isRussian ? "Ввести TSS вручную" : "Manual TSS Entry", isOn: $isManualTSS)
                         .tint(.orange)
                     
                     if !isManualTSS {
-                        Picker(Locale.current.identifier.hasPrefix("ru") ? "Интенсивность" : "Intensity Preset", selection: $intensityFactor) {
+                        Picker(AppLanguage.isRussian ? "Интенсивность" : "Intensity Preset", selection: $intensityFactor) {
                             Text("Восстановление (IF 0.60)").tag(0.60)
                             Text("Аэробный темп (IF 0.75)").tag(0.75)
                             Text("Темповая работа (IF 0.85)").tag(0.85)
@@ -1567,7 +1536,7 @@ struct AddPlannedWorkoutSheet: View {
                         }
                         
                         HStack {
-                            Text(Locale.current.identifier.hasPrefix("ru") ? "Расчетный TSS:" : "Calculated TSS:")
+                            Text(AppLanguage.isRussian ? "Расчетный TSS:" : "Calculated TSS:")
                                 .font(.headline)
                             Spacer()
                             Text(String(format: "%.0f", computedTSS))
@@ -1587,16 +1556,16 @@ struct AddPlannedWorkoutSheet: View {
                     }
                 }
             }
-            .navigationTitle(Locale.current.identifier.hasPrefix("ru") ? "Запланировать тренировку" : "Plan Workout")
+            .navigationTitle(AppLanguage.isRussian ? "Запланировать тренировку" : "Plan Workout")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(Locale.current.identifier.hasPrefix("ru") ? "Отмена" : "Cancel") {
+                    Button(AppLanguage.isRussian ? "Отмена" : "Cancel") {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(Locale.current.identifier.hasPrefix("ru") ? "Сохранить" : "Save") {
+                    Button(AppLanguage.isRussian ? "Сохранить" : "Save") {
                         savePlannedWorkout()
                     }
                     .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)

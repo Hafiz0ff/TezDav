@@ -14,7 +14,7 @@ struct AchievementsShowcaseView: View {
     }
     
     var body: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         let allBadges = AchievementManager.shared.badges
         let unlocked = unlockedTypes
         

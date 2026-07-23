@@ -12,7 +12,7 @@ enum ShareTheme: String, CaseIterable, Identifiable {
 
 enum ShareFormat: String, CaseIterable, Identifiable {
     case square = "Квадрат (1:1)"
-    case stories = "Stories (9:16)"
+    case stories = "Истории (9:16)"
     
     var id: String { rawValue }
 }
@@ -53,7 +53,7 @@ struct WorkoutCardShareView: View {
                                     .shadow(radius: 12)
                                     .padding(.top, 16)
                             } else {
-                                Text("Не удалось загрузить карту для шаринга")
+                                Text("Не удалось загрузить карту для публикации")
                                     .foregroundColor(.secondary)
                                     .frame(height: 300)
                             }
@@ -584,7 +584,7 @@ struct WorkoutCardShareView: View {
         case "Ride": return "🚴‍♂️ ВЕЛОСИПЕД"
         case "Walk": return "🚶‍♂️ ХОДЬБА"
         case "Swim": return "🏊‍♂️ ПЛАВАНИЕ"
-        case "Hike": return "🥾 ХАЙКИНГ"
+        case "Hike": return "🥾 ПОХОД"
         default: return "💪 АКТИВНОСТЬ"
         }
     }

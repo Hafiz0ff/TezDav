@@ -8,9 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0AD88C6F7A6CCCD8A8558A05 /* ActivityCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E149FD25BF0B21FE78663 /* ActivityCardView.swift */; };
-		154374480578EE95344BDF9F /* GoogleMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 36AACD64712C473DE326E237 /* GoogleMaps */; };
 		58721DC4373B687F0C2D422A /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D23C83D6D43DCEAA0B3E35 /* CustomTabBar.swift */; };
-		999900019999000199990001 /* GoogleMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999900019999000199990002 /* GoogleMapView.swift */; };
+		999900019999000199990001 /* TezDavMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999900019999000199990002 /* TezDavMapView.swift */; };
 		598F8D16404199C9E89E047D /* FitDataProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = "TEMP_F2492D5D-8A8F-4FFB-9D9F-36BD3FC4C05B" /* FitDataProtocol */; };
 		598F8D16404199C9E89E048A /* FitnessUnits in Frameworks */ = {isa = PBXBuildFile; productRef = 7EFE2C791C65C4881CC6548A /* FitnessUnits */; };
 		598F8D16404199C9E89E048B /* AntMessageProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 7EFE2C791C65C4881CC6548B /* AntMessageProtocol */; };
@@ -37,6 +36,8 @@
 		A00100000000000000000015 /* StravaAPI/StravaAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000015 /* StravaAPI/StravaAPIClient.swift */; };
 		A00100000000000000000016 /* Sync/SyncProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000016 /* Sync/SyncProgress.swift */; };
 		A00100000000000000000017 /* Sync/SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000017 /* Sync/SyncService.swift */; };
+		HK0100000000000000000001 /* Sync/HealthKitWorkoutImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = HK0200000000000000000001 /* Sync/HealthKitWorkoutImporter.swift */; };
+		LOC010000000000000000001 /* Localization/AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = LOC020000000000000000001 /* Localization/AppLanguage.swift */; };
 		A00100000000000000000018 /* Dashboard/DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000018 /* Dashboard/DashboardViewModel.swift */; };
 		A00100000000000000000019 /* Dashboard/DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000019 /* Dashboard/DashboardView.swift */; };
 		A00100000000000000000020 /* TezDavTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000020 /* TezDavTests.swift */; };
@@ -161,6 +162,9 @@
 		TZ900000000000000000000F /* CoachingEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ900000000000000000000E /* CoachingEngineTests.swift */; };
 		TZ9000000000000000000011 /* GearTrackingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000010 /* GearTrackingTests.swift */; };
 		TZ9000000000000000000013 /* WeatherServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TZ9000000000000000000012 /* WeatherServiceTests.swift */; };
+	729791B7C9EC130B5339F756 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85177D685E4B811C5B892C46 /* DesignTokens.swift */; };
+	CB03C8454DA139B5A7A2E675 /* LiquidGlassComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A84ABAF8D6B97C2085B039F /* LiquidGlassComponents.swift */; };
+	CBA1DCE2C74F3B3987B0E549 /* RedesignPreviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4BAE13E7562EA17B1141FE /* RedesignPreviews.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -201,6 +205,8 @@
 		A00200000000000000000015 /* StravaAPI/StravaAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StravaAPI/StravaAPIClient.swift; sourceTree = "<group>"; };
 		A00200000000000000000016 /* Sync/SyncProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/SyncProgress.swift; sourceTree = "<group>"; };
 		A00200000000000000000017 /* Sync/SyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/SyncService.swift; sourceTree = "<group>"; };
+		HK0200000000000000000001 /* Sync/HealthKitWorkoutImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync/HealthKitWorkoutImporter.swift; sourceTree = "<group>"; };
+		LOC020000000000000000001 /* Localization/AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization/AppLanguage.swift; sourceTree = "<group>"; };
 		A00200000000000000000018 /* Dashboard/DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/DashboardViewModel.swift; sourceTree = "<group>"; };
 		A00200000000000000000019 /* Dashboard/DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/DashboardView.swift; sourceTree = "<group>"; };
 		A00200000000000000000020 /* TezDavTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TezDavTests.swift; sourceTree = "<group>"; };
@@ -241,7 +247,7 @@
 		A00200000000000000000100 /* TezDav/TezDav.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TezDav/TezDav.entitlements; sourceTree = "<group>"; };
 		A00200000000000000000101 /* Dashboard/DemoDataSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard/DemoDataSeeder.swift; sourceTree = "<group>"; };
 		A3D23C83D6D43DCEAA0B3E35 /* CustomTabBar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
-		999900019999000199990002 /* GoogleMapView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GoogleMapView.swift; sourceTree = "<group>"; };
+		999900019999000199990002 /* TezDavMapView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TezDavMapView.swift; sourceTree = "<group>"; };
 		AI010000000000000000000001 /* TrainingMetrics/AICoachEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingMetrics/AICoachEngine.swift; sourceTree = "<group>"; };
 		AI010000000000000000000003 /* AICoachTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AICoachTests.swift; sourceTree = "<group>"; };
 		B9BC215D5A4C43480845BA1F /* ComponentStyles.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ComponentStyles.swift; sourceTree = "<group>"; };
@@ -337,6 +343,9 @@
 		TZ900000000000000000000E /* CoachingEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachingEngineTests.swift; sourceTree = "<group>"; };
 		TZ9000000000000000000010 /* GearTrackingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GearTrackingTests.swift; sourceTree = "<group>"; };
 		TZ9000000000000000000012 /* WeatherServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherServiceTests.swift; sourceTree = "<group>"; };
+	3A84ABAF8D6B97C2085B039F /* LiquidGlassComponents.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LiquidGlassComponents.swift; sourceTree = "<group>"; };
+	85177D685E4B811C5B892C46 /* DesignTokens.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DesignTokens.swift; sourceTree = "<group>"; };
+	BD4BAE13E7562EA17B1141FE /* RedesignPreviews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RedesignPreviews.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -348,7 +357,6 @@
 				598F8D16404199C9E89E048A /* FitnessUnits in Frameworks */,
 				598F8D16404199C9E89E048B /* AntMessageProtocol in Frameworks */,
 				598F8D16404199C9E89E048C /* DataDecoder in Frameworks */,
-				154374480578EE95344BDF9F /* GoogleMaps in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,6 +449,8 @@
 				A00200000000000000000015 /* StravaAPI/StravaAPIClient.swift */,
 				A00200000000000000000016 /* Sync/SyncProgress.swift */,
 				A00200000000000000000017 /* Sync/SyncService.swift */,
+				HK0200000000000000000001 /* Sync/HealthKitWorkoutImporter.swift */,
+				LOC020000000000000000001 /* Localization/AppLanguage.swift */,
 				A00200000000000000000018 /* Dashboard/DashboardViewModel.swift */,
 				A00200000000000000000019 /* Dashboard/DashboardView.swift */,
 				A00200000000000000000030 /* Dashboard/ActivityDetailView.swift */,
@@ -569,6 +579,8 @@
 				CBE4608AE34BAC5C03D4882A /* Typography.swift */,
 				B9BC215D5A4C43480845BA1F /* ComponentStyles.swift */,
 				C8654AB12950F487CF2572F0 /* LiquidGlass.swift */,
+				85177D685E4B811C5B892C46 /* DesignTokens.swift */,
+				BD4BAE13E7562EA17B1141FE /* RedesignPreviews.swift */,
 			);
 			name = DesignSystem;
 			path = DesignSystem;
@@ -579,7 +591,8 @@
 			children = (
 				5C2E149FD25BF0B21FE78663 /* ActivityCardView.swift */,
 				A3D23C83D6D43DCEAA0B3E35 /* CustomTabBar.swift */,
-				999900019999000199990002 /* GoogleMapView.swift */,
+				999900019999000199990002 /* TezDavMapView.swift */,
+				3A84ABAF8D6B97C2085B039F /* LiquidGlassComponents.swift */,
 			);
 			name = Components;
 			path = Components;
@@ -608,7 +621,6 @@
 				7EFE2C791C65C4881CC6548A /* FitnessUnits */,
 				7EFE2C791C65C4881CC6548B /* AntMessageProtocol */,
 				7EFE2C791C65C4881CC6548C /* DataDecoder */,
-				36AACD64712C473DE326E237 /* GoogleMaps */,
 			);
 			productName = TezDav;
 			productReference = A00200000000000000000027 /* TezDav.app */;
@@ -674,10 +686,10 @@
 			};
 			buildConfigurationList = A01100000000000000000001 /* Build configuration list for PBXProject "TezDav" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = en;
+			developmentRegion = ru;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
+				ru,
 				Base,
 			);
 			mainGroup = A00700000000000000000001;
@@ -687,10 +699,11 @@
 				59FEB8010D350F2F2ABBF78A /* XCRemoteSwiftPackageReference "FitnessUnits" */,
 				59FEB8010D350F2F2ABBF78B /* XCRemoteSwiftPackageReference "AntMessageProtocol" */,
 				59FEB8010D350F2F2ABBF78C /* XCRemoteSwiftPackageReference "DataDecoder" */,
-				CFDCB4B38C66B515C1657939 /* XCRemoteSwiftPackageReference "ios-maps-sdk" */,
 			);
 			productRefGroup = A00700000000000000000004 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+			);
 			projectRoot = "";
 			targets = (
 				A00500000000000000000001 /* TezDav */,
@@ -784,6 +797,8 @@
 				A00100000000000000000015 /* StravaAPI/StravaAPIClient.swift in Sources */,
 				A00100000000000000000016 /* Sync/SyncProgress.swift in Sources */,
 				A00100000000000000000017 /* Sync/SyncService.swift in Sources */,
+				HK0100000000000000000001 /* Sync/HealthKitWorkoutImporter.swift in Sources */,
+				LOC010000000000000000001 /* Localization/AppLanguage.swift in Sources */,
 				A00100000000000000000018 /* Dashboard/DashboardViewModel.swift in Sources */,
 				A00100000000000000000019 /* Dashboard/DashboardView.swift in Sources */,
 				A00100000000000000000030 /* Dashboard/ActivityDetailView.swift in Sources */,
@@ -857,9 +872,12 @@
 				9142D9B3592ADAB220C1C3F2 /* ComponentStyles.swift in Sources */,
 				0AD88C6F7A6CCCD8A8558A05 /* ActivityCardView.swift in Sources */,
 				58721DC4373B687F0C2D422A /* CustomTabBar.swift in Sources */,
-				999900019999000199990001 /* GoogleMapView.swift in Sources */,
+				999900019999000199990001 /* TezDavMapView.swift in Sources */,
 				9CDAD0F22FDFAC16B12053D5 /* StoryFeedDashboardView.swift in Sources */,
 				D1BD8C6B9D6C6D6AE92619B8 /* LiquidGlass.swift in Sources */,
+				729791B7C9EC130B5339F756 /* DesignTokens.swift in Sources */,
+				CBA1DCE2C74F3B3987B0E549 /* RedesignPreviews.swift in Sources */,
+				CB03C8454DA139B5A7A2E675 /* LiquidGlassComponents.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1277,22 +1295,9 @@
 				minimumVersion = 1.15.0;
 			};
 		};
-		CFDCB4B38C66B515C1657939 /* XCRemoteSwiftPackageReference "ios-maps-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/googlemaps/ios-maps-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 9.2.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		36AACD64712C473DE326E237 /* GoogleMaps */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CFDCB4B38C66B515C1657939 /* XCRemoteSwiftPackageReference "ios-maps-sdk" */;
-			productName = GoogleMaps;
-		};
 		7EFE2C791C65C4881CC65413 /* FitDataProtocol */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 59FEB8010D350F2F2ABBF7DF /* XCRemoteSwiftPackageReference "FitDataProtocol" */;

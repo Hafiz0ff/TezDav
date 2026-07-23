@@ -1,7 +1,7 @@
 # SwiftLint Configuration file for TezDav
 
 opt_in_rules:
-  - force_unwrap
+  - force_unwrapping
   - force_cast
   - implicitly_unwrapped_optional
 
@@ -15,8 +15,8 @@ disabled_rules:
   - shorthand_operator
 
 # Rule Configurations
-force_unwrap:
-  severity: error
+force_unwrapping:
+  severity: warning
 
 force_cast:
   severity: error
@@ -39,6 +39,7 @@ todo:
 
 # Path Exclusions
 excluded:
+  - Android
   - Carthage
   - Pods
   - TezDavTests

@@ -38,11 +38,11 @@ struct PersonalHeatmapView: View {
     @State private var selectedZoneMaxDistance = 0.0
     
     // Map State
-    @State private var cameraCenter: CLLocationCoordinate2D? = CLLocationCoordinate2D(latitude: 38.56, longitude: 68.79)
-    @State private var cameraZoom: Float? = 12.0
+    @State private var cameraCenter: CLLocationCoordinate2D?
+    @State private var cameraZoom: Float?
     @State private var currentRegion = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 38.56, longitude: 68.79),
-        span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+        center: CLLocationCoordinate2D(latitude: 0, longitude: 0),
+        span: MKCoordinateSpan(latitudeDelta: 120, longitudeDelta: 120)
     )
     
     // Share Sheet State
@@ -102,7 +102,7 @@ struct PersonalHeatmapView: View {
     var body: some View {
         ZStack {
             // Main Map View with Tile Overlay
-            GoogleMapView(
+            TezDavMapView(
                 heatmapTracks: filteredTracks,
                 filterSport: filterSport,
                 periodDays: periodDays,

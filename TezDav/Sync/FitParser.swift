@@ -10,7 +10,7 @@ struct FitParser {
         
         var points: [(date: Date, lat: Double, lon: Double, ele: Double?, hr: Double?, cad: Double?, power: Double?, speed: Double?, dist: Double?)] = []
         
-        var activityName = "FIT Activity"
+        var activityName = "FIT-тренировка"
         var sportType = "Run"
         var startTime: Date?
         var totalDistance: Double?
@@ -176,7 +176,7 @@ struct FitParser {
         let trimpVal = finalHR != nil ? Double(movingTime / 60.0) * 1.5 : 0.0
         let loadVal = finalHR != nil ? trimpVal * 1.1 : (finalDistance / 1000.0) * 3.5
         
-        let name = activityName == "FIT Activity" ? url.deletingPathExtension().lastPathComponent : activityName
+        let name = activityName == "FIT-тренировка" ? url.deletingPathExtension().lastPathComponent : activityName
         
         let startLat = sortedPoints.first?.lat
         let startLon = sortedPoints.first?.lon

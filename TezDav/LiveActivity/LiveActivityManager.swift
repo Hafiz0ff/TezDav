@@ -133,7 +133,7 @@ final class LiveActivityManager {
         // End any existing sync activity first
         endSyncActivity()
         
-        let attributes = TezDavAttributes(title: "Strava Sync")
+        let attributes = TezDavAttributes(title: "Синхронизация Strava")
         let initialState = TezDavAttributes.ContentState(
             loadedCount: 0,
             totalCount: totalCount,
@@ -190,7 +190,7 @@ final class LiveActivityManager {
         // End any existing sync activity first
         endSyncActivity()
         
-        let attributes = TezDavAttributes(title: "Workout Summary")
+        let attributes = TezDavAttributes(title: "Итоги тренировки")
         let summaryState = TezDavAttributes.ContentState(
             loadedCount: 0,
             totalCount: 0,

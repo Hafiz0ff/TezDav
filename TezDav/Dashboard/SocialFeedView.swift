@@ -112,7 +112,7 @@ struct SocialFeedView: View {
                 // Map visualization
                 if !coords.isEmpty {
                     if NSClassFromString("XCTestCase") == nil {
-                        GoogleMapView(
+                        TezDavMapView(
                             coordinates: coords,
                             sportType: activity.sportType,
                             showStartEndMarkers: false
@@ -129,7 +129,7 @@ struct SocialFeedView: View {
                                     Image(systemName: "map")
                                         .font(.title)
                                         .foregroundColor(.orange)
-                                    Text("Map Visualized")
+                                    Text("Карта загружена")
                                         .font(.caption)
                                         .foregroundColor(.gray)
                                 }

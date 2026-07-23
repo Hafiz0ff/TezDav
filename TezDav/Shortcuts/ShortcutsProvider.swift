@@ -10,9 +10,7 @@ public struct TezDavShortcutsProvider: AppShortcutsProvider {
             intent: GetFormIntent(),
             phrases: [
                 "Как моя форма в \(.applicationName)?",
-                "Как я сейчас в \(.applicationName)?",
-                "What is my status in \(.applicationName)?",
-                "Am I ready to train in \(.applicationName)?"
+                "Как я сейчас в \(.applicationName)?"
             ],
             shortTitle: "Как я сейчас",
             systemImageName: "heart.text.square"
@@ -22,7 +20,6 @@ public struct TezDavShortcutsProvider: AppShortcutsProvider {
             intent: GetWeeklyStatsIntent(),
             phrases: [
                 "Моя форма за неделю в \(.applicationName)",
-                "Weekly volume in \(.applicationName)",
                 "Недельная статистика в \(.applicationName)"
             ],
             shortTitle: "Моя форма за неделю",
@@ -33,7 +30,6 @@ public struct TezDavShortcutsProvider: AppShortcutsProvider {
             intent: GetLastWorkoutIntent(),
             phrases: [
                 "Последняя тренировка в \(.applicationName)",
-                "Show last workout in \(.applicationName)",
                 "Моя последняя активность в \(.applicationName)"
             ],
             shortTitle: "Последняя тренировка",
@@ -44,10 +40,9 @@ public struct TezDavShortcutsProvider: AppShortcutsProvider {
             intent: GetGearWearIntent(),
             phrases: [
                 "Когда менять кроссовки в \(.applicationName)?",
-                "Check shoe wear in \(.applicationName)",
                 "Износ экипировки в \(.applicationName)"
             ],
-            shortTitle: "Когда меняй кроссовки",
+            shortTitle: "Когда менять кроссовки",
             systemImageName: "shoeprints.fill"
         )
         
@@ -55,7 +50,6 @@ public struct TezDavShortcutsProvider: AppShortcutsProvider {
             intent: ImportWorkoutIntent(),
             phrases: [
                 "Добавить тренировку в \(.applicationName)",
-                "Import workout in \(.applicationName)",
                 "Загрузить файл тренировки в \(.applicationName)"
             ],
             shortTitle: "Добавить тренировку",
@@ -87,7 +81,7 @@ public struct GetFormIntent: AppIntent {
         let gearDescriptor = FetchDescriptor<GearItem>()
         let gears = (try? context.fetch(gearDescriptor)) ?? []
         
-        let isRu = Locale.current.identifier.hasPrefix("ru")
+        let isRu = AppLanguage.isRussian
         
         let summary = DashboardViewModel.summary(from: activities)
         let tsb = summary.tsb
@@ -138,7 +132,7 @@ public struct GetWeeklyStatsIntent: AppIntent {
         let actDescriptor = FetchDescriptor<Activity>()
         let activities = (try? context.fetch(actDescriptor)) ?? []
         
-        let isRu = Locale.current.identifier.hasPrefix("ru")
+        let isRu = AppLanguage.isRussian
         let calendar = Calendar.current
         
         let now = Date()
@@ -186,7 +180,7 @@ public struct GetLastWorkoutIntent: AppIntent {
         let actDescriptor = FetchDescriptor<Activity>()
         let activities = (try? context.fetch(actDescriptor)) ?? []
         
-        let isRu = Locale.current.identifier.hasPrefix("ru")
+        let isRu = AppLanguage.isRussian
         
         guard let lastAct = activities.sorted(by: { $0.startDate > $1.startDate }).first else {
             let text = isRu ? "У вас еще нет записанных тренировок." : "You don't have any recorded activities yet."
@@ -197,8 +191,8 @@ public struct GetLastWorkoutIntent: AppIntent {
         let hours = Int(lastAct.movingTime) / 3600
         let minutes = (Int(lastAct.movingTime) % 3600) / 60
         
-        let sportName = isRu ? 
-            (lastAct.sportType.lowercased() == "run" ? "Бег" : "Заезд") : 
+        let sportName = isRu ?
+            AppLanguage.sportName(lastAct.sportType) :
             lastAct.sportType
             
         let value = isRu ?
@@ -228,7 +222,7 @@ public struct GetGearWearIntent: AppIntent {
         let gearDescriptor = FetchDescriptor<GearItem>()
         let gears = (try? context.fetch(gearDescriptor)) ?? []
         
-        let isRu = Locale.current.identifier.hasPrefix("ru")
+        let isRu = AppLanguage.isRussian
         
         let activeShoes = gears.filter { $0.isActive && $0.sportType == "Run" }
         

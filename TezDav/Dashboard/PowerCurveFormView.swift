@@ -284,7 +284,7 @@ struct PowerCurveFormView: View {
             
             HStack(spacing: 24) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Critical Power (CP)")
+                    Text("Критическая мощность (CP)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Text("\(Int(result.criticalPower)) Вт")

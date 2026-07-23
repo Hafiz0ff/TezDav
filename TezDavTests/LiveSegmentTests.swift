@@ -21,6 +21,7 @@ final class LiveSegmentTests: XCTestCase {
     }
     
     override func tearDown() {
+        LiveSegmentCoordinator.shared.reset()
         context = nil
         container = nil
         super.tearDown()

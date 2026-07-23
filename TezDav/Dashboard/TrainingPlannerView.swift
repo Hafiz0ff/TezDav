@@ -495,7 +495,7 @@ struct TrainingPlannerView: View {
                     .foregroundStyle(.purple.gradient)
                 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(isMetric ? "ИИ-Ассистент Тренера" : "AI Coach Assistant")
+                    Text(AppLanguage.isRussian ? "ИИ-ассистент тренера" : "AI Coach Assistant")
                         .font(.headline)
                     Text("CTL: \(Int(round(rec.ctl))) | ATL: \(Int(round(rec.atl)))")
                         .font(.caption)
@@ -517,7 +517,7 @@ struct TrainingPlannerView: View {
             Divider()
             
             // Insight message
-            Text(isMetric ? rec.insightRU : rec.insightEN)
+            Text(AppLanguage.isRussian ? rec.insightRU : rec.insightEN)
                 .font(.subheadline)
                 .foregroundStyle(.primary)
                 .lineLimit(nil)
@@ -526,7 +526,7 @@ struct TrainingPlannerView: View {
             // Compliance section if previous week exists
             if rec.runCompliance != nil || rec.bikeCompliance != nil {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(isMetric ? "Выполнение плана за прошлую неделю:" : "Previous week plan compliance:")
+                    Text(AppLanguage.isRussian ? "Выполнение плана за прошлую неделю:" : "Previous week plan compliance:")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
                     
@@ -536,7 +536,7 @@ struct TrainingPlannerView: View {
                         let actualVal = actualRun / divisor
                         let unit = isMetric ? "км" : "миль"
                         HStack {
-                            Text(isMetric ? "Бег:" : "Run:")
+                            Text(AppLanguage.isRussian ? "Бег:" : "Run:")
                                 .font(.caption)
                                 .frame(width: 45, alignment: .leading)
                             
@@ -550,7 +550,7 @@ struct TrainingPlannerView: View {
                     
                     if let bc = rec.bikeCompliance, let targetBike = rec.targetBikeHours, let actualBike = rec.actualBikeHours {
                         HStack {
-                            Text(isMetric ? "Вело:" : "Bike:")
+                            Text(AppLanguage.isRussian ? "Велосипед:" : "Bike:")
                                 .font(.caption)
                                 .frame(width: 45, alignment: .leading)
                             
@@ -580,9 +580,9 @@ struct TrainingPlannerView: View {
                     }
                 )) {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(isMetric ? "Авто-адаптация" : "Auto-Adaptation")
+                        Text(AppLanguage.isRussian ? "Автоматическая адаптация" : "Auto-Adaptation")
                             .font(.subheadline.weight(.semibold))
-                        Text(isMetric ? "С подстройкой под усталость" : "Adjust targets based on fatigue")
+                        Text(AppLanguage.isRussian ? "Корректировать цели с учётом усталости" : "Adjust targets based on fatigue")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
@@ -602,7 +602,7 @@ struct TrainingPlannerView: View {
                             )
                         }
                     } label: {
-                        Text(isMetric ? "Адаптировать" : "Adapt Plan")
+                        Text(AppLanguage.isRussian ? "Адаптировать план" : "Adapt Plan")
                             .font(.caption.weight(.bold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 12)
@@ -629,11 +629,11 @@ struct TrainingPlannerView: View {
     
     private func statusLabel(_ status: TrainerStatus, isMetric: Bool) -> String {
         switch status {
-        case .optimal: return isMetric ? "ОПТИМАЛЬНО" : "OPTIMAL"
-        case .overload: return isMetric ? "ПЕРЕГРУЗКА" : "OVERLOAD"
-        case .recovery: return isMetric ? "ВОССТАНОВЛЕНИЕ" : "RECOVERY"
-        case .underload: return isMetric ? "НЕДОГРУЗКА" : "UNDERLOAD"
-        case .fresh: return isMetric ? "СВЕЖЕСТЬ" : "FRESH"
+        case .optimal: return AppLanguage.isRussian ? "ОПТИМАЛЬНО" : "OPTIMAL"
+        case .overload: return AppLanguage.isRussian ? "ПЕРЕГРУЗКА" : "OVERLOAD"
+        case .recovery: return AppLanguage.isRussian ? "ВОССТАНОВЛЕНИЕ" : "RECOVERY"
+        case .underload: return AppLanguage.isRussian ? "НЕДОГРУЗКА" : "UNDERLOAD"
+        case .fresh: return AppLanguage.isRussian ? "СВЕЖЕСТЬ" : "FRESH"
         }
     }
 }

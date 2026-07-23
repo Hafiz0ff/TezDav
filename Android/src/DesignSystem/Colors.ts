@@ -1,0 +1,33 @@
+export const Colors = {
+  accentPrimary: '#1DBF88',
+  accentPrimaryDeep: '#0D7A58',
+  accentTint: 'rgba(29, 191, 136, 0.16)',
+  accentTintStrong: 'rgba(29, 191, 136, 0.28)',
+  ruby: '#C8304F',
+  rubyDeep: '#8B1F35',
+  rubyTint: 'rgba(200, 48, 79, 0.16)',
+  warning: '#E6B85C',
+  danger: '#E45D76',
+
+  backgroundMain: '#08090B',
+  backgroundDeep: '#030405',
+  surface: '#131518',
+  surfaceRaised: '#181A1E',
+  surfaceMuted: '#0F1113',
+  glassBackground: 'rgba(22, 25, 28, 0.66)',
+  glassFallback: '#202327',
+  glassBorder: 'rgba(255, 255, 255, 0.08)',
+  glassHighlight: 'rgba(255, 255, 255, 0.18)',
+  divider: 'rgba(255, 255, 255, 0.07)',
+
+  emeraldAuroraStart: 'rgba(29, 191, 136, 0.13)',
+  emeraldAuroraMid: 'rgba(13, 122, 88, 0.06)',
+  emeraldAuroraEnd: 'rgba(8, 9, 11, 0)',
+  rubyAurora: 'rgba(200, 48, 79, 0.08)',
+
+  textPrimary: '#F5F6F7',
+  textSecondary: '#A7ABB0',
+  textMuted: '#777C83',
+  textOnAccent: '#032116',
+  mapLine: '#1A2A25',
+} as const;

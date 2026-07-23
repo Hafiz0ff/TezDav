@@ -202,8 +202,8 @@ final class SyncService {
         let remaining = limit - gear.currentDistanceKm
         if gear.isActive && remaining > 0 && remaining <= 50.0 {
             NotificationManager.shared.sendNotification(
-                title: Locale.current.identifier.hasPrefix("ru") ? "Замена экипировки" : "Gear Replacement Alert",
-                body: String(format: Locale.current.identifier.hasPrefix("ru") ? "Ресурс экипировки %@ (%d км). Осталось всего %.1f км. Рекомендуется замена." : "Gear limit reached for %@ (%d km). Only %.1f km remaining. Replacement advised.", gear.name, Int(limit), remaining),
+                title: AppLanguage.isRussian ? "Замена экипировки" : "Gear Replacement Alert",
+                body: String(format: AppLanguage.isRussian ? "Ресурс экипировки %@ (%d км). Осталось всего %.1f км. Рекомендуется замена." : "Gear limit reached for %@ (%d km). Only %.1f km remaining. Replacement advised.", gear.name, Int(limit), remaining),
                 userInfo: [:]
             )
         }

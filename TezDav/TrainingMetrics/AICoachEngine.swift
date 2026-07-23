@@ -219,7 +219,7 @@ enum AICoachEngine {
         // Tag label
         let tagRU = "(Адапт.)"
         let tagEN = "(Adapted)"
-        let tag = Locale.current.identifier.hasPrefix("ru") ? tagRU : tagEN
+        let tag = AppLanguage.isRussian ? tagRU : tagEN
         
         if !nextPlannedWeek.typeString.contains(tagRU) && !nextPlannedWeek.typeString.contains(tagEN) {
             nextPlannedWeek.typeString += " \(tag)"

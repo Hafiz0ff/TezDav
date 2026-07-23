@@ -28,6 +28,49 @@ final class StravaOAuthTests: XCTestCase {
         XCTAssertEqual(code, "run123")
     }
 
+    func testAuthorizationURLAcceptsLoopbackRedirectOverride() throws {
+        let config = StravaConfig(
+            clientId: "123",
+            clientSecret: "secret",
+            redirectScheme: "tezdav",
+            redirectURI: "tezdav://auth/callback"
+        )
+
+        let url = try StravaOAuth.authorizationURL(
+            config: config,
+            state: "abc",
+            redirectURI: "http://localhost:49152/auth/callback"
+        )
+        let components = try XCTUnwrap(URLComponents(url: url, resolvingAgainstBaseURL: false))
+        let redirectURI = components.queryItems?.first(where: { $0.name == "redirect_uri" })?.value
+
+        XCTAssertEqual(redirectURI, "http://localhost:49152/auth/callback")
+    }
+
+    func testAuthorizationCodeValidatesState() throws {
+        let callback = URL(string: "http://localhost:49152/auth/callback?state=expected&code=run123")!
+
+        XCTAssertEqual(
+            try StravaOAuth.authorizationCode(from: callback, expectedState: "expected"),
+            "run123"
+        )
+        XCTAssertThrowsError(
+            try StravaOAuth.authorizationCode(from: callback, expectedState: "different")
+        ) { error in
+            XCTAssertEqual(error as? StravaOAuthError, .invalidState)
+        }
+    }
+
+    func testAuthorizationCodeReportsDeniedAccess() {
+        let callback = URL(string: "http://localhost:49152/auth/callback?state=expected&error=access_denied")!
+
+        XCTAssertThrowsError(
+            try StravaOAuth.authorizationCode(from: callback, expectedState: "expected")
+        ) { error in
+            XCTAssertEqual(error as? StravaOAuthError, .accessDenied)
+        }
+    }
+
     func testSessionRefreshesExpiringToken() async throws {
         let store = InMemoryTokenStore()
         try store.saveToken(StravaToken(

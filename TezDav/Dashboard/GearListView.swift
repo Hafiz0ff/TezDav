@@ -10,7 +10,7 @@ struct GearListView: View {
     @State private var isShowingAddSheet = false
     
     var body: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         let activeGears = gears.filter { $0.isActive }
         let retiredGears = gears.filter { !$0.isActive }
         
@@ -67,7 +67,7 @@ struct GearRowView: View {
     let gear: GearItem
     
     var body: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         let pct = gear.maxDistanceKm > 0 ? (gear.currentDistanceKm / gear.maxDistanceKm) : 0.0
         
         VStack(alignment: .leading, spacing: 8) {
@@ -131,7 +131,7 @@ struct GearDetailView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         let gearActivities = activities.filter { $0.gearItem?.id == gear.id }
         let topActivities = Array(gearActivities.sorted { $0.distanceMeters > $1.distanceMeters }.prefix(5))
         
@@ -216,7 +216,7 @@ struct AddGearView: View {
     @State private var isDefault = false
     
     var body: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         
         NavigationStack {
             Form {
@@ -265,7 +265,7 @@ struct AddGearView: View {
                             .frame(width: 80)
                     }
                     
-                    TextField(isRussian ? "Strava Gear ID (опционально)" : "Strava Gear ID (optional)", text: $stravaGearId)
+                    TextField(isRussian ? "Идентификатор снаряжения Strava (необязательно)" : "Strava Gear ID (optional)", text: $stravaGearId)
                     
                     Toggle(isRussian ? "Снаряжение по умолчанию" : "Set as Default Sport Gear", isOn: $isDefault)
                 }

@@ -27,17 +27,19 @@ struct RecordsView: View {
     @State private var selectedRunningProgressDistance: String = "5k"
 
     var body: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         let runningActivities = activities.filter { $0.sportType.lowercased().contains("run") }
         
         Group {
             if runningActivities.isEmpty {
-                ContentUnavailableView(
-                    isRussian ? "Нет рекордов" : "No Records",
-                    systemImage: "trophy.fill",
-                    description: Text(isRussian ? "Синхронизируйте хотя бы одну беговую тренировку, чтобы увидеть рекорды" : "Sync at least one running workout to see records")
+                TezDavEmptyState(
+                    symbol: "trophy",
+                    title: isRussian ? "Нет рекордов" : "No Records",
+                    message: isRussian
+                        ? "Синхронизируйте беговую тренировку, чтобы найти лучшие результаты."
+                        : "Sync a running workout to find your best efforts."
                 )
-                .background(AmbientBackgroundView())
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 24) {
@@ -59,14 +61,13 @@ struct RecordsView: View {
                         Spacer()
                             .frame(height: 120)
                     }
-                    .padding(.horizontal, 14)
+                    .padding(.horizontal, DesignTokens.Spacing.screen)
                     .padding(.top, 16)
                 }
             }
         }
-        .navigationTitle("")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .navigationTitle(isRussian ? "Рекорды" : "Records")
+        .navigationBarTitleDisplayMode(.large)
         .onAppear {
             scanAndComputeRecords()
         }
@@ -77,7 +78,7 @@ struct RecordsView: View {
 
     // MARK: - Running Personal Records Section
     private var runningRecordsSection: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         return VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 8) {
                 Image(systemName: "trophy.fill")
@@ -129,8 +130,17 @@ struct RecordsView: View {
                             .buttonStyle(RecordPressButtonStyle())
                         } else {
                             Text(isRussian ? "Нет данных" : "No data")
-                                .font(.system(size: 13))
-                                .foregroundStyle(Color.textDisabled)
+                                .font(.caption.weight(.medium))
+                                .foregroundStyle(Color.textTertiary)
+                                .padding(.horizontal, DesignTokens.Spacing.sm)
+                                .padding(.vertical, DesignTokens.Spacing.xs)
+                                .overlay {
+                                    Capsule()
+                                        .strokeBorder(
+                                            Color.textTertiary.opacity(0.5),
+                                            style: StrokeStyle(lineWidth: 1, dash: [4, 4])
+                                        )
+                                }
                         }
                     }
                     .padding(.vertical, 14)
@@ -204,7 +214,7 @@ struct RecordsView: View {
     }
 
     private var recordProgressionSection: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         return VStack(alignment: .leading, spacing: 14) {
             HStack {
                 HStack(spacing: 8) {
@@ -251,7 +261,7 @@ struct RecordsView: View {
                     Image(systemName: "waveform.path")
                         .font(.title2)
                         .foregroundStyle(Color.textDisabled)
-                    Text(isRussian ? "Выполните тренировки на эту дистанцию с GPS, чтобы увидеть историю." : "Complete activities of this distance with GPS to see history.")
+                    Text(isRussian ? "Выполните тренировки на эту дистанцию с записью маршрута, чтобы увидеть историю." : "Complete activities of this distance with GPS to see history.")
                         .font(.system(size: 12))
                         .foregroundStyle(Color.textTertiaryReadable)
                         .multilineTextAlignment(.center)
@@ -288,7 +298,7 @@ struct RecordsView: View {
 
     // MARK: - Cycling Critical Power Section
     private var cyclingCriticalPowerSection: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         return VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 8) {
                 Image(systemName: "bolt.fill")
@@ -301,10 +311,10 @@ struct RecordsView: View {
             
             let powerCurves: [(duration: String, keyPath: KeyPath<Activity, Double?>)] = [
                 ("5 sec", \Activity.peakPower5s),
-                ("1 min", \Activity.peakPower1m),
-                ("5 min", \Activity.peakPower5m),
-                ("20 min", \Activity.peakPower20m),
-                ("60 min", \Activity.peakPower60m)
+                ("1 мин", \Activity.peakPower1m),
+                ("5 мин", \Activity.peakPower5m),
+                ("20 мин", \Activity.peakPower20m),
+                ("60 мин", \Activity.peakPower60m)
             ]
             
             let hasAnyPower = activities.contains { $0.peakPower5s != nil }
@@ -334,7 +344,7 @@ struct RecordsView: View {
                             Text(cp.duration)
                                 .font(.system(size: 10, weight: .bold))
                                 .foregroundStyle(Color.textSecondaryReadable)
-                            Text(peakPower > 0 ? String(format: "%.0f W", peakPower) : "--")
+                            Text(peakPower > 0 ? String(format: "%.0f Вт", peakPower) : "--")
                                 .font(.system(size: 13, weight: .bold))
                                 .foregroundStyle(peakPower > 0 ? Color.accentPrimary : Color.textDisabled)
                         }
@@ -356,7 +366,7 @@ struct RecordsView: View {
 
     // MARK: - Personal Segments Section
     private var personalSegmentsSection: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         return VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 8) {
                 Image(systemName: "slider.horizontal.3")
@@ -441,14 +451,14 @@ struct RecordsView: View {
         let baselineSec = Double(baselineHours * 3600 + baselineMinutes * 60 + baselineSeconds)
         let ctl = currentCTL
         let isMetric = activeUserSettings.isMetric
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         
         return VStack(alignment: .leading, spacing: 18) {
             HStack(spacing: 8) {
                 Image(systemName: "figure.run.square.stack")
                     .font(.system(size: 18, weight: .bold))
                     .foregroundStyle(Color.orange)
-                Text(isRussian ? "Race Predictor Pro (v2)" : "Race Predictor Pro (v2)")
+                Text(isRussian ? "Прогноз результата" : "Race Predictor Pro")
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(Color.textPrimary)
             }
@@ -536,7 +546,7 @@ struct RecordsView: View {
                             Spacer()
                             HStack(spacing: 4) {
                                 HStack(spacing: 0) {
-                                    Picker("Hours", selection: $baselineHours) {
+                                    Picker("Часы", selection: $baselineHours) {
                                         ForEach(0..<10) { h in
                                             Text("\(h)").tag(h)
                                         }
@@ -551,7 +561,7 @@ struct RecordsView: View {
                                 }
                                 
                                 HStack(spacing: 0) {
-                                    Picker("Minutes", selection: $baselineMinutes) {
+                                    Picker("Минуты", selection: $baselineMinutes) {
                                         ForEach(0..<60) { m in
                                             Text("\(m)").tag(m)
                                         }
@@ -566,7 +576,7 @@ struct RecordsView: View {
                                 }
                                 
                                 HStack(spacing: 0) {
-                                    Picker("Seconds", selection: $baselineSeconds) {
+                                    Picker("Секунды", selection: $baselineSeconds) {
                                         ForEach(0..<60) { s in
                                             Text("\(s)").tag(s)
                                         }
@@ -658,14 +668,14 @@ struct RecordsView: View {
                                         selectedRouteId = route.id
                                         manualElevationGain = route.totalElevationGain
                                     } label: {
-                                        let distStr = isMetric ? String(format: "%.1f км", route.totalDistanceMeters / 1000.0) : String(format: "%.1f miles", route.totalDistanceMeters / 1609.34)
+                                        let distStr = isMetric ? String(format: "%.1f км", route.totalDistanceMeters / 1000.0) : String(format: "%.1f миль", route.totalDistanceMeters / 1609.34)
                                         Text("\(route.name) (\(distStr))")
                                     }
                                 }
                             } label: {
                                 HStack {
                                     if let selectedRoute = runningSavedRoutes.first(where: { $0.id == selectedRouteId }) {
-                                        let distStr = isMetric ? String(format: "%.1f км", selectedRoute.totalDistanceMeters / 1000.0) : String(format: "%.1f miles", selectedRoute.totalDistanceMeters / 1609.34)
+                                        let distStr = isMetric ? String(format: "%.1f км", selectedRoute.totalDistanceMeters / 1000.0) : String(format: "%.1f миль", selectedRoute.totalDistanceMeters / 1609.34)
                                         Text("\(selectedRoute.name) (\(distStr))")
                                             .font(.system(size: 13, weight: .semibold))
                                             .foregroundStyle(Color.textPrimary)
@@ -727,7 +737,7 @@ struct RecordsView: View {
                                     .font(.system(size: 12, weight: .bold))
                                     .foregroundStyle(Color.accentPrimary)
                             } else {
-                                Text(String(format: "%.0f ft", manualElevationGain * 3.28084))
+                                Text(String(format: "%.0f фт", manualElevationGain * 3.28084))
                                     .font(.system(size: 12, weight: .bold))
                                     .foregroundStyle(Color.accentPrimary)
                             }
@@ -805,7 +815,7 @@ struct RecordsView: View {
                                         let paceSec = projectedSec / (target.dist / paceDist)
                                         let paceMin = Int(paceSec) / 60
                                         let paceSecRemainder = Int(paceSec) % 60
-                                        Text(String(format: isRussian ? "Средний темп: %d:%02d /%@" : "Avg pace: %d:%02d /%@", paceMin, paceSecRemainder, isMetric ? "км" : "mi"))
+                                        Text(String(format: isRussian ? "Средний темп: %d:%02d /%@" : "Avg pace: %d:%02d /%@", paceMin, paceSecRemainder, isMetric ? "км" : "милю"))
                                             .font(.system(size: 11))
                                             .foregroundStyle(Color.textTertiaryReadable)
                                     }
@@ -898,7 +908,7 @@ struct RecordsView: View {
                                             .foregroundStyle(Color.textTertiaryReadable)
                                             .frame(width: 44, alignment: .leading)
                                         
-                                        Text(String(format: "%d:%02d /%@", paceMin, paceSecRemainder, isMetric ? "км" : "mi"))
+                                        Text(String(format: "%d:%02d /%@", paceMin, paceSecRemainder, isMetric ? "км" : "милю"))
                                             .font(.system(size: 12, weight: .semibold))
                                             .foregroundStyle(Color.textPrimary)
                                             .frame(width: 90, alignment: .leading)
@@ -909,7 +919,7 @@ struct RecordsView: View {
                                             .frame(width: 80, alignment: .leading)
                                         
                                         let elevVal = isMetric ? split.elevationGain : split.elevationGain * 3.28084
-                                        Text(elevVal > 0.5 ? String(format: "+%.0f %@", elevVal, isMetric ? "м" : "ft") : "-")
+                                        Text(elevVal > 0.5 ? String(format: "+%.0f %@", elevVal, isMetric ? "м" : "фт") : "-")
                                             .font(.system(size: 12))
                                             .foregroundStyle(elevVal > 0.5 ? Color.accentPrimary : Color.textDisabled)
                                             .frame(maxWidth: .infinity, alignment: .trailing)
@@ -925,7 +935,7 @@ struct RecordsView: View {
                             Button(action: {
                                 HapticManager.trigger(.medium)
                                 let routeName = selectedRoute?.name ?? (isMetric ? String(format: "Прогноз на %.1f км", targetDist / 1000.0) : String(format: "Прогноз на %.1f миль", targetDist / 1609.34))
-                                let distStr = isMetric ? String(format: "%.1f км", targetDist / 1000.0) : String(format: "%.1f miles", targetDist / 1609.34)
+                                let distStr = isMetric ? String(format: "%.1f км", targetDist / 1000.0) : String(format: "%.1f миль", targetDist / 1609.34)
                                 let predictedSec = RacePredictorEngine.predictTime(
                                     baseDistance: baselineDistance,
                                     baseTime: baselineSec,
@@ -945,7 +955,7 @@ struct RecordsView: View {
                             }) {
                                 HStack(spacing: 8) {
                                     Image(systemName: "square.and.arrow.up")
-                                    Text(isRussian ? "Экспортировать Pace Band" : "Export Pace Band")
+                                    Text(isRussian ? "Экспортировать браслет темпа" : "Export Pace Band")
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
@@ -985,15 +995,15 @@ struct RecordsView: View {
     }
     
     private func enduranceLevel(for ctl: Double) -> String {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         if ctl < 25.0 {
-            return isRussian ? "Начальный (Low)" : "Low (Beginner)"
+            return isRussian ? "Начальный" : "Low (Beginner)"
         } else if ctl < 50.0 {
-            return isRussian ? "Базовый (Moderate)" : "Moderate (Base)"
+            return isRussian ? "Базовый" : "Moderate (Base)"
         } else if ctl < 75.0 {
-            return isRussian ? "Отличный (Good)" : "Good (Advanced)"
+            return isRussian ? "Продвинутый" : "Good (Advanced)"
         } else {
-            return isRussian ? "Элитный (Excellent)" : "Excellent (Elite)"
+            return isRussian ? "Элитный" : "Excellent (Elite)"
         }
     }
     
@@ -1128,5 +1138,3 @@ struct RacePredictorShareItem: Identifiable {
     let id = UUID()
     let image: UIImage
 }
-
-

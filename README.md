@@ -9,7 +9,7 @@
   <a href="https://developer.apple.com/ios/"><img src="https://img.shields.io/badge/iOS-17.0%2B-blue.svg?style=flat-square&logo=apple" alt="iOS"></a>
   <a href="https://developer.apple.com/watchos/"><img src="https://img.shields.io/badge/watchOS-10.0%2B-lightblue.svg?style=flat-square&logo=apple" alt="watchOS"></a>
   <a href="https://developer.apple.com/xcode/swiftdata/"><img src="https://img.shields.io/badge/SwiftData-✦-purple.svg?style=flat-square" alt="SwiftData"></a>
-  <a href="https://developers.google.com/maps/documentation/ios-sdk"><img src="https://img.shields.io/badge/Google_Maps-SDK-4285F4.svg?style=flat-square&logo=googlemaps" alt="Google Maps"></a>
+  <a href="https://developer.apple.com/maps/"><img src="https://img.shields.io/badge/MapKit-Native-0A84FF.svg?style=flat-square&logo=apple" alt="MapKit"></a>
   <a href="https://developer.apple.com/widgets/"><img src="https://img.shields.io/badge/Live_Activities-Dynamic_Island-black.svg?style=flat-square" alt="Live Activities"></a>
 </p>
 
@@ -92,7 +92,7 @@ TezDav использует современную дизайн-систему �
 - **Прогнозирование результатов** — алгоритм Riegel v2 с поправками на температуру и рельеф
 
 #### 🗺 Карты и маршруты
-- **Google Maps SDK** — интерактивная карта с кастомными оверлеями треков активностей
+- **MapKit** — нативная интерактивная карта с маршрутами, точками и цветными треками
 - **Интерактивный редактор маршрутов** — клик-для-создания с привязкой к дорогам (MKDirections), профилем высот, экспортом GPX
 - **Персональная тепловая карта** — все треки на одной карте с фильтрацией по спорту, цветовыми схемами и экспортом в HD
 - **Live Segments** — ведение в реальном времени по личным сегментам с отображением дельты времени
@@ -115,7 +115,6 @@ TezDav использует современную дизайн-систему �
 - **Strava OAuth** — автоматический импорт тренировок, GPX/FIT парсер
 - **Учёт экипировки** — пробег обуви и велосипеда, индикаторы износа, уведомления
 - **Погодная аналитика** — Open-Meteo API, корреляция скорости с температурой и влажностью
-- **iCloud / CloudKit** — синхронизация данных между устройствами
 - **Сегменты & Лидерборды** — Haversine-matching GPX/FIT с PR-трекером и виртуальными соперниками
 
 ---
@@ -124,8 +123,8 @@ TezDav использует современную дизайн-систему �
 
 | Слой | Технологии |
 |------|-----------|
-| **UI** | SwiftUI, Swift Charts, MapKit, Google Maps iOS SDK |
-| **База данных** | SwiftData (CloudKit + Local) |
+| **UI** | SwiftUI, Swift Charts, MapKit |
+| **База данных** | SwiftData (только локально) |
 | **Системные расширения** | WidgetKit, ActivityKit (Live Activities), WatchConnectivity |
 | **Здоровье** | HealthKit (HRV, сон, шаги, калории) |
 | **Геолокация** | CoreLocation, MapKit, MKDirections |
@@ -147,7 +146,7 @@ graph TD
     UI --> Dash[Dashboard & PMC]
     UI --> Detail[Activity Detail & Power Curve]
     UI --> Form[Form/Fitness PMC]
-    UI --> Routes[Google Maps & Route Builder]
+    UI --> Routes[MapKit & Route Builder]
     UI --> Heatmap[Personal Heatmap]
     UI --> Social[Social Feed & Kudos]
     UI --> Coach[AI Coach & Training Planner]
@@ -170,10 +169,10 @@ graph TD
     Ext --> HK[HealthKit Dual Sync]
     Ext --> WC[WatchConnectivity]
     Ext --> Widget[iOS Widget & Watch App]
-    Ext --> GMaps[Google Maps SDK]
+    Ext --> Maps[MapKit]
     Ext --> Strava[Strava OAuth & Sync]
 
-    DB[(SwiftData Local + iCloud)]
+    DB[(SwiftData Local)]
     App --> DB
 ```
 
@@ -184,7 +183,7 @@ graph TD
 #### Требования
 - Xcode 16.0+
 - iOS 17.0+ (симулятор или устройство)
-- Google Maps iOS SDK API Key
+- Apple Developer signing для запуска HealthKit на физическом устройстве
 
 #### Конфигурация
 1. Клонируй репозиторий:
@@ -198,12 +197,11 @@ graph TD
    open TezDav.xcodeproj
    ```
 
-3. В `TezDav/TezDavApp.swift` замени API-ключ Google Maps:
-   ```swift
-   GMSServices.provideAPIKey("YOUR_GOOGLE_MAPS_API_KEY")
-   ```
+3. Для запуска на устройстве выбери свою команду подписи и проверь возможности
+   **HealthKit**, **Background Delivery** и **App Groups**.
 
-4. В Xcode выбери схему **TezDav** и запусти на симуляторе или устройстве.
+4. В Xcode выбери схему **TezDav** и запусти на симуляторе или устройстве. Карты
+   работают через встроенный MapKit и не требуют API-ключа.
 
 > **Демо-режим**: При первом запуске на симуляторе без данных, приложение автоматически заполняется реалистичными тренировочными данными из Душанбе, Таджикистан.
 
@@ -218,7 +216,7 @@ TezDav/
 ├── Components/                # Переиспользуемые UI компоненты
 │   ├── CustomTabBar.swift     # Floating glass tab bar
 │   ├── ActivityCardView.swift # Карточка активности
-│   └── GoogleMapView.swift    # Google Maps UIViewRepresentable
+│   └── TezDavMapView.swift    # Общий MapKit UIViewRepresentable
 ├── Dashboard/                 # Основные экраны приложения
 │   ├── DashboardView.swift    # Главный экран (PMC, готовность, активности)
 │   ├── FormView.swift         # PMC chart, Power Curve, Running Dynamics
@@ -252,7 +250,7 @@ TezDav/
 
 - **PMC / Performance Management Chart** — Real-time CTL, ATL, TSB with 30-day forecast
 - **Power Curve & Critical Power Solver** — MMP windows, hyperbolic CP + W' regression, Coggan zones
-- **Google Maps Integration** — Interactive map with custom track overlays and route builder
+- **MapKit Integration** — Native maps with route overlays, waypoints, and a route builder
 - **Live Activities & Dynamic Island** — Real-time pace, HR, distance on Lock Screen
 - **Running Dynamics** — Cadence, GCT, vertical oscillation, L/R balance (Garmin color zones)
 - **AI Coach (on-device)** — Readiness + TSB + cadence + gear-based daily coaching
@@ -268,10 +266,10 @@ TezDav/
 
 ### Tech Stack
 
-SwiftUI · SwiftData · Swift Charts · Google Maps iOS SDK · HealthKit · WidgetKit · ActivityKit · CoreLocation · MapKit · WatchConnectivity · Strava OAuth 2.0 · Open-Meteo API · CloudKit
+SwiftUI · SwiftData · Swift Charts · MapKit · HealthKit · WidgetKit · ActivityKit · CoreLocation · WatchConnectivity · Strava OAuth 2.0 · Open-Meteo API
 
 ### Requirements
 
 - Xcode 16.0+
 - iOS 17.0+ / watchOS 10.0+
-- Google Maps iOS SDK API Key
+- Apple Developer signing for HealthKit on a physical device

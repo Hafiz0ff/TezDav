@@ -14,7 +14,7 @@ struct CreatePersonalSegmentView: View {
     @State private var endRatio: Double = 0.9
     
     private var isRussian: Bool {
-        Locale.current.identifier.hasPrefix("ru")
+        AppLanguage.isRussian
     }
     
     private var coordinates: [CLLocationCoordinate2D] {
@@ -45,7 +45,7 @@ struct CreatePersonalSegmentView: View {
                     .padding(.horizontal)
                     .padding(.top)
                 
-                GoogleMapView(
+                TezDavMapView(
                     coordinates: selectedCoordinates,
                     segments: [MapSegment(coordinates: coordinates, color: Color.gray.opacity(0.5))],
                     sportType: "Segment",

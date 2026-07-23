@@ -50,7 +50,11 @@ final class GpxParser: NSObject, XMLParserDelegate {
         xmlParser.delegate = parser
         
         guard xmlParser.parse() else {
-            throw xmlParser.parserError ?? NSError(domain: "GpxParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to parse GPX XML."])
+            throw xmlParser.parserError ?? NSError(
+                domain: "GpxParser",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "Не удалось прочитать файл GPX."]
+            )
         }
         
         return try parser.buildActivity(fileName: url.deletingPathExtension().lastPathComponent)
@@ -124,7 +128,11 @@ final class GpxParser: NSObject, XMLParserDelegate {
     
     private func buildActivity(fileName: String) throws -> (activity: Activity, samples: [ActivityStreamSample]) {
         guard !points.isEmpty else {
-            throw NSError(domain: "GpxParser", code: 2, userInfo: [NSLocalizedDescriptionKey: "GPX file contains no valid trackpoints."])
+            throw NSError(
+                domain: "GpxParser",
+                code: 2,
+                userInfo: [NSLocalizedDescriptionKey: "В файле GPX нет корректных точек маршрута."]
+            )
         }
         
         // Sort points chronologically

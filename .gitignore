@@ -29,8 +29,12 @@ GoogleService-Info.plist
 # Local Environment
 .env
 .env.*
+**/node_modules/
 
 # Local agent scratch files
 .superpowers/
+.claude/
 scratch/
 
+# Legacy local backend experiment (the mobile apps are local-first)
+/backend/

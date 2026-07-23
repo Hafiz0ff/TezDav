@@ -67,10 +67,10 @@ struct ActivityDetailView: View {
 
     // Enums for charts selection
     enum ChartTab: String, CaseIterable, Identifiable {
-        case heartRate = "Pulse"
-        case pace = "Pace"
-        case elevation = "Elevation"
-        case power = "Power"
+        case heartRate = "Пульс"
+        case pace = "Темп"
+        case elevation = "Высота"
+        case power = "Мощность"
 
         var id: String { self.rawValue }
     }
@@ -93,16 +93,16 @@ struct ActivityDetailView: View {
 
     var body: some View {
         Group {
-            if !activity.streamsImported {
+            if activity.source == "strava" && !activity.streamsImported {
                 VStack(spacing: 20) {
                     ProgressView()
                         .scaleEffect(1.5)
-                    Text("Loading high-resolution metrics...")
+                    Text("Загрузка высокоточных метрик...")
                         .font(.headline)
                         .foregroundStyle(.secondary)
 
                     if isLoadingStreams {
-                        Text("Fetching GPS & sensor streams from Strava...")
+                        Text("Получение маршрута и данных датчиков из Strava...")
                             .font(.subheadline)
                             .foregroundStyle(.tertiary)
                     }
@@ -114,7 +114,7 @@ struct ActivityDetailView: View {
                             .multilineTextAlignment(.center)
                             .padding()
 
-                        Button("Retry Fetching Streams") {
+                        Button("Повторить загрузку данных") {
                             triggerStreamFetch()
                         }
                         .buttonStyle(.borderedProminent)
@@ -247,7 +247,7 @@ struct ActivityDetailView: View {
                     
                     HStack(spacing: 6) {
                         Image(systemName: sportIconName(activity.sportType))
-                        Text(activity.sportType)
+                        Text(AppLanguage.sportName(activity.sportType))
                         Text("·")
                         Text(activity.startDate.formatted(date: .long, time: .shortened))
                     }
@@ -261,7 +261,7 @@ struct ActivityDetailView: View {
             
             if isNullIsland {
                 HStack(spacing: 8) {
-                    Text(Locale.current.identifier.hasPrefix("ru") ? "Погода: Нет данных" : "Weather: No data")
+                    Text(AppLanguage.isRussian ? "Погода: Нет данных" : "Weather: No data")
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -308,16 +308,16 @@ struct ActivityDetailView: View {
     // MARK: - Section 2: Route Map
     private var mapSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Route Map")
+            Text("Карта маршрута")
                 .font(.headline)
             
             let gpsCoordinates = validGpsCoordinates
             if gpsCoordinates.isEmpty {
                 VStack(spacing: 12) {
-                    Image(systemName: "map.slash")
+                    Image(systemName: "location.slash")
                         .font(.system(size: 40))
                         .foregroundStyle(.tertiary)
-                    Text("No GPS route available for this activity.")
+                    Text("Маршрут недоступен для этой тренировки.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -328,7 +328,7 @@ struct ActivityDetailView: View {
                 let segments = makeMapSegments(from: streamSamples)
                 VStack(spacing: 8) {
                     if NSClassFromString("XCTestCase") == nil {
-                        GoogleMapView(
+                        TezDavMapView(
                             segments: segments,
                             showStartEndMarkers: true,
                             cameraCenter: $cameraCenter,
@@ -356,7 +356,7 @@ struct ActivityDetailView: View {
                                     Image(systemName: "map")
                                         .font(.title)
                                         .foregroundColor(.purple)
-                                    Text("Map Visualized")
+                                    Text("Карта загружена")
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
@@ -370,7 +370,7 @@ struct ActivityDetailView: View {
                         } label: {
                             HStack(spacing: 6) {
                                 Image(systemName: "plus.circle")
-                                Text(Locale.current.identifier.hasPrefix("ru") ? "Создать личный сегмент" : "Create Personal Segment")
+                                Text(AppLanguage.isRussian ? "Создать личный сегмент" : "Create Personal Segment")
                             }
                             .font(.caption.bold())
                             .foregroundStyle(.purple)
@@ -382,17 +382,17 @@ struct ActivityDetailView: View {
                 }
                 .sheet(isPresented: $isMapExpanded) {
                     NavigationStack {
-                        GoogleMapView(
+                        TezDavMapView(
                             segments: segments,
                             showStartEndMarkers: true,
                             cameraCenter: $cameraCenterExpanded,
                             cameraZoom: $cameraZoomExpanded
                         )
-                        .navigationTitle("Route Details")
+                        .navigationTitle("Маршрут")
                         .navigationBarTitleDisplayMode(.inline)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Close") {
+                                Button("Закрыть") {
                                     isMapExpanded = false
                                 }
                             }
@@ -410,30 +410,30 @@ struct ActivityDetailView: View {
                         HStack(spacing: 12) {
                             HStack(spacing: 4) {
                                 Circle().fill(Color(hue: 0.75, saturation: 0.9, brightness: 0.9)).frame(width: 8, height: 8)
-                                Text(Locale.current.identifier.hasPrefix("ru") ? "Низкая высота" : "Low Elevation").font(.caption).foregroundStyle(.secondary)
+                                Text(AppLanguage.isRussian ? "Низкая высота" : "Low Elevation").font(.caption).foregroundStyle(.secondary)
                             }
                             HStack(spacing: 4) {
                                 Circle().fill(Color(hue: 0.55, saturation: 0.9, brightness: 0.9)).frame(width: 8, height: 8)
-                                Text(Locale.current.identifier.hasPrefix("ru") ? "Средняя высота" : "Medium").font(.caption).foregroundStyle(.secondary)
+                                Text(AppLanguage.isRussian ? "Средняя высота" : "Medium").font(.caption).foregroundStyle(.secondary)
                             }
                             HStack(spacing: 4) {
                                 Circle().fill(Color(hue: 0.35, saturation: 0.9, brightness: 0.9)).frame(width: 8, height: 8)
-                                Text(Locale.current.identifier.hasPrefix("ru") ? "Высокая высота" : "High Elevation").font(.caption).foregroundStyle(.secondary)
+                                Text(AppLanguage.isRussian ? "Высокая высота" : "High Elevation").font(.caption).foregroundStyle(.secondary)
                             }
                         }
                     } else {
                         HStack(spacing: 12) {
                             HStack(spacing: 4) {
                                 Circle().fill(.red).frame(width: 8, height: 8)
-                                Text(Locale.current.identifier.hasPrefix("ru") ? "Медленно" : "Slow").font(.caption).foregroundStyle(.secondary)
+                                Text(AppLanguage.isRussian ? "Медленно" : "Slow").font(.caption).foregroundStyle(.secondary)
                             }
                             HStack(spacing: 4) {
                                 Circle().fill(.yellow).frame(width: 8, height: 8)
-                                Text(Locale.current.identifier.hasPrefix("ru") ? "Средне" : "Average").font(.caption).foregroundStyle(.secondary)
+                                Text(AppLanguage.isRussian ? "Средне" : "Average").font(.caption).foregroundStyle(.secondary)
                             }
                             HStack(spacing: 4) {
                                 Circle().fill(.green).frame(width: 8, height: 8)
-                                Text(Locale.current.identifier.hasPrefix("ru") ? "Быстро" : "Fast").font(.caption).foregroundStyle(.secondary)
+                                Text(AppLanguage.isRussian ? "Быстро" : "Fast").font(.caption).foregroundStyle(.secondary)
                             }
                         }
                     }
@@ -447,7 +447,7 @@ struct ActivityDetailView: View {
     // MARK: - Section 3: Key Metrics Grid
     private var metricsGridSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Key Metrics")
+            Text("Ключевые метрики")
                 .font(.headline)
 
             let isCycling = activity.sportType.lowercased().contains("ride")
@@ -464,40 +464,40 @@ struct ActivityDetailView: View {
 
             let isMetric = activeUserSettings.isMetric
             let distDivider = isMetric ? 1000.0 : 1609.344
-            let distUnit = isMetric ? "km" : "mi"
+            let distUnit = isMetric ? "км" : "миль"
             let speedMultiplier = isMetric ? 3.6 : 2.23694
-            let speedUnit = isMetric ? "km/h" : "mph"
+            let speedUnit = isMetric ? "км/ч" : "миль/ч"
             let paceUnitValue = isMetric ? 1000.0 : 1609.344
-            let paceUnitLabel = isMetric ? " /km" : " /mi"
+            let paceUnitLabel = isMetric ? " /км" : " /милю"
             let elevMultiplier = isMetric ? 1.0 : 3.28084
-            let elevUnit = isMetric ? "m" : "ft"
+            let elevUnit = isMetric ? "м" : "фт"
 
             LazyVGrid(columns: columns, spacing: 12) {
                 // Tile 1: Distance
-                MetricCard(title: "Distance", value: String(format: "%.2f \(distUnit)", activity.distanceMeters / distDivider))
+                MetricCard(title: "Дистанция", value: String(format: "%.2f \(distUnit)", activity.distanceMeters / distDivider))
 
                 // Tile 2: Duration
-                MetricCard(title: "Time", value: formattedDuration(activity.movingTime))
+                MetricCard(title: "Время", value: formattedDuration(activity.movingTime))
 
                 // Tile 3: Average Pace/Speed
                 if isSwim {
                     let pace100m = avgSpeed > 0 ? (100.0 / avgSpeed) : 0
-                    MetricCard(title: "Avg Pace", value: formattedPace(pace100m) + " /100m")
+                    MetricCard(title: "Средний темп", value: formattedPace(pace100m) + " /100 м")
                 } else if isCycling {
-                    MetricCard(title: "Avg Speed", value: String(format: "%.1f \(speedUnit)", avgSpeed * speedMultiplier))
+                    MetricCard(title: "Средняя скорость", value: String(format: "%.1f \(speedUnit)", avgSpeed * speedMultiplier))
                 } else {
                     let paceKm = avgSpeed > 0 ? (paceUnitValue / avgSpeed) : 0
-                    MetricCard(title: "Avg Pace", value: formattedPace(paceKm) + paceUnitLabel)
+                    MetricCard(title: "Средний темп", value: formattedPace(paceKm) + paceUnitLabel)
                 }
 
                 // Tile 4: Average Heart Rate
-                MetricCard(title: "Avg HR", value: activity.averageHeartRate.map { String(format: "%.0f bpm", $0) } ?? "--")
+                MetricCard(title: "Средний пульс", value: activity.averageHeartRate.map { String(format: "%.0f уд/мин", $0) } ?? "--")
 
                 // Tile 5: Elevation Gain
-                MetricCard(title: "Elevation Gain", value: String(format: "%.0f \(elevUnit)", activity.elevationGain * elevMultiplier))
+                MetricCard(title: "Набор высоты", value: String(format: "%.0f \(elevUnit)", activity.elevationGain * elevMultiplier))
 
                 // Tile 6: Average Cadence
-                MetricCard(title: "Cadence", value: activity.averageCadence.map { String(format: "%.0f rpm", $0) } ?? "--")
+                MetricCard(title: "Каденс", value: activity.averageCadence.map { String(format: "%.0f об/мин", $0) } ?? "--")
             }
 
             // Cycling Power Metrics (NP, Avg Power)
@@ -507,13 +507,13 @@ struct ActivityDetailView: View {
                     let np = calculateNormalizedPower(from: powerStream) ?? activity.averagePower
                     
                     MetricCard(
-                        title: "Avg Power",
-                        value: activity.averagePower.map { String(format: "%.0f W", $0) } ?? "--"
+                        title: "Средняя мощность",
+                        value: activity.averagePower.map { String(format: "%.0f Вт", $0) } ?? "--"
                     )
                     
                     MetricCard(
-                        title: "Normalized Power (NP)",
-                        value: np.map { String(format: "%.0f W", $0) } ?? "--"
+                        title: "Нормализованная мощность (NP)",
+                        value: np.map { String(format: "%.0f Вт", $0) } ?? "--"
                     )
                 }
             }
@@ -523,7 +523,7 @@ struct ActivityDetailView: View {
     // MARK: - Section 4: Charts Section
     private var chartsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Activity Graphs")
+            Text("Графики тренировки")
                 .font(.headline)
 
             let availableTabs: [ChartTab] = {
@@ -534,7 +534,7 @@ struct ActivityDetailView: View {
                 return tabs.sorted { $0.rawValue < $1.rawValue }
             }()
 
-            Picker("Metric Chart", selection: $selectedChartTab) {
+            Picker("Показатель графика", selection: $selectedChartTab) {
                 ForEach(availableTabs) { tab in
                     Text(tab.rawValue).tag(tab)
                 }
@@ -548,7 +548,7 @@ struct ActivityDetailView: View {
 
             let chartData = makeChartData()
             if chartData.isEmpty {
-                Text("No data points available for this chart.")
+                Text("Нет данных для этого графика.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .frame(height: 160)
@@ -556,13 +556,13 @@ struct ActivityDetailView: View {
             } else {
                 VStack(alignment: .leading, spacing: 8) {
                     let isMetric = activeUserSettings.isMetric
-                    let chartXLabel = isMetric ? "Distance (km)" : "Distance (mi)"
-                    let chartXUnit = isMetric ? "%.1f km" : "%.1f mi"
-                    let isRussian = Locale.current.identifier.hasPrefix("ru")
+                    let chartXLabel = isMetric ? "Дистанция (км)" : "Дистанция (мили)"
+                    let chartXUnit = isMetric ? "%.1f км" : "%.1f мили"
+                    let isRussian = AppLanguage.isRussian
                     let accessibilityLabelText: String = {
                         switch selectedChartTab {
                         case .heartRate: return isRussian ? "Пульс" : "Heart Rate"
-                        case .pace: return isRussian ? "Темп" : "Pace"
+                        case .pace: return isRussian ? "Темп" : "Темп"
                         case .elevation: return isRussian ? "Высота" : "Elevation"
                         case .power: return isRussian ? "Мощность" : "Power"
                         }
@@ -599,7 +599,7 @@ struct ActivityDetailView: View {
                             .fill(Color.secondary.opacity(0.1))
                             .frame(height: 160)
                             .overlay(
-                                Text("\(selectedChartTab.rawValue.capitalized) Chart")
+                                Text("График: \(selectedChartTab.rawValue.lowercased())")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             )
@@ -612,7 +612,7 @@ struct ActivityDetailView: View {
                         let maximum = values.max() ?? 0
                         
                         VStack(alignment: .leading) {
-                            Text("AVERAGE")
+                            Text("СРЕДНЕЕ")
                                 .font(.caption2.weight(.bold))
                                 .foregroundStyle(.secondary)
                             Text(formatValue(average, tab: selectedChartTab))
@@ -620,7 +620,7 @@ struct ActivityDetailView: View {
                         }
                         Spacer()
                         VStack(alignment: .trailing) {
-                            Text("MAXIMUM")
+                            Text("МАКСИМУМ")
                                 .font(.caption2.weight(.bold))
                                 .foregroundStyle(.secondary)
                             Text(formatValue(maximum, tab: selectedChartTab))
@@ -638,12 +638,12 @@ struct ActivityDetailView: View {
     // MARK: - Section 5: Splits Section
     private var splitsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(activeUserSettings.isMetric ? "Kilometer Splits" : "Mile Splits")
+            Text(activeUserSettings.isMetric ? "Разбивка по километрам" : "Разбивка по милям")
                 .font(.headline)
 
             let splits = calculateKilometerSplits()
             if splits.isEmpty {
-                Text("Not enough data to calculate splits.")
+                Text("Недостаточно данных для расчета сплитов.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             } else {
@@ -655,7 +655,7 @@ struct ActivityDetailView: View {
     // MARK: - Section 6: Heart Rate Zones
     private var heartRateZonesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Heart Rate Zones")
+            Text("Пульсовые зоны")
                 .font(.headline)
 
             let maxHR = activeUserSettings.maxHeartRate
@@ -663,7 +663,7 @@ struct ActivityDetailView: View {
             let totalHrTime = zoneTimes.reduce(0, +)
 
             if totalHrTime == 0 {
-                Text("No heart rate details recorded.")
+                Text("Нет данных о пульсе.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             } else {
@@ -671,7 +671,7 @@ struct ActivityDetailView: View {
                     ForEach(0..<5) { index in
                         VStack(alignment: .leading, spacing: 4) {
                             HStack {
-                                Text("Zone \(index + 1)")
+                                Text("Зона \(index + 1)")
                                     .font(.subheadline.weight(.semibold))
                                     .foregroundStyle(zoneColor(index))
                                 Spacer()
@@ -707,7 +707,7 @@ struct ActivityDetailView: View {
     // MARK: - Section 7: Training Load
     private var trainingLoadSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Training Impact")
+            Text("Эффект тренировки")
                 .font(.headline)
 
             let isCycling = activity.sportType.lowercased().contains("ride")
@@ -772,12 +772,12 @@ struct ActivityDetailView: View {
     // MARK: - Section 8: Similar Activities
     private var similarActivitiesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Similar Activities")
+            Text("Похожие тренировки")
                 .font(.headline)
 
             let similar = findSimilarActivities()
             if similar.isEmpty {
-                Text("No similar training sessions found yet.")
+                Text("Похожих тренировок пока не найдено.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             } else {
@@ -797,24 +797,24 @@ struct ActivityDetailView: View {
                             VStack(alignment: .trailing, spacing: 2) {
                                 let isMetric = activeUserSettings.isMetric
                                 let divisor = isMetric ? 1000.0 : 1609.344
-                                let unit = isMetric ? " km" : " mi"
+                                let unit = isMetric ? " км" : " миль"
                                 Text(String(format: "%.1f\(unit)", simActivity.distanceMeters / divisor))
                                     .font(.subheadline.weight(.medium))
                                 
                                 if simActivity.sportType.lowercased().contains("swim") {
                                     let simPace = (simActivity.averageSpeed ?? 0) > 0 ? (100.0 / (simActivity.averageSpeed ?? 1.0)) : 0.0
-                                    Text(formattedPace(simPace) + "/100m")
+                                    Text(formattedPace(simPace) + "/100 м")
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 } else if simActivity.sportType.lowercased().contains("ride") {
                                     let speedMult = isMetric ? 3.6 : 2.23694
-                                    let speedUnit = isMetric ? " km/h" : " mph"
+                                    let speedUnit = isMetric ? " км/ч" : " миль/ч"
                                     Text(String(format: "%.1f\(speedUnit)", (simActivity.averageSpeed ?? 0) * speedMult))
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 } else {
                                     let paceUnit = isMetric ? 1000.0 : 1609.344
-                                    let paceLabel = isMetric ? "/km" : "/mi"
+                                    let paceLabel = isMetric ? "/км" : "/милю"
                                     let simPace = (simActivity.averageSpeed ?? 0) > 0 ? (paceUnit / (simActivity.averageSpeed ?? 1.0)) : 0.0
                                     Text(formattedPace(simPace) + paceLabel)
                                         .font(.caption)
@@ -838,7 +838,7 @@ struct ActivityDetailView: View {
     }
 
     private var hikeStatisticsSection: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         let isMetric = activeUserSettings.isMetric
         let elevMultiplier = isMetric ? 1.0 : 3.28084
         let elevUnit = isMetric ? "м" : "фт"
@@ -1173,15 +1173,15 @@ struct ActivityDetailView: View {
         let isMetric = activeUserSettings.isMetric
         switch tab {
         case .heartRate:
-            return String(format: "%.0f bpm", value)
+            return String(format: "%.0f уд/мин", value)
         case .pace:
-            let paceLabel = activity.sportType.lowercased().contains("swim") ? " /100m" : (isMetric ? " /km" : " /mi")
+            let paceLabel = activity.sportType.lowercased().contains("swim") ? " /100 м" : (isMetric ? " /км" : " /милю")
             return formattedPace(value) + paceLabel
         case .elevation:
-            let elevUnit = isMetric ? " m" : " ft"
+            let elevUnit = isMetric ? " м" : " фт"
             return String(format: "%.0f\(elevUnit)", value)
         case .power:
-            return String(format: "%.0f W", value)
+            return String(format: "%.0f Вт", value)
         }
     }
 
@@ -1303,11 +1303,11 @@ struct ActivityDetailView: View {
     private func zoneBpmRange(_ index: Int, maxHR: Double) -> String {
         let zones = activeUserSettings.effectiveHeartRateZones(maxHR: maxHR)
         switch index {
-        case 0: return String(format: "Active Recovery (Восстановление): %.0f-%.0f bpm", activeUserSettings.restingHeartRate, zones[0])
-        case 1: return String(format: "Aerobic Endurance (Выносливость): %.0f-%.0f bpm", zones[0], zones[1])
-        case 2: return String(format: "Tempo Rhythm (Темп): %.0f-%.0f bpm", zones[1], zones[2])
-        case 3: return String(format: "Lactate Threshold (Порог): %.0f-%.0f bpm", zones[2], zones[3])
-        case 4: return String(format: "Anaerobic Capacity (Анаэробная): >%.0f bpm", zones[3])
+        case 0: return String(format: "Активное восстановление: %.0f-%.0f уд/мин", activeUserSettings.restingHeartRate, zones[0])
+        case 1: return String(format: "Аэробная выносливость: %.0f-%.0f уд/мин", zones[0], zones[1])
+        case 2: return String(format: "Темповая зона: %.0f-%.0f уд/мин", zones[1], zones[2])
+        case 3: return String(format: "Лактатный порог: %.0f-%.0f уд/мин", zones[2], zones[3])
+        case 4: return String(format: "Анаэробная зона: >%.0f уд/мин", zones[3])
         default: return ""
         }
     }
@@ -1423,7 +1423,7 @@ struct ActivityDetailView: View {
             }
             
             let workReps = activitySegments.filter { $0.type == "work" }
-            let isRussian = Locale.current.identifier.hasPrefix("ru")
+            let isRussian = AppLanguage.isRussian
             
             // Best & Worst work repeats
             let bestRep = workReps.max(by: { $0.averageSpeed < $1.averageSpeed }) // highest speed is best
@@ -1505,7 +1505,7 @@ struct ActivityDetailView: View {
                             .fill(Color.secondary.opacity(0.1))
                             .frame(height: 100)
                             .overlay(
-                                Text("Pace Degradation Chart")
+                                Text("График деградации темпа")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             )
@@ -1533,7 +1533,7 @@ struct ActivityDetailView: View {
                     let repNumber = rep.segmentIndex / 2 + 1
                     
                     HStack {
-                        Text("Work \(repNumber)")
+                        Text("Повтор \(repNumber)")
                             .font(.subheadline).fontWeight(.semibold)
                             .frame(width: 70, alignment: .leading)
                         
@@ -1625,8 +1625,8 @@ struct ActivityDetailView: View {
                             if currentAvgHR > 0 && prevAvgHR > 0 {
                                 comparisonRow(
                                     title: "Средний пульс работы",
-                                    prevVal: String(format: "%.0f bpm", prevAvgHR),
-                                    currentVal: String(format: "%.0f bpm", currentAvgHR),
+                                    prevVal: String(format: "%.0f уд/мин", prevAvgHR),
+                                    currentVal: String(format: "%.0f уд/мин", currentAvgHR),
                                     better: currentAvgHR < prevAvgHR
                                 )
                             }
@@ -1637,8 +1637,8 @@ struct ActivityDetailView: View {
                             if currentAvgPow > 0 && prevAvgPow > 0 {
                                 comparisonRow(
                                     title: "Средняя мощность работы",
-                                    prevVal: String(format: "%.0f W", prevAvgPow),
-                                    currentVal: String(format: "%.0f W", currentAvgPow),
+                                    prevVal: String(format: "%.0f Вт", prevAvgPow),
+                                    currentVal: String(format: "%.0f Вт", currentAvgPow),
                                     better: currentAvgPow > prevAvgPow
                                 )
                             }
@@ -1932,7 +1932,7 @@ struct ActivityDetailView: View {
                                             Image(systemName: "crown.fill")
                                                 .font(.caption)
                                                 .foregroundColor(.yellow)
-                                            Text("PR")
+                                            Text("ЛР")
                                                 .font(.caption2.weight(.bold))
                                                 .foregroundColor(.orange)
                                         }
@@ -1948,7 +1948,7 @@ struct ActivityDetailView: View {
                                             .foregroundColor(.primary)
                                         
                                         if let hr = effort.averageHeartRate {
-                                            Text(String(format: "❤️ %.0f bpm", hr))
+                                            Text(String(format: "❤️ %.0f уд/мин", hr))
                                                 .font(.caption2)
                                                 .foregroundColor(.secondary)
                                         }
@@ -2054,7 +2054,7 @@ struct ActivityDetailView: View {
     }
     
     private var dynamicsChartHeaderView: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         let isMetric = activeUserSettings.isMetric
         let strideMultiplier = isMetric ? 1.0 : 3.28084
         let strideUnit = isMetric ? "м" : "фт"
@@ -2129,7 +2129,7 @@ struct ActivityDetailView: View {
                             if let cad = selected.cadence {
                                 let zone = RunningDynamicsEngine.classifyCadence(cad)
                                 HStack(spacing: 2) {
-                                    Text(String(format: "%.0f spm", cad))
+                                    Text(String(format: "%.0f шаг/мин", cad))
                                         .font(.caption)
                                         .fontWeight(.bold)
                                     Circle()
@@ -2209,7 +2209,7 @@ struct ActivityDetailView: View {
                             if let cad = activity.averageCadence {
                                 let zone = RunningDynamicsEngine.classifyCadence(cad)
                                 HStack(spacing: 2) {
-                                    Text(String(format: "%.0f spm", cad))
+                                    Text(String(format: "%.0f шаг/мин", cad))
                                         .font(.caption)
                                         .fontWeight(.bold)
                                     Circle()
@@ -2256,7 +2256,7 @@ struct ActivityDetailView: View {
     }
     
     private var runningDynamicsSection: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         let isMetric = activeUserSettings.isMetric
         
         let avgOsc = activity.averageVerticalOscillation ?? 8.5
@@ -2269,8 +2269,8 @@ struct ActivityDetailView: View {
         let strideUnit = isMetric ? "м" : "фт"
         
         let (oscPoints, gctPoints, stridePoints, cadencePoints) = makeDynamicsChartData()
-        let chartXLabel = isMetric ? "Distance (km)" : "Distance (mi)"
-        let chartXUnit = isMetric ? "%.1f km" : "%.1f mi"
+        let chartXLabel = isMetric ? "Дистанция (км)" : "Дистанция (мили)"
+        let chartXUnit = isMetric ? "%.1f км" : "%.1f мили"
         
         return VStack(alignment: .leading, spacing: 16) {
             Text(isRussian ? "Беговая динамика" : "Running Dynamics")
@@ -2288,7 +2288,7 @@ struct ActivityDetailView: View {
                 let cadZone = RunningDynamicsEngine.classifyCadence(avgCadenceVal)
                 DynamicsGridTile(
                     title: isRussian ? "Каденс" : "Cadence",
-                    value: String(format: "%.0f spm", avgCadenceVal),
+                    value: String(format: "%.0f шаг/мин", avgCadenceVal),
                     zone: cadZone,
                     scoreText: localizedZoneText(cadZone, isRussian: isRussian),
                     percent: (avgCadenceVal - 120.0) / (200.0 - 120.0),
@@ -2367,7 +2367,7 @@ struct ActivityDetailView: View {
                         let gctDiff = avgGCT - averages.gct
                         
                         VStack(alignment: .leading, spacing: 2) {
-                            diffText(label: isRussian ? "Каденс" : "Cad", diff: cadDiff, format: "%+.0f spm", inverseColor: false)
+                            diffText(label: isRussian ? "Каденс" : "Cad", diff: cadDiff, format: "%+.0f шаг/мин", inverseColor: false)
                             diffText(label: isRussian ? "Шаг" : "Stride", diff: strideDiff * strideMultiplier, format: "%+.2f \(strideUnit)", inverseColor: false)
                             diffText(label: isRussian ? "Колебания" : "Osc", diff: oscDiff, format: "%+.1f см", inverseColor: true)
                             diffText(label: isRussian ? "Контакт" : "Contact", diff: gctDiff, format: "%+.0f мс", inverseColor: true)
@@ -2380,7 +2380,7 @@ struct ActivityDetailView: View {
             }
             
             VStack(alignment: .leading, spacing: 8) {
-                Picker("Dynamics Chart Tab", selection: $selectedDynamicsTab) {
+                Picker("График беговой динамики", selection: $selectedDynamicsTab) {
                     Text(isRussian ? "Колебания" : "Oscillation").tag(0)
                     Text(isRussian ? "Контакт" : "Contact").tag(1)
                     Text(isRussian ? "Шаг / Каденс" : "Stride / Cadence").tag(2)
@@ -2626,7 +2626,7 @@ struct ActivityDetailView: View {
                             .fill(Color.secondary.opacity(0.1))
                             .frame(height: 180)
                             .overlay(
-                                Text("Running Dynamics Charts")
+                                Text("Графики беговой динамики")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             )
@@ -2715,10 +2715,10 @@ private struct SplitsSectionView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text(isMetric ? "KM" : "MI").frame(width: 40, alignment: .leading)
-                Text("Pace").frame(maxWidth: .infinity, alignment: .leading)
-                Text("HR").frame(width: 60, alignment: .trailing)
-                Text("Elev.").frame(width: 70, alignment: .trailing)
+                Text(isMetric ? "КМ" : "МИЛЯ").frame(width: 40, alignment: .leading)
+                Text("Темп").frame(maxWidth: .infinity, alignment: .leading)
+                Text("Пульс").frame(width: 60, alignment: .trailing)
+                Text("Высота").frame(width: 70, alignment: .trailing)
             }
             .font(.caption).fontWeight(.bold)
             .foregroundStyle(.secondary)
@@ -2741,7 +2741,7 @@ private struct SplitsSectionView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     
                     Text(split.avgHeartRate.map { String(format: "%.0f", $0) } ?? "--").frame(width: 60, alignment: .trailing)
-                    let elevUnit = isMetric ? " m" : " ft"
+                    let elevUnit = isMetric ? " м" : " фт"
                     Text(String(format: "%+.0f\(elevUnit)", split.elevationChange)).frame(width: 70, alignment: .trailing)
                 }
                 .font(.subheadline)
@@ -2801,7 +2801,7 @@ private struct DynamicsGridTile: View {
                     .padding(.vertical, 2)
                     .background(color.opacity(0.12), in: Capsule())
             } else {
-                Text(Locale.current.identifier.hasPrefix("ru") ? "Метрика" : "Metric")
+                Text(AppLanguage.isRussian ? "Метрика" : "Metric")
                     .font(.system(size: 9, weight: .bold))
                     .foregroundStyle(.blue)
                     .padding(.horizontal, 6)
@@ -2856,7 +2856,7 @@ private struct LRBalanceBarometer: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack {
-                Text(String(format: "%.1f%% L", leftPercent))
+                Text(String(format: "%.1f%% Л", leftPercent))
                     .font(.subheadline)
                     .fontWeight(.bold)
                     .foregroundStyle(.blue)
@@ -2873,7 +2873,7 @@ private struct LRBalanceBarometer: View {
                 
                 Spacer()
                 
-                Text(String(format: "%.1f%% R", rightPercent))
+                Text(String(format: "%.1f%% П", rightPercent))
                     .font(.subheadline)
                     .fontWeight(.bold)
                     .foregroundStyle(.purple)

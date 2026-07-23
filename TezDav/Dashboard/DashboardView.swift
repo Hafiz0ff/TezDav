@@ -26,9 +26,7 @@ struct DashboardView: View {
     @State private var selectedSport: SportFilter = .all
     @State private var isShowingWeeklySummary = false
     @State private var isSimulatorPresented = false
-
-    private let config = StravaConfig.fromBundle()
-    private let tokenStore = KeychainTokenStore()
+    @AppStorage("selectedTab") private var selectedAppTab = 0
 
     private var activeUserSettings: UserSettings {
         userSettings.first ?? UserSettings()
@@ -97,7 +95,7 @@ struct DashboardView: View {
                 Text("Доброе утро")
                     .font(.system(size: 12))
                     .foregroundStyle(Color.textSecondaryReadable)
-                Text("Abduhafiz 👋")
+                Text("Abduhafiz")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(Color.textOnGlass)
             }
@@ -109,36 +107,22 @@ struct DashboardView: View {
                     HapticManager.trigger(.light)
                     isFileImporterPresented = true
                 } label: {
-                    ZStack {
-                        Circle()
-                            .fill(Color.white.opacity(0.06))
-                            .frame(width: 36, height: 36)
-                        Image(systemName: "plus")
-                            .font(.system(size: 15, weight: .bold))
-                            .foregroundStyle(Color.textOnGlass)
-                    }
-                    .overlay(
-                        Circle()
-                            .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
-                    )
+                    Image(systemName: "plus")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(Color.textPrimary)
+                        .frame(width: 36, height: 36)
+                        .liquidGlassControl(shape: .circle)
                 }
                 
                 Button {
                     HapticManager.trigger(.light)
                     isSimulatorPresented = true
                 } label: {
-                    ZStack {
-                        Circle()
-                            .fill(Color.orange.opacity(0.12))
-                            .frame(width: 36, height: 36)
-                        Image(systemName: "play.fill")
-                            .font(.system(size: 13, weight: .bold))
-                            .foregroundStyle(Color.orange)
-                    }
-                    .overlay(
-                        Circle()
-                            .strokeBorder(Color.orange.opacity(0.25), lineWidth: 1)
-                    )
+                    Image(systemName: "play.fill")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(Color.warning)
+                        .frame(width: 36, height: 36)
+                        .liquidGlassControl(shape: .circle)
                 }
             }
         }
@@ -149,33 +133,37 @@ struct DashboardView: View {
 
     @ViewBuilder
     private var metricsRowView: some View {
-        HStack(spacing: 7) {
-            MetCardView(
-                label: "Фитнес CTL",
+        LazyVGrid(
+            columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3),
+            spacing: 8
+        ) {
+            MetricDataCard(
+                title: "Фитнес CTL",
                 value: String(format: "%.0f", summary.ctl),
-                unit: "",
-                color: Color.accentPrimary,
-                sub: "↑2.1 за неделю",
-                glowColor: Color.accentPrimary
+                detail: "за 42 дня",
+                color: Color.accentPrimary
             )
-            MetCardView(
-                label: "Усталость ATL",
+            MetricDataCard(
+                title: "Усталость ATL",
                 value: String(format: "%.0f", summary.atl),
-                unit: "",
-                color: Color(hex: "C8304F"),
-                sub: "↓1.3 за неделю",
-                glowColor: Color(hex: "C8304F")
+                detail: "за 7 дней",
+                color: Color.ruby
             )
             
-            MetCardView(
-                label: "Форма TSB",
+            MetricDataCard(
+                title: "Форма TSB",
                 value: String(format: "%+.0f", tsbValue),
-                unit: "",
-                color: tsbColor,
-                sub: tsbLabel,
-                glowColor: tsbColor
+                detail: tsbLabel,
+                color: tsbColor
             )
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            HapticManager.trigger(.light)
+            selectedAppTab = 1
+        }
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint("Открывает подробный график формы")
     }
 
     @ViewBuilder
@@ -208,7 +196,7 @@ struct DashboardView: View {
                 Spacer()
                     .frame(height: 120)
             }
-            .padding(.horizontal, 14)
+            .padding(.horizontal, DesignTokens.Spacing.screen)
         }
         .scrollContentBackground(.hidden)
         .background(Color.clear)
@@ -232,7 +220,8 @@ struct DashboardView: View {
                 }
             }
         }
-        .navigationTitle("")
+        .navigationTitle("TezDav")
+        .navigationBarTitleDisplayMode(.large)
         .sheet(item: Binding(
             get: { localImportedFileURLs.map { FileIdWrapper(urls: $0) } },
             set: { wrapper in localImportedFileURLs = wrapper?.urls }
@@ -285,6 +274,9 @@ struct DashboardView: View {
                 }
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .healthKitWorkoutsDidChange)) { _ in
+            triggerSync()
+        }
     }
 
     // MARK: - Premium Skeleton Shimmer Loader
@@ -313,7 +305,7 @@ struct DashboardView: View {
                 }
             }
             
-            Section("This Week") {
+            Section("На этой неделе") {
                 HStack {
                     SkeletonRow(height: 16).frame(width: 100)
                     Spacer()
@@ -326,7 +318,7 @@ struct DashboardView: View {
                 }
             }
             
-            Section("Latest Activities") {
+            Section("Последние тренировки") {
                 ForEach(0..<3) { _ in
                     VStack(alignment: .leading, spacing: 6) {
                         SkeletonRow(height: 18).frame(width: 180)
@@ -341,69 +333,43 @@ struct DashboardView: View {
     // MARK: - Empty State View
     
     private var emptyStateView: some View {
-        VStack(spacing: 32) {
+        VStack {
             Spacer()
-            
-            VStack(spacing: 16) {
-                Image(systemName: "waveform.path.ecg.rectangle")
-                    .font(.system(size: 72))
-                    .foregroundStyle(.blue.gradient)
-                
-                Text("Подключи Strava или импортируй GPX/FIT файл чтобы начать")
-                    .font(.title3.weight(.bold))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                
-                Text("Все ваши спортивные данные будут храниться конфиденциально и обрабатываться локально на вашем устройстве.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 24)
+            TezDavEmptyState(
+                symbol: "waveform.path.ecg.rectangle",
+                title: "Пока нет тренировок",
+                message: "Импортируйте историю из приложений «Фитнес» и «Здоровье». Данные останутся на устройстве.",
+                actionTitle: "Импортировать из Здоровья"
+            ) {
+                HapticManager.trigger(.medium)
+                triggerSync()
             }
-            
-            VStack(spacing: 16) {
-                Button {
-                    HapticManager.trigger(.medium)
-                    isFileImporterPresented = true
-                } label: {
-                    Label("Импортировать GPX или FIT", systemImage: "square.and.arrow.down")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .background(Color.blue.gradient)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                }
-                
-                Button {
-                    HapticManager.trigger(.medium)
-                    connectStrava()
-                } label: {
-                    Label("Подключить аккаунт Strava", systemImage: "link")
-                        .font(.subheadline.weight(.bold))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .background(Color.orange.gradient)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                }
+
+            Button {
+                HapticManager.trigger(.light)
+                isFileImporterPresented = true
+            } label: {
+                Label("Импортировать GPX/FIT", systemImage: "square.and.arrow.down")
+                    .font(.body.weight(.semibold))
             }
-            .padding(.horizontal, 24)
-            
+            .buttonStyle(LiquidGlassButtonStyle())
+
+            if isSyncing {
+                ProgressView(syncText(progress.phase))
+                    .font(.caption)
+                    .padding(.top, 8)
+            } else if case let .failed(message) = progress.phase {
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 8)
+            }
             Spacer()
         }
+        .padding(.horizontal, DesignTokens.Spacing.screen)
     }
     
-    private func connectStrava() {
-        do {
-            let state = UUID().uuidString
-            let authURL = try StravaOAuth.authorizationURL(config: config, state: state)
-            UIApplication.shared.open(authURL)
-        } catch {
-            print("Failed to open Strava auth: \(error)")
-        }
-    }
-
     private var isSyncing: Bool {
         switch progress.phase {
         case .authenticating, .importing:
@@ -415,15 +381,18 @@ struct DashboardView: View {
 
     private func triggerSync() {
         guard !isSyncing else { return }
-        
-        let refresher = StravaTokenRefresher(config: config)
-        let session = StravaSession(tokenStore: tokenStore, refresher: refresher)
-        let apiClient = StravaAPIClient(session: session)
-        let syncService = SyncService(apiClient: apiClient, modelContext: modelContext, progress: progress)
-        
+        progress.phase = .authenticating
+
         Task {
-            let latestActivityDate = activities.map { $0.startDate }.max()
-            await syncService.importAll(after: latestActivityDate)
+            let authorized = await HealthKitManager.shared.requestAuthorization()
+            guard authorized else {
+                progress.phase = .failed("Нет доступа к тренировкам Apple Health.")
+                return
+            }
+            _ = await HealthKitWorkoutImporter.shared.importAll(
+                into: modelContext,
+                progress: progress
+            )
             saveTelemetrySnapshot()
         }
     }
@@ -550,13 +519,13 @@ struct DashboardView: View {
 
         switch phase {
         case .idle:
-            return "Ready"
+            return "Готово"
         case .authenticating:
-            return "Connecting Strava"
+            return "Подключение к Apple Health"
         case let .importing(page, imported):
-            return "Importing page \(page), \(imported) activities saved"
+            return "Обработано \(page), сохранено \(imported)"
         case let .finished(imported):
-            return "Imported \(imported) activities"
+            return "Импортировано \(imported) тренировок"
         case let .failed(message):
             return message
         }
@@ -679,7 +648,7 @@ struct ReadinessTrendChartView: View {
                     .fill(Color.secondary.opacity(0.1))
                     .frame(height: 80)
                     .overlay(
-                        Text("Readiness Trend Chart")
+                        Text("График тренда готовности")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     )
@@ -697,7 +666,7 @@ struct ReadinessDetailsExpandedView: View {
         VStack(alignment: .leading, spacing: 12) {
             // 1. HRV relative to baseline (35%)
             componentBar(
-                title: ru ? "HRV (SDNN) к базовому" : "HRV to Baseline",
+                title: ru ? "ВСР (SDNN) относительно нормы" : "HRV to Baseline",
                 score: details.hrvScore,
                 valueText: String(format: "%.0f мс / %.0f мс", details.hrvValue, details.hrvBaseline),
                 color: .red
@@ -770,18 +739,18 @@ struct LatestActivitiesSection: View {
     let isMetric: Bool
     
     var body: some View {
-        Section("Latest Activities") {
+        Section("Последние тренировки") {
             if activities.isEmpty {
-                Text("No local activities yet")
+                Text("Пока нет локальных тренировок")
                     .foregroundStyle(.secondary)
             } else {
                 let divisor = isMetric ? 1000.0 : 1609.344
-                let unit = isMetric ? " km" : " mi"
+                let unit = isMetric ? " км" : " миль"
                 
                 ForEach(activities, id: \.stravaId) { activity in
                     let distStr = (activity.distanceMeters / divisor).formatted(.number.precision(.fractionLength(1)))
                     let timeStr = durationString(activity.movingTime)
-                    let subtitleText = "\(activity.sportType) · \(distStr)\(unit) · \(timeStr)"
+                    let subtitleText = "\(AppLanguage.sportName(activity.sportType)) · \(distStr)\(unit) · \(timeStr)"
                     
                     NavigationLink(destination: ActivityDetailView(activity: activity)) {
                         VStack(alignment: .leading, spacing: 4) {
@@ -804,9 +773,9 @@ struct LatestActivitiesSection: View {
         let hours = Int(duration) / 3600
         let minutes = (Int(duration) % 3600) / 60
         if hours > 0 {
-            return "\(hours)h \(minutes)m"
+            return "\(hours) ч \(minutes) мин"
         } else {
-            return "\(minutes)m"
+            return "\(minutes) мин"
         }
     }
 }
@@ -833,9 +802,9 @@ struct DashboardThisWeekSection: View {
     let weeklyDuration: TimeInterval
     
     var body: some View {
-        Section("This Week") {
-            LabeledContent("Distance", value: distanceStr)
-            LabeledContent("Time", value: durationString(weeklyDuration))
+        Section("На этой неделе") {
+            LabeledContent("Дистанция", value: distanceStr)
+            LabeledContent("Время", value: durationString(weeklyDuration))
         }
     }
     
@@ -854,14 +823,14 @@ struct DashboardSyncSection: View {
     let phase: SyncPhase
     
     var body: some View {
-        Section("Sync") {
+        Section("Синхронизация") {
             Text(syncText(phase))
                 .foregroundStyle(.secondary)
         }
     }
     
     private func syncText(_ phase: SyncPhase) -> String {
-        let ru = Locale.current.identifier.hasPrefix("ru")
+        let ru = AppLanguage.isRussian
         switch phase {
         case .idle:
             return ru ? "Готов к синхронизации" : "Ready to sync"
@@ -932,7 +901,7 @@ struct DashboardReadinessSection: View {
                     
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
-                            let ru = Locale.current.identifier.hasPrefix("ru")
+                            let ru = AppLanguage.isRussian
                             Text(ru ? "Готовность к нагрузке" : "Readiness Score")
                                 .font(.headline)
                             Spacer()
@@ -946,7 +915,7 @@ struct DashboardReadinessSection: View {
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(recoveryColor(recoveryScore))
                         } else {
-                            let ru = Locale.current.identifier.hasPrefix("ru")
+                            let ru = AppLanguage.isRussian
                             Text(recoveryAdvice(recoveryScore))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
@@ -965,9 +934,9 @@ struct DashboardReadinessSection: View {
                     Divider()
                     
                     if let details = readinessDetails {
-                        ReadinessDetailsExpandedView(details: details, trend: readiness7DayTrend, ru: Locale.current.identifier.hasPrefix("ru"))
+                        ReadinessDetailsExpandedView(details: details, trend: readiness7DayTrend, ru: AppLanguage.isRussian)
                     } else {
-                        Text(Locale.current.identifier.hasPrefix("ru") ? "Загрузка детальных данных..." : "Loading detailed metrics...")
+                        Text(AppLanguage.isRussian ? "Загрузка детальных данных..." : "Loading detailed metrics...")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -984,7 +953,7 @@ struct DashboardReadinessSection: View {
     }
     
     private func recoveryAdvice(_ score: Int) -> String {
-        let ru = Locale.current.identifier.hasPrefix("ru")
+        let ru = AppLanguage.isRussian
         if score >= 80 {
             return ru ? "Организм полностью восстановлен и готов к тяжелой работе." : "Fully recovered and ready for high intensity."
         } else if score >= 50 {
@@ -1004,7 +973,7 @@ enum SportFilter: String, CaseIterable {
     case other = "Other"
     
     var displayName: String {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         switch self {
         case .all: return isRussian ? "Все" : "All"
         case .run: return isRussian ? "Бег" : "Run"
@@ -1052,7 +1021,7 @@ struct CasualSyncCard: View {
                 .font(.title2)
             
             VStack(alignment: .leading, spacing: 2) {
-                Text(Locale.current.identifier.hasPrefix("ru") ? "Синхронизация" : "Sync Status")
+                Text(AppLanguage.isRussian ? "Синхронизация" : "Sync Status")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Text(syncText(phase))
@@ -1069,7 +1038,7 @@ struct CasualSyncCard: View {
     }
     
     private func syncText(_ phase: SyncPhase) -> String {
-        let ru = Locale.current.identifier.hasPrefix("ru")
+        let ru = AppLanguage.isRussian
         switch phase {
         case .idle:
             return ru ? "Обновлено" : "Synced"
@@ -1127,7 +1096,7 @@ struct CustomReadinessCard: View {
     }
     
     private var hrvMsText: String {
-        String(format: "HRV: %.0f мс", readinessDetails?.hrvValue ?? 52.0)
+        String(format: "ВСР: %.0f мс", readinessDetails?.hrvValue ?? 52.0)
     }
     
     var body: some View {
@@ -1154,7 +1123,7 @@ struct CustomReadinessCard: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 6) {
-                    Text("HRV vs 30д")
+                    Text("ВСР относительно 30 дней")
                         .font(.system(size: 10))
                         .foregroundStyle(Color.textSecondaryReadable)
                     
@@ -1257,7 +1226,7 @@ struct CustomWeeklyVolumeChart: View {
         var list: [DayVolume] = []
         let dayNamesRu = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
         let dayNamesEn = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        let ru = Locale.current.identifier.hasPrefix("ru")
+        let ru = AppLanguage.isRussian
         let names = ru ? dayNamesRu : dayNamesEn
         
         let divisor = settings.isMetric ? 1000.0 : 1609.344
@@ -1292,7 +1261,7 @@ struct CustomWeeklyVolumeChart: View {
                 
                 Spacer()
                 
-                let unit = settings.isMetric ? " км" : " mi"
+                let unit = settings.isMetric ? " км" : " миль"
                 Text(String(format: "%.1f%@", totalVolume, unit))
                     .font(.system(size: 14, weight: .black, design: .rounded))
                     .foregroundStyle(Color.accentPrimary)
@@ -1337,11 +1306,9 @@ struct CustomAICoachCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("🤖 ИИ-ТРЕНЕР")
-                .font(.system(size: 10, weight: .bold))
-                .tracking(0.4)
+            Label("ИИ-ТРЕНЕР", systemImage: "sparkles")
+                .font(.caption2.weight(.bold))
                 .foregroundStyle(Color.accentPrimary)
-                .shadow(color: Color.accentPrimary.opacity(0.4), radius: 6)
             
             Text(adviceText)
                 .font(.system(size: 12))
@@ -1367,11 +1334,11 @@ struct CustomLatestActivitiesList: View {
     
     private func sportIcon(_ sportType: String) -> String {
         let lower = sportType.lowercased()
-        if lower.contains("run") { return "🏃" }
-        if lower.contains("ride") || lower.contains("cycl") { return "🚴" }
-        if lower.contains("walk") || lower.contains("hike") { return "🚶" }
-        if lower.contains("swim") { return "🏊" }
-        return "🏋️"
+        if lower.contains("run") { return "figure.run" }
+        if lower.contains("ride") || lower.contains("cycl") { return "bicycle" }
+        if lower.contains("walk") || lower.contains("hike") { return "figure.walk" }
+        if lower.contains("swim") { return "figure.pool.swim" }
+        return "figure.strengthtraining.traditional"
     }
     
     private func formatDate(_ date: Date) -> String {
@@ -1392,7 +1359,7 @@ struct CustomLatestActivitiesList: View {
     
     private func formatDistance(_ meters: Double) -> String {
         let divisor = settings.isMetric ? 1000.0 : 1609.344
-        let unit = settings.isMetric ? " км" : " mi"
+        let unit = settings.isMetric ? " км" : " миль"
         return String(format: "%.1f%@", meters / divisor, unit)
     }
     
@@ -1402,17 +1369,17 @@ struct CustomLatestActivitiesList: View {
         
         if activity.sportType.lowercased().contains("ride") || activity.sportType.lowercased().contains("cycl") {
             let multiplier = isMetric ? 3.6 : 2.23694
-            let unit = isMetric ? " км/ч" : " mph"
+            let unit = isMetric ? " км/ч" : " миль/ч"
             return String(format: "%.1f%@", speed * multiplier, unit)
         } else {
             if speed > 0 {
                 let paceSeconds = (isMetric ? 1000.0 : 1609.344) / speed
                 let minutes = Int(paceSeconds) / 60
                 let seconds = Int(paceSeconds) % 60
-                let unit = isMetric ? " /км" : " /mi"
+                let unit = isMetric ? " /км" : " /милю"
                 return String(format: "%d:%02d%@", minutes, seconds, unit)
             }
-            return isMetric ? "0:00 /км" : "0:00 /mi"
+            return isMetric ? "0:00 /км" : "0:00 /милю"
         }
     }
     
@@ -1429,8 +1396,10 @@ struct CustomLatestActivitiesList: View {
                 let isFirst = activity.stravaId == activities.first?.stravaId
                 NavigationLink(destination: ActivityDetailView(activity: activity)) {
                     HStack(spacing: 11) {
-                        Text(sportIcon(activity.sportType))
-                            .font(.system(size: 20))
+                        Image(systemName: sportIcon(activity.sportType))
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(Color.forSportType(activity.sportType))
+                            .frame(width: 24)
                         
                         VStack(alignment: .leading, spacing: 2) {
                             Text(activity.name)
@@ -1476,6 +1445,3 @@ struct CustomLatestActivitiesList: View {
         }
     }
 }
-
-
-

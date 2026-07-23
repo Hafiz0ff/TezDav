@@ -5,12 +5,8 @@ import SwiftData
 @testable import TezDav
 
 final class SnapshotTests: XCTestCase {
-    
-    var container: ModelContainer!
-    
-    override func setUp() {
-        super.setUp()
-        // Initialize an in-memory ModelContainer for snapshot isolation
+
+    private static let sharedContainer: ModelContainer = {
         let schema = Schema([
             Activity.self, ActivityStreamSample.self, UserSettings.self, WeatherSnapshot.self,
             GearItem.self, PersonalSegment.self, PlannedWorkout.self, Achievement.self,
@@ -18,10 +14,42 @@ final class SnapshotTests: XCTestCase {
             TrainingWeek.self, SyncState.self, IntervalSegment.self
         ])
         let config = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
-        container = try! ModelContainer(for: schema, configurations: config)
-        
-        // Populate container with mock data
+
+        do {
+            return try ModelContainer(for: schema, configurations: config)
+        } catch {
+            fatalError("Failed to initialize snapshot storage: \(error)")
+        }
+    }()
+
+    var container: ModelContainer!
+
+    override func setUp() {
+        super.setUp()
+        container = Self.sharedContainer
         let context = ModelContext(container)
+
+        try? context.delete(model: ActivityStreamSample.self)
+        try? context.delete(model: IntervalSegment.self)
+        try? context.delete(model: SegmentEffort.self)
+        try? context.delete(model: Segment.self)
+        try? context.delete(model: PersonalSegment.self)
+        try? context.delete(model: PlannedWorkout.self)
+        try? context.delete(model: TrainingWeek.self)
+        try? context.delete(model: SavedRoute.self)
+        try? context.delete(model: WeatherSnapshot.self)
+        try? context.delete(model: Achievement.self)
+        if let friendComments = try? context.fetch(FetchDescriptor<FriendComment>()) {
+            friendComments.forEach(context.delete)
+        }
+        if let friendActivities = try? context.fetch(FetchDescriptor<FriendActivity>()) {
+            friendActivities.forEach(context.delete)
+        }
+        try? context.delete(model: GearItem.self)
+        try? context.delete(model: SyncState.self)
+        try? context.delete(model: Activity.self)
+        try? context.delete(model: UserSettings.self)
+
         let settings = TestDataFactory.makeUserSettings(appMode: .pro)
         context.insert(settings)
         
@@ -34,7 +62,11 @@ final class SnapshotTests: XCTestCase {
         let gear = TestDataFactory.makeGearItem(maxDistanceKm: 700.0, currentDistanceKm: 350.0)
         context.insert(gear)
         
-        try! context.save()
+        do {
+            try context.save()
+        } catch {
+            XCTFail("Failed to seed snapshot storage: \(error)")
+        }
     }
     
     override func tearDown() {
@@ -50,10 +82,12 @@ final class SnapshotTests: XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) {
+        let shouldRecord = ProcessInfo.processInfo.environment["RECORD_SNAPSHOTS"] == "1"
         let context = ModelContext(container)
         let embeddedView = view
             .modelContainer(container)
             .environment(\.modelContext, context)
+            .environment(\.locale, AppLanguage.locale)
             
         // Test variations: 2 themes x 3 size categories
         let themes: [(String, ColorScheme)] = [("Light", .light), ("Dark", .dark)]
@@ -78,7 +112,7 @@ final class SnapshotTests: XCTestCase {
                     of: hostingController,
                     as: .image(on: .iPhoneX),
                     named: "\(name)_\(themeName)_\(sizeName)",
-                    record: false,
+                    record: shouldRecord,
                     file: file,
                     testName: "testSnapshot",
                     line: line

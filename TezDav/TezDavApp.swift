@@ -1,6 +1,5 @@
 import SwiftData
 import SwiftUI
-import GoogleMaps
 
 var isRunningTests: Bool {
     if NSClassFromString("XCTestCase") != nil {
@@ -15,13 +14,10 @@ var isRunningTests: Bool {
 
 @main
 struct TezDavApp: App {
-    init() {
-        GMSServices.provideAPIKey("AIzaSyFakeKey_NoRealKeyNeededForTesting")
-    }
-
     var body: some Scene {
         WindowGroup {
             AppRootView()
+                .environment(\.locale, AppLanguage.locale)
                 .onAppear {
                     if CommandLine.arguments.contains("--seed-demo-data") {
                         // Force onboarding complete so the main UI shows

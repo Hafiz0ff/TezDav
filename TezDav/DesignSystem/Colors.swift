@@ -1,38 +1,44 @@
 import SwiftUI
 
-/// TezDav Design System - Color Palette
-/// Dark Professional theme with Emerald Green accent
+/// TezDav dark palette. Emerald and ruby are reserved for semantic data states.
 extension Color {
 
     // MARK: - Background Colors
 
-    /// Primary background - Deep black (#0A0A0A)
-    static let backgroundPrimary = Color(hex: "0A0A0A")
+    /// Primary canvas (#0A0B0D)
+    static let backgroundPrimary = Color(hex: "0A0B0D")
 
-    /// Secondary background - Dark gray (#1A1A1A)
-    static let backgroundSecondary = Color(hex: "1A1A1A")
+    /// Opaque content surface (#131416)
+    static let backgroundSecondary = Color(hex: "131416")
 
-    /// Tertiary background - Very dark gray (#2A2A2A)
-    static let backgroundTertiary = Color(hex: "2A2A2A")
+    /// Raised content surface (#18191C)
+    static let backgroundTertiary = Color(hex: "18191C")
+
+    static let contentSurface = Color(hex: "131416")
+    static let contentSurfaceRaised = Color(hex: "18191C")
+    static let contentBorder = Color.white.opacity(0.1)
 
     // MARK: - Accent Colors
 
-    /// Primary accent - Emerald green (#10B981)
-    static let accentPrimary = Color(hex: "10B981")
+    /// Primary accent - Emerald green (#1DBF88)
+    static let accentPrimary = Color(hex: "1DBF88")
 
-    /// Dark accent - Dark emerald (#059669)
-    static let accentDark = Color(hex: "059669")
+    /// Dark accent - Dark emerald (#0D7A58)
+    static let accentDark = Color(hex: "0D7A58")
+
+    static let ruby = Color(hex: "C8304F")
+    static let rubyDark = Color(hex: "8B1F35")
 
     // MARK: - Text Colors
 
-    /// Primary text - White (#FFFFFF)
-    static let textPrimary = Color(hex: "FFFFFF")
+    /// Primary text (#F5F6F7)
+    static let textPrimary = Color(hex: "F5F6F7")
 
-    /// Secondary text - Light gray (#D1D5DB)
-    static let textSecondary = Color(hex: "D1D5DB")
+    /// Secondary text (#8E9196)
+    static let textSecondary = Color(hex: "8E9196")
 
-    /// Tertiary text - Gray (#9CA3AF)
-    static let textTertiary = Color(hex: "9CA3AF")
+    /// Tertiary text (#71747A)
+    static let textTertiary = Color(hex: "71747A")
 
     /// Disabled text - Dark gray (#6B7280)
     static let textDisabled = Color(hex: "6B7280")
@@ -40,13 +46,13 @@ extension Color {
     // MARK: - Semantic Colors
 
     /// Success color - Emerald green (#10B981)
-    static let success = Color(hex: "10B981")
+    static let success = Color(hex: "1DBF88")
 
     /// Warning color - Amber (#F59E0B)
     static let warning = Color(hex: "F59E0B")
 
     /// Error color - Red (#EF4444)
-    static let error = Color(hex: "EF4444")
+    static let error = Color(hex: "C8304F")
 
     /// Info color - Blue (#3B82F6)
     static let info = Color(hex: "3B82F6")
@@ -54,7 +60,7 @@ extension Color {
     // MARK: - Sport Type Colors
 
     /// Running color - Emerald green
-    static let sportRunning = Color(hex: "10B981")
+    static let sportRunning = Color(hex: "1DBF88")
 
     /// Cycling color - Blue
     static let sportCycling = Color(hex: "3B82F6")
@@ -71,10 +77,10 @@ extension Color {
     // MARK: - Chart Colors
 
     /// Heart rate chart color - Red
-    static let chartHeartRate = Color(hex: "EF4444")
+    static let chartHeartRate = Color(hex: "C8304F")
 
     /// Pace/Speed chart color - Emerald green
-    static let chartPace = Color(hex: "10B981")
+    static let chartPace = Color(hex: "1DBF88")
 
     /// Elevation chart color - Blue
     static let chartElevation = Color(hex: "3B82F6")
@@ -114,16 +120,16 @@ extension Color {
     static let textOnGlass = Color.white
 
     /// Secondary text on glass - light gray (12:1 contrast on dark)
-    static let textSecondaryReadable = Color(hex: "E5E7EB")
+    static let textSecondaryReadable = Color(hex: "A8ABB0")
 
     /// Tertiary text on glass - readable gray (7:1 contrast on dark)
-    static let textTertiaryReadable = Color(hex: "C7CBD3")
+    static let textTertiaryReadable = Color(hex: "8E9196")
 
     /// Thin glass border - subtle white edge for glass definition
-    static let glassBorder = Color.white.opacity(0.18)
+    static let glassBorder = Color.white.opacity(0.14)
 
     /// Glass top inner highlight - simulates light refraction at top of glass
-    static let glassHighlight = Color.white.opacity(0.28)
+    static let glassHighlight = Color.white.opacity(0.22)
 
     /// Glass bottom inner shadow - subtle depth under glass
     static let glassInnerShadow = Color.black.opacity(0.35)
@@ -133,21 +139,17 @@ extension Color {
     /// Ambient background gradient - very dark with barely-perceptible emerald tint.
     /// Designed to be visible *through* glass cards while staying readable.
     static let ambientBackgroundGradient = RadialGradient(
-        colors: [
-            Color(hex: "0A0E0C"),   // very dark with hint of emerald
-            Color(hex: "050706"),   // near-black
-            Color(hex: "020303")    // deep dark
-        ],
+        colors: [Color(hex: "0C1110"), Color.backgroundPrimary],
         center: .topTrailing,
-        startRadius: 40,
-        endRadius: 700
+        startRadius: 20,
+        endRadius: 800
     )
 
-    /// Emerald aurora gradient - decorative glow blob behind glass (subtle)
+    /// Compatibility token for existing screens; intentionally kept very subtle.
     static let emeraldAuroraGradient = RadialGradient(
         colors: [
-            accentPrimary.opacity(0.18),
-            accentPrimary.opacity(0.06),
+            accentPrimary.opacity(0.04),
+            accentPrimary.opacity(0.015),
             Color.clear
         ],
         center: .center,

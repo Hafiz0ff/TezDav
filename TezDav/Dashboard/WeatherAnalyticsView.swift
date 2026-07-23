@@ -8,7 +8,7 @@ struct WeatherAnalyticsView: View {
     @State private var selectedSport: String = "Run"
     
     var body: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         let filtered = activities.filter { 
             $0.sportType == selectedSport && $0.weatherSnapshot != nil 
         }
@@ -36,7 +36,7 @@ struct WeatherAnalyticsView: View {
                     
                     // 2. Pace vs Temperature Scatter Plot
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(isRussian ? "Скорость vs Температура" : "Speed vs Temperature")
+                        Text(isRussian ? "Скорость и температура" : "Speed vs Temperature")
                             .font(.headline)
                             .padding(.horizontal, 4)
                         
@@ -60,7 +60,7 @@ struct WeatherAnalyticsView: View {
                                     .fill(Color.secondary.opacity(0.1))
                                     .frame(height: 220)
                                     .overlay(
-                                        Text("Speed vs Temperature Scatter Plot")
+                                        Text("Скорость и Температура")
                                             .font(.caption)
                                             .foregroundStyle(.secondary)
                                     )
@@ -72,7 +72,7 @@ struct WeatherAnalyticsView: View {
                     
                     // 3. Pace vs Humidity Scatter Plot
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(isRussian ? "Скорость vs Влажность" : "Speed vs Humidity")
+                        Text(isRussian ? "Скорость и влажность" : "Speed vs Humidity")
                             .font(.headline)
                             .padding(.horizontal, 4)
                         
@@ -96,7 +96,7 @@ struct WeatherAnalyticsView: View {
                                     .fill(Color.secondary.opacity(0.1))
                                     .frame(height: 220)
                                     .overlay(
-                                        Text("Speed vs Humidity Scatter Plot")
+                                        Text("Скорость и Влажность")
                                             .font(.caption)
                                             .foregroundStyle(.secondary)
                                     )

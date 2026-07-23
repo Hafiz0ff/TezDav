@@ -1,5 +1,6 @@
 import XCTest
 import SwiftData
+import HealthKit
 @testable import TezDav
 
 final class IntegrationTests: XCTestCase {
@@ -148,5 +149,53 @@ final class IntegrationTests: XCTestCase {
         // Sleep under 1 hour shouldn't crash, score is computed normally
         XCTAssertTrue(details.score > 0)
         XCTAssertEqual(details.sleepScore, 7) // 0.1 / 1.5 * 100
+    }
+
+    func testHealthKitActivityIDIsStableAndNamespaced() {
+        let uuid = UUID(uuidString: "4A8E3020-57F8-40F1-A526-E38A714703BB")!
+
+        let first = HealthKitWorkoutImporter.stableActivityID(for: uuid)
+        let second = HealthKitWorkoutImporter.stableActivityID(for: uuid)
+
+        XCTAssertEqual(first, second)
+        XCTAssertGreaterThanOrEqual(first, Int64(0x6000_0000_0000_0000))
+        XCTAssertLessThan(first, Int64(0x7000_0000_0000_0000))
+    }
+
+    func testHealthKitDuplicateMatchingUsesStartAndDistanceTolerance() {
+        let start = Date(timeIntervalSince1970: 1_700_000_000)
+
+        XCTAssertTrue(
+            HealthKitWorkoutImporter.isProbableDuplicate(
+                existingStartDate: start,
+                existingDistanceMeters: 5_000,
+                candidateStartDate: start.addingTimeInterval(4),
+                candidateDistanceMeters: 5_025
+            )
+        )
+        XCTAssertFalse(
+            HealthKitWorkoutImporter.isProbableDuplicate(
+                existingStartDate: start,
+                existingDistanceMeters: 5_000,
+                candidateStartDate: start.addingTimeInterval(8),
+                candidateDistanceMeters: 5_025
+            )
+        )
+        XCTAssertFalse(
+            HealthKitWorkoutImporter.isProbableDuplicate(
+                existingStartDate: start,
+                existingDistanceMeters: 5_000,
+                candidateStartDate: start,
+                candidateDistanceMeters: 5_050
+            )
+        )
+    }
+
+    func testHealthKitSportMappingMatchesDashboardFilters() {
+        XCTAssertEqual(HealthKitWorkoutImporter.sportType(for: .running), "Run")
+        XCTAssertEqual(HealthKitWorkoutImporter.sportType(for: .cycling), "Ride")
+        XCTAssertEqual(HealthKitWorkoutImporter.sportType(for: .walking), "Walk")
+        XCTAssertEqual(HealthKitWorkoutImporter.sportType(for: .hiking), "Hike")
+        XCTAssertEqual(HealthKitWorkoutImporter.sportType(for: .swimming), "Swim")
     }
 }

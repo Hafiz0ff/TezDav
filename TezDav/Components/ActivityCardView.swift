@@ -334,7 +334,7 @@ struct CompactActivityCardView: View {
         if isMetric {
             return String(format: "%.1f км", meters / 1000.0)
         } else {
-            return String(format: "%.1f mi", meters / 1609.34)
+            return String(format: "%.1f миль", meters / 1609.34)
         }
     }
 

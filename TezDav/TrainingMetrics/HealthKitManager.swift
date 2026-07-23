@@ -2,11 +2,16 @@
 import Foundation
 import HealthKit
 
+extension Notification.Name {
+    static let healthKitWorkoutsDidChange = Notification.Name("healthKitWorkoutsDidChange")
+}
+
 @MainActor
 final class HealthKitManager: ObservableObject {
     static let shared = HealthKitManager()
     
     private var healthStore: HKHealthStore?
+    private var workoutObserverQuery: HKObserverQuery?
     
     private init() {
         if HKHealthStore.isHealthDataAvailable() {
@@ -18,14 +23,7 @@ final class HealthKitManager: ObservableObject {
     func requestAuthorization() async -> Bool {
         guard let healthStore = healthStore else { return false }
         
-        let typesToRead: Set<HKObjectType> = [
-            HKObjectType.workoutType(),
-            HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN)!,
-            HKObjectType.quantityType(forIdentifier: .restingHeartRate)!,
-            HKObjectType.quantityType(forIdentifier: .stepCount)!,
-            HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
-            HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
-        ]
+        let typesToRead = readTypes
         
         let typesToWrite: Set<HKSampleType> = [
             HKObjectType.workoutType()
@@ -33,6 +31,11 @@ final class HealthKitManager: ObservableObject {
         
         do {
             try await healthStore.requestAuthorization(toShare: typesToWrite, read: typesToRead)
+            startWorkoutObservation()
+            try? await healthStore.enableBackgroundDelivery(
+                for: HKObjectType.workoutType(),
+                frequency: .immediate
+            )
             return true
         } catch {
             return false
@@ -41,9 +44,74 @@ final class HealthKitManager: ObservableObject {
     
     // Checks if HealthKit is active and authorized
     func isAuthorized() async -> Bool {
-        guard healthStore != nil else { return false }
-        // Simple check: we request read authorization status
-        return true
+        guard let healthStore else { return false }
+        let typesToWrite: Set<HKSampleType> = [HKObjectType.workoutType()]
+        do {
+            let status = try await healthStore.statusForAuthorizationRequest(
+                toShare: typesToWrite,
+                read: readTypes
+            )
+            return status == .unnecessary
+        } catch {
+            return false
+        }
+    }
+
+    func startWorkoutObservation() {
+        guard let healthStore, workoutObserverQuery == nil else { return }
+
+        let query = HKObserverQuery(
+            sampleType: HKObjectType.workoutType(),
+            predicate: nil
+        ) { _, completionHandler, error in
+            defer { completionHandler() }
+            guard error == nil else { return }
+
+            Task { @MainActor in
+                NotificationCenter.default.post(name: .healthKitWorkoutsDidChange, object: nil)
+            }
+        }
+
+        workoutObserverQuery = query
+        healthStore.execute(query)
+    }
+
+    private var readTypes: Set<HKObjectType> {
+        var types: Set<HKObjectType> = [
+            HKObjectType.workoutType(),
+            HKSeriesType.workoutRoute()
+        ]
+
+        let quantityIdentifiers: [HKQuantityTypeIdentifier] = [
+            .heartRate,
+            .heartRateVariabilitySDNN,
+            .restingHeartRate,
+            .stepCount,
+            .activeEnergyBurned,
+            .distanceWalkingRunning,
+            .distanceCycling,
+            .distanceSwimming,
+            .runningSpeed,
+            .runningPower,
+            .runningGroundContactTime,
+            .runningStrideLength,
+            .runningVerticalOscillation,
+            .cyclingSpeed,
+            .cyclingPower,
+            .cyclingCadence,
+            .swimmingStrokeCount,
+            .vo2Max
+        ]
+
+        for identifier in quantityIdentifiers {
+            if let type = HKObjectType.quantityType(forIdentifier: identifier) {
+                types.insert(type)
+            }
+        }
+        if let sleep = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) {
+            types.insert(sleep)
+        }
+        return types
     }
     
     // Record synced Strava session into Apple Health as HKWorkout
@@ -477,7 +545,7 @@ final class HealthKitManager: ObservableObject {
         let composite = (Double(hrvScore) * 0.35) + (Double(sleepScore) * 0.25) + (Double(tsbScore) * 0.25) + (Double(restDaysScore) * 0.15)
         let finalScore = max(0, min(100, Int(round(composite))))
         
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         
         let category: String
         switch finalScore {
@@ -490,7 +558,7 @@ final class HealthKitManager: ObservableObject {
         // Identify lowest components (pulling the score down)
         var problems: [String] = []
         if hrvScore < 85 {
-            problems.append(isRussian ? "снижен HRV (вариабельность)" : "reduced HRV")
+            problems.append(isRussian ? "снижена вариабельность сердечного ритма" : "reduced HRV")
         }
         if sleepScore < 85 {
             problems.append(isRussian ? "мало глубокого сна" : "insufficient deep sleep")

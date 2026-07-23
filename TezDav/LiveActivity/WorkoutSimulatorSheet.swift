@@ -136,11 +136,11 @@ struct WorkoutSimulatorSheet: View {
                         }
                         .listRowBackground(Color.blue)
                     } footer: {
-                        Text("Симуляция генерирует GPS-координаты по треку сегмента с шагом в 3 секунды, позволяя проверить вхождение в сегмент и отображение Dynamic Island / Live Activity.")
+                        Text("Симуляция создаёт координаты по треку сегмента с шагом в 3 секунды, позволяя проверить вхождение в сегмент, Динамический остров и действия в реальном времени.")
                     }
                 }
             }
-            .navigationTitle("Workout Simulator")
+            .navigationTitle("Симулятор тренировки")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Готово") {

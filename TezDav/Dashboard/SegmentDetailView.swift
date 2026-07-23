@@ -75,7 +75,7 @@ struct SegmentDetailView: View {
             VStack(spacing: 20) {
                 // Section 1: Map
                 ZStack(alignment: .bottomTrailing) {
-                    GoogleMapView(
+                    TezDavMapView(
                         coordinates: segment.coordinates,
                         sportType: segment.sportType,
                         showStartEndMarkers: true,
@@ -160,7 +160,7 @@ struct SegmentDetailView: View {
                 
                 // Section 4: Leaderboard
                 VStack(alignment: .leading, spacing: 12) {
-                    Picker("Leaderboard Mode", selection: $leaderboardTab) {
+                    Picker("Режим таблицы результатов", selection: $leaderboardTab) {
                         Text("Все результаты").tag(0)
                         Text("Мои попытки").tag(1)
                     }
@@ -235,7 +235,7 @@ struct SegmentDetailView: View {
                                     // Parameters (HR / Power / Speed)
                                     VStack(alignment: .trailing, spacing: 2) {
                                         if let hr = effort.averageHeartRate {
-                                            Text(String(format: "❤️ %.0f bpm", hr))
+                                            Text(String(format: "❤️ %.0f уд/мин", hr))
                                                 .font(.caption2)
                                                 .foregroundColor(.secondary)
                                         }

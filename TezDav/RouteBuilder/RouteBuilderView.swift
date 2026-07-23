@@ -24,8 +24,8 @@ struct RouteBuilderView: View {
     @State private var errorMessage = ""
     
     // Map state
-    @State private var googleCameraCenter: CLLocationCoordinate2D? = CLLocationCoordinate2D(latitude: 38.5598, longitude: 68.7870)
-    @State private var googleCameraZoom: Float? = 12.0
+    @State private var googleCameraCenter: CLLocationCoordinate2D?
+    @State private var googleCameraZoom: Float?
     
     @Query private var userSettingsList: [UserSettings]
     private var userSettings: UserSettings? {
@@ -85,7 +85,7 @@ struct RouteBuilderView: View {
     }
     
     private var mapView: some View {
-        GoogleMapView(
+        TezDavMapView(
             coordinates: routeEngine.fullRouteCoordinates,
             waypoints: routeEngine.waypoints,
             sportType: selectedSport,
@@ -379,9 +379,9 @@ struct RouteBuilderView: View {
         } else {
             let miles = meters / 1609.344
             if miles >= 0.1 {
-                return String(format: "%.2f mi", miles)
+                return String(format: "%.2f миль", miles)
             } else {
-                return String(format: "%.0f ft", meters * 3.28084)
+                return String(format: "%.0f фт", meters * 3.28084)
             }
         }
     }
@@ -391,7 +391,7 @@ struct RouteBuilderView: View {
         if isMetric {
             return String(format: "↑ %.0f м", meters)
         } else {
-            return String(format: "↑ %.0f ft", meters * 3.28084)
+            return String(format: "↑ %.0f фт", meters * 3.28084)
         }
     }
     

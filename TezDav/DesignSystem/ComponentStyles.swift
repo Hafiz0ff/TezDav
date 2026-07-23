@@ -19,11 +19,11 @@ enum Spacing {
 
 enum CornerRadius {
     static let small: CGFloat = 8
-    static let medium: CGFloat = 10
-    static let regular: CGFloat = 12
-    static let large: CGFloat = 16
-    static let xlarge: CGFloat = 20
-    static let pill: CGFloat = 20
+    static let medium: CGFloat = 12
+    static let regular: CGFloat = 14
+    static let large: CGFloat = 24
+    static let xlarge: CGFloat = 28
+    static let pill: CGFloat = 999
     static let circle: CGFloat = 50 // percentage
 }
 
@@ -93,13 +93,13 @@ struct Shadow {
 struct ElevatedCardModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .background(Color.backgroundSecondary)
+            .background(Color.contentSurface)
             .cornerRadius(CornerRadius.large)
             .overlay(
                 RoundedRectangle(cornerRadius: CornerRadius.large)
                     .stroke(Color.backgroundTertiary, lineWidth: 1)
             )
-            .shadow(color: Color.black.opacity(0.5), radius: 20, x: 0, y: 12)
+            .shadow(color: Color.black.opacity(0.24), radius: 12, x: 0, y: 8)
             .overlay(
                 RoundedRectangle(cornerRadius: CornerRadius.large)
                     .stroke(Color.white.opacity(0.05), lineWidth: 1)
@@ -110,13 +110,13 @@ struct ElevatedCardModifier: ViewModifier {
 struct CardModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .background(Color.backgroundSecondary)
+            .background(Color.contentSurface)
             .cornerRadius(CornerRadius.large)
             .overlay(
                 RoundedRectangle(cornerRadius: CornerRadius.large)
                     .stroke(Color.backgroundTertiary, lineWidth: 1)
             )
-            .shadow(color: Color.black.opacity(0.4), radius: 12, x: 0, y: 8)
+            .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 5)
     }
 }
 

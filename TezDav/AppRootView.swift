@@ -41,6 +41,7 @@ final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
 struct AppRootView: View {
     @Query private var allActivities: [Activity]
     @Environment(\.modelContext) private var modelContext
+    @ObservedObject private var stravaOAuth = StravaOAuthCoordinator.shared
     
     @State private var isConnected = false
     @State private var isLoading = false
@@ -63,22 +64,19 @@ struct AppRootView: View {
                     NavigationSplitView {
                         List(selection: $sidebarSelection) {
                             NavigationLink(value: 0) {
-                                Label("Dashboard", systemImage: "chart.bar.fill")
+                                Label("Главная", systemImage: "square.grid.2x2")
                             }
                             NavigationLink(value: 1) {
-                                Label("Form", systemImage: "waveform.path.ecg")
+                                Label("Форма", systemImage: "waveform.path.ecg")
                             }
                             NavigationLink(value: 2) {
-                                Label("Routes", systemImage: "map.fill")
+                                Label("Рекорды", systemImage: "trophy")
                             }
                             NavigationLink(value: 3) {
-                                Label("Social", systemImage: "person.2.fill")
+                                Label("Карта", systemImage: "map")
                             }
                             NavigationLink(value: 4) {
-                                Label("Records", systemImage: "trophy.fill")
-                            }
-                            NavigationLink(value: 5) {
-                                Label("Profile", systemImage: "person.crop.circle.fill")
+                                Label("Профиль", systemImage: "person.crop.circle")
                             }
                         }
                         .navigationTitle("TezDav")
@@ -87,10 +85,9 @@ struct AppRootView: View {
                         switch sidebarSelection ?? 0 {
                         case 0: DashboardView()
                         case 1: FormView()
-                        case 2: RouteListView()
-                        case 3: SocialFeedView()
-                        case 4: RecordsView()
-                        case 5: ProfileView()
+                        case 2: RecordsView()
+                        case 3: RouteListView()
+                        case 4: ProfileView()
                         default: DashboardView()
                         }
                     }
@@ -217,15 +214,27 @@ struct AppRootView: View {
             }
             #endif
         }
-    }
-
-    private func connectStrava() {
-        do {
-            let state = UUID().uuidString
-            let authURL = try StravaOAuth.authorizationURL(config: config, state: state)
-            UIApplication.shared.open(authURL)
-        } catch {
-            errorMessage = "Failed to create authorization URL: \(error.localizedDescription)"
+        .onChange(of: stravaOAuth.isConnected) { _, connected in
+            if connected {
+                isConnected = true
+            }
+        }
+        .alert(
+            "Не удалось подключить Strava",
+            isPresented: Binding(
+                get: { stravaOAuth.errorMessage != nil },
+                set: { isPresented in
+                    if !isPresented {
+                        stravaOAuth.clearError()
+                    }
+                }
+            )
+        ) {
+            Button("OK", role: .cancel) {
+                stravaOAuth.clearError()
+            }
+        } message: {
+            Text(stravaOAuth.errorMessage ?? "")
         }
     }
 
@@ -248,7 +257,7 @@ struct AppRootView: View {
                 }
             } catch {
                 await MainActor.run {
-                    errorMessage = "Auth error: \(error.localizedDescription)"
+                    errorMessage = "Ошибка авторизации: \(error.localizedDescription)"
                     isLoading = false
                 }
             }

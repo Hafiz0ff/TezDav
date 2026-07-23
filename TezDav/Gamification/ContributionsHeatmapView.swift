@@ -60,7 +60,7 @@ struct ContributionsHeatmapView: View {
             }
             
             HStack(spacing: 12) {
-                Text(Locale.current.identifier.hasPrefix("ru") ? "Меньше" : "Less")
+                Text(AppLanguage.isRussian ? "Меньше" : "Less")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                 
@@ -72,7 +72,7 @@ struct ContributionsHeatmapView: View {
                     }
                 }
                 
-                Text(Locale.current.identifier.hasPrefix("ru") ? "Больше" : "More")
+                Text(AppLanguage.isRussian ? "Больше" : "More")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }

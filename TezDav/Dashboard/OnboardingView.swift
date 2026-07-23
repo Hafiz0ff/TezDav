@@ -16,8 +16,8 @@ struct OnboardingView: View {
     @State private var weeklyGoalKm: String = "40"
     @State private var appMode: AppMode = .pro
     @State private var targetWeeklyActiveMinutes: String = "150"
-    
-    private let config = StravaConfig.fromBundle()
+    @State private var isRequestingHealthAccess = false
+    @State private var healthAccessError: String?
     
     var body: some View {
         ZStack {
@@ -44,7 +44,7 @@ struct OnboardingView: View {
                     welcomeStep
                         .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
                 case 2:
-                    stravaStep
+                    healthStep
                         .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
                 case 3:
                     settingsStep
@@ -58,7 +58,7 @@ struct OnboardingView: View {
             .padding()
         }
         .onChange(of: isConnected) { oldValue, newValue in
-            // If Strava connects successfully while on step 2, auto-transition to settings step
+            // A connected data source can advance onboarding to personal settings.
             if newValue && currentStep == 2 {
                 withAnimation(.spring()) {
                     currentStep = 3
@@ -127,21 +127,21 @@ struct OnboardingView: View {
         }
     }
     
-    // MARK: - Strava Connect Step
+    // MARK: - Apple Health Step
     
-    private var stravaStep: some View {
+    private var healthStep: some View {
         VStack(spacing: 32) {
             VStack(spacing: 12) {
-                Image(systemName: "link.circle.fill")
+                Image(systemName: "heart.text.square.fill")
                     .font(.system(size: 72))
-                    .foregroundStyle(.orange.gradient)
+                    .foregroundStyle(.red.gradient)
                 
-                Text("Подключение Strava")
+                Text("Подключение к Здоровью")
                     .font(.title2.weight(.bold))
                     .multilineTextAlignment(.center)
             }
             
-            Text("Авторизация в Strava позволяет автоматически загружать ваши тренировки, пульсовые данные и статистику. TezDav проанализирует каждый метр вашей активности бесплатно.")
+            Text("TezDav импортирует тренировки из приложений «Фитнес» и «Здоровье»: маршруты, пульс, темп, мощность и каденс. Данные сохраняются и анализируются локально на iPhone.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -151,18 +151,31 @@ struct OnboardingView: View {
             VStack(spacing: 16) {
                 Button {
                     HapticManager.trigger(.medium)
-                    connectStrava()
+                    connectAppleHealth()
                 } label: {
                     HStack {
-                        Image(systemName: "arrow.triangle.2.circlepath")
-                        Text("Подключить Strava")
+                        if isRequestingHealthAccess {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            Image(systemName: "heart.text.square")
+                        }
+                        Text(isRequestingHealthAccess ? "Подключение..." : "Разрешить доступ")
                     }
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
-                    .background(Color.orange.gradient)
+                    .background(Color.red.gradient)
                     .foregroundColor(.white)
                     .cornerRadius(12)
+                }
+                .disabled(isRequestingHealthAccess)
+
+                if let healthAccessError {
+                    Text(healthAccessError)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
                 }
                 
                 Button {
@@ -300,13 +313,22 @@ struct OnboardingView: View {
     
     // MARK: - Actions
     
-    private func connectStrava() {
-        do {
-            let state = UUID().uuidString
-            let authURL = try StravaOAuth.authorizationURL(config: config, state: state)
-            UIApplication.shared.open(authURL)
-        } catch {
-            print("Failed to open Strava Authorization URL: \(error)")
+    private func connectAppleHealth() {
+        guard !isRequestingHealthAccess else { return }
+        isRequestingHealthAccess = true
+        healthAccessError = nil
+
+        Task {
+            let success = await HealthKitManager.shared.requestAuthorization()
+            isRequestingHealthAccess = false
+            if success {
+                isConnected = true
+                withAnimation(.spring()) {
+                    currentStep = 3
+                }
+            } else {
+                healthAccessError = "Не удалось открыть доступ к Apple Health. Проверьте разрешения TezDav в настройках приложения «Здоровье»."
+            }
         }
     }
     

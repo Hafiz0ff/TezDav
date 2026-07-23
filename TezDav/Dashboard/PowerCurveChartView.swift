@@ -18,7 +18,7 @@ struct PowerCurveChartView: View {
     @Binding var selectedPoint: PowerPoint?
     
     // Ordered labels for X-axis spacing consistency
-    private let orderedLabels = ["1с", "5с", "15с", "30с", "1м", "2м", "5м", "10m", "20m", "1ч"]
+    private let orderedLabels = ["1с", "5с", "15с", "30с", "1м", "2м", "5м", "10м", "20м", "1ч"]
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -105,7 +105,7 @@ struct PowerCurveChartView: View {
                             Image(systemName: "chart.line.uptrend.xyaxis")
                                 .font(.largeTitle)
                                 .foregroundStyle(.secondary)
-                            Text("Power Curve Chart")
+                            Text("График мощности")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }

@@ -21,6 +21,7 @@ final class Activity {
     var importedAt: Date
     var streamsImported: Bool
     var source: String = "strava"
+    var healthKitUUID: String?
 
     // Gear & Weather Correlation
     var startLatitude: Double?
@@ -95,6 +96,7 @@ final class Activity {
         importedAt: Date = .now,
         streamsImported: Bool = false,
         source: String = "strava",
+        healthKitUUID: String? = nil,
         averageVerticalOscillation: Double? = nil,
         averageGroundContactTime: Double? = nil,
         averageStrideLength: Double? = nil,
@@ -150,6 +152,7 @@ final class Activity {
         self.importedAt = importedAt
         self.streamsImported = streamsImported
         self.source = source
+        self.healthKitUUID = healthKitUUID
         self.averageVerticalOscillation = averageVerticalOscillation
         self.averageGroundContactTime = averageGroundContactTime
         self.averageStrideLength = averageStrideLength

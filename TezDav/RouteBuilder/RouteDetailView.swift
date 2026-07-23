@@ -23,7 +23,7 @@ struct RouteDetailView: View {
             VStack(spacing: 20) {
                 // Section 1: Route Map Preview
                 ZStack(alignment: .bottomTrailing) {
-                    GoogleMapView(
+                    TezDavMapView(
                         coordinates: route.routeCoordinates,
                         sportType: route.sportType,
                         showStartEndMarkers: true,
@@ -111,7 +111,7 @@ struct RouteDetailView: View {
                                     AxisGridLine()
                                     AxisTick()
                                     if let km = value.as(Double.self) {
-                                        AxisValueLabel(String(format: isMetric ? "%.1f км" : "%.1f mi", km))
+                                        AxisValueLabel(String(format: isMetric ? "%.1f км" : "%.1f миль", km))
                                     }
                                 }
                             }
@@ -120,7 +120,7 @@ struct RouteDetailView: View {
                                     AxisGridLine()
                                     AxisTick()
                                     if let elev = value.as(Double.self) {
-                                        AxisValueLabel(String(format: isMetric ? "%.0f м" : "%.0f ft", elev))
+                                        AxisValueLabel(String(format: isMetric ? "%.0f м" : "%.0f фт", elev))
                                     }
                                 }
                             }
@@ -151,7 +151,7 @@ struct RouteDetailView: View {
                     }
                     
                     Button(action: sendToWatch) {
-                        Label("Отправить на Watch", systemImage: "applewatch")
+                        Label("Отправить на Apple Watch", systemImage: "applewatch")
                             .font(.subheadline.bold())
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
@@ -224,7 +224,7 @@ struct RouteDetailView: View {
         } message: {
             Text("Вы действительно хотите окончательно удалить этот маршрут?")
         }
-        .alert("Синхронизация с Watch", isPresented: $showWatchSuccessAlert) {
+        .alert("Синхронизация с Apple Watch", isPresented: $showWatchSuccessAlert) {
             Button("OK", role: .cancel) {}
         } message: {
             Text(watchAlertMessage)
@@ -327,9 +327,9 @@ struct RouteDetailView: View {
         } else {
             let miles = meters / 1609.344
             if miles >= 0.1 {
-                return String(format: "%.2f mi", miles)
+                return String(format: "%.2f миль", miles)
             } else {
-                return String(format: "%.0f ft", meters * 3.28084)
+                return String(format: "%.0f фт", meters * 3.28084)
             }
         }
     }
@@ -339,7 +339,7 @@ struct RouteDetailView: View {
         if isMetric {
             return String(format: "%.0f м", meters)
         } else {
-            return String(format: "%.0f ft", meters * 3.28084)
+            return String(format: "%.0f фт", meters * 3.28084)
         }
     }
     

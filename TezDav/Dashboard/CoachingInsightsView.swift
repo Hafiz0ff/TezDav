@@ -11,7 +11,7 @@ struct DailyRecommendationCardView: View {
     @State private var isExpanded = false
     
     var body: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         
         VStack(alignment: .leading, spacing: 12) {
             if insights.isEmpty {
@@ -132,7 +132,7 @@ struct CoachingInsightsArchiveView: View {
     let insights: [CoachingInsight]
     
     var body: some View {
-        let isRussian = Locale.current.identifier.hasPrefix("ru")
+        let isRussian = AppLanguage.isRussian
         
         List {
             if insights.count <= 1 {

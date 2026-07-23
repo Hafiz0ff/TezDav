@@ -40,7 +40,7 @@ final class CoreSpotlightManager {
         
         DispatchQueue.global(qos: .background).async {
             var items: [CSSearchableItem] = []
-            let isRu = Locale.current.identifier.hasPrefix("ru")
+            let isRu = AppLanguage.isRussian
             
             for activity in indexables {
                 let attributeSet = CSSearchableItemAttributeSet(itemContentType: "public.item")
